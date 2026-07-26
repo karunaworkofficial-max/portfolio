@@ -79,12 +79,16 @@ const Home = () => {
 
   return (
     <motion.div 
-      className="w-full min-h-screen bg-transparent"
+      className="w-full min-h-screen relative overflow-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      <div className="max-w-[1400px] mx-auto px-6 pt-32 pb-24 min-h-screen">
+      <div className="absolute inset-0 gradient-mesh opacity-30 z-0 animate-gradient-shift"></div>
+      <div className="absolute -top-64 -right-64 w-[800px] h-[800px] bg-primary/10 blur-3xl z-0 animate-wiggle-blob"></div>
+      <div className="absolute -bottom-64 -left-64 w-[800px] h-[800px] bg-secondary/10 blur-3xl z-0 animate-wiggle-blob" style={{ animationDelay: '2s' }}></div>
+
+      <div className="max-w-[1400px] mx-auto px-6 pt-32 pb-24 min-h-screen relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-[260px]">
           
           {/* 1. Hero Profile Card (2x2) */}
@@ -127,9 +131,9 @@ const Home = () => {
             variants={bentoVariants}
             initial="hidden"
             animate="visible"
-            className="col-span-1 row-span-1 rounded-[2rem] bg-primary/10 border border-primary/20 backdrop-blur-xl p-8 flex flex-col justify-center items-center shadow-lg group hover:bg-primary/20 transition-colors"
+            className="col-span-1 row-span-1 rounded-[2rem] bg-gradient-to-br from-purple-500/10 to-blue-500/10 border border-purple-500/20 backdrop-blur-xl p-8 flex flex-col justify-center items-center shadow-lg group hover:from-purple-500/20 hover:to-blue-500/20 transition-all"
           >
-             <div className="text-5xl md:text-7xl font-heading text-primary mb-2 group-hover:scale-110 transition-transform">{projectStats.totalProjects || 0}+</div>
+             <div className="text-5xl md:text-7xl font-heading mb-2 group-hover:scale-110 transition-transform bg-gradient-to-r from-purple-500 to-blue-500 text-transparent bg-clip-text">{projectStats.totalProjects || 0}+</div>
              <div className="text-xs uppercase tracking-widest font-accent text-text/70">Projects</div>
           </motion.div>
 
@@ -138,9 +142,9 @@ const Home = () => {
             variants={bentoVariants}
             initial="hidden"
             animate="visible"
-            className="col-span-1 row-span-1 rounded-[2rem] bg-secondary/10 border border-secondary/20 backdrop-blur-xl p-8 flex flex-col justify-center items-center shadow-lg group hover:bg-secondary/20 transition-colors"
+            className="col-span-1 row-span-1 rounded-[2rem] bg-gradient-to-br from-pink-500/10 to-orange-500/10 border border-pink-500/20 backdrop-blur-xl p-8 flex flex-col justify-center items-center shadow-lg group hover:from-pink-500/20 hover:to-orange-500/20 transition-all"
           >
-             <div className="text-5xl md:text-7xl font-heading text-secondary mb-2 group-hover:scale-110 transition-transform">{dynamicYearsExp}+</div>
+             <div className="text-5xl md:text-7xl font-heading mb-2 group-hover:scale-110 transition-transform bg-gradient-to-r from-pink-500 to-orange-500 text-transparent bg-clip-text">{dynamicYearsExp}+</div>
              <div className="text-xs uppercase tracking-widest font-accent text-text/70">Years Exp</div>
           </motion.div>
 

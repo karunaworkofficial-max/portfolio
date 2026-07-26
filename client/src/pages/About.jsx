@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import { ProfileContext } from '../context/ProfileContext';
 import { ThemeContext } from '../context/ThemeContext';
 import api from '../utils/api';
@@ -50,6 +50,14 @@ const About = () => {
   const { profile, loading } = useContext(ProfileContext);
   const { theme } = useContext(ThemeContext);
   const [projectStats, setProjectStats] = useState({ totalProjects: 0, totalClients: 0 });
+  const experienceContainerRef = useRef(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: experienceContainerRef,
+    offset: ["start center", "end center"]
+  });
+
+  const scaleY = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -141,21 +149,22 @@ const About = () => {
             variants={fadeInRight} 
             initial="hidden" 
             animate="visible"
-            className="order-1 lg:order-2"
+            className="order-1 lg:order-2 flex flex-col justify-center"
           >
-            <div className="inline-flex items-center px-4 py-1.5 bg-green-500/10 text-green-400 border border-green-500/20 rounded-full text-xs font-accent uppercase tracking-widest mb-6">
+            <div className="inline-flex items-center px-4 py-1.5 bg-green-500/10 text-green-400 border border-green-500/20 rounded-full text-xs font-accent uppercase tracking-widest mb-8 self-start shadow-sm">
               <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse" />
               Available for work
             </div>
-            <h1 className="text-5xl md:text-7xl font-heading mb-6 leading-tight">
-              I'm {profile.name?.split(' ')[0] || 'a Designer'}
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-heading mb-8 leading-[1.05] tracking-tight text-text-h">
+              <span className="block text-lg md:text-xl font-accent text-primary mb-4 tracking-widest uppercase opacity-90">Hello, I'm</span>
+              {profile.name?.split(' ')[0] || 'a Designer'}.
             </h1>
-            <p className="text-2xl md:text-3xl font-body text-text/70 mb-8 leading-snug">
+            <p className="text-xl md:text-2xl lg:text-3xl font-body text-text/70 mb-10 leading-relaxed max-w-2xl font-light">
               {profile.tagline}
             </p>
             {profile.location && (profile.location.city || profile.location.country) && (
-              <p className="text-muted font-accent uppercase tracking-widest text-sm flex items-center gap-2">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              <p className="text-text/50 font-accent uppercase tracking-widest text-sm flex items-center gap-3">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
                 {[profile.location.city, profile.location.country].filter(Boolean).join(', ')}
               </p>
             )}
@@ -310,7 +319,13 @@ const About = () => {
             {/* Experience */}
             <div>
               <h3 className="text-3xl font-heading mb-12">Experience</h3>
-              <div className="relative border-l border-text/20 ml-4 space-y-12 pb-8">
+              <div className="relative border-l border-text/20 ml-4 space-y-12 pb-8" ref={experienceContainerRef}>
+                {/* Foreground animated line */}
+                <motion.div 
+                  className="absolute top-0 bottom-0 left-[-1px] w-[2px] bg-primary origin-top" 
+                  style={{ scaleY }} 
+                />
+
                 {profile.experience?.map((exp, idx) => (
                   <motion.div 
                     key={exp._id || idx}
@@ -320,9 +335,9 @@ const About = () => {
                     variants={fadeInLeft}
                     className="relative pl-8"
                   >
-                    <div className={`absolute -left-2 top-1.5 w-4 h-4 rounded-full border-4 border-bg ${exp.current ? 'bg-primary' : 'bg-text/10'}`} />
+                    <div className={`absolute -left-2 top-1.5 w-4 h-4 rounded-full border-4 border-bg ${exp.current ? 'bg-primary' : 'bg-text/10'} z-10 transition-colors duration-500`} />
                     {exp.current && (
-                      <div className="absolute -left-2 top-1.5 w-4 h-4 rounded-full bg-primary animate-ping opacity-75" />
+                      <div className="absolute -left-2 top-1.5 w-4 h-4 rounded-full bg-primary animate-ping opacity-75 z-0" />
                     )}
 
                     <div className="mb-2 flex flex-wrap gap-3 items-center">
@@ -348,8 +363,9 @@ const About = () => {
                     whileInView="visible"
                     viewport={{ once: true, margin: "-50px" }}
                     variants={fadeInUp}
-                    className="bg-surface/50 border border-text/20 p-8 rounded-custom hover:border-text/20 transition-colors"
+                    className="relative bg-surface/30 backdrop-blur-md border border-white/10 p-8 rounded-custom shadow-[0_8px_32px_0_rgba(0,0,0,0.05)] hover:bg-surface/50 hover:shadow-[0_8px_32px_0_rgba(170,59,255,0.1)] hover:-translate-y-1 hover:border-primary/30 transition-all duration-300 overflow-hidden group"
                   >
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                     <span className="text-sm font-accent text-secondary tracking-widest block mb-2">{edu.year}</span>
                     <h4 className="text-xl font-heading text-text mb-1">{edu.degree}</h4>
                     <p className="text-text/70 font-body mb-1">{edu.institution}</p>
