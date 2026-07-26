@@ -100,10 +100,8 @@ const ProjectForm = ({ initialData, mode = 'add' }) => {
   };
 
   const handleSubmit = async (publish = true) => {
-    if (!formData.title) return alert("Title is required");
-    if (!formData.category) return alert("Category is required");
-    if (!description) return alert("Brief/Description is required");
-    if (images.length === 0) return alert("At least one image is required");
+    // Removed text field validations as requested
+    // if (images.length === 0) return alert("At least one image is required");
 
     setLoading(true);
 
