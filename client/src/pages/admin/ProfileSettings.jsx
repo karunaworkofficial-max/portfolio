@@ -228,32 +228,7 @@ const ProfileSettings = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-6">
-                  <div className="relative">
-                    <div className="w-24 h-24 rounded-full bg-black border border-text/20 overflow-hidden flex items-center justify-center p-2">
-                      {data.loadingLogo?.url ? (
-                        <img src={data.loadingLogo.url} alt="Loading Logo" className="w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]" />
-                      ) : (
-                        <span className="text-3xl text-primary font-heading font-bold">L</span>
-                      )}
-                    </div>
-                    <input type="file" ref={loadingLogoInputRef} className="hidden" accept="image/*" onChange={handleLoadingLogoUpload} />
-                  </div>
-                  <div>
-                    <h3 className="font-accent tracking-widest uppercase text-sm mb-3">Loading Screen Logo</h3>
-                    <div className="flex flex-wrap gap-2">
-                      <button onClick={() => loadingLogoInputRef.current?.click()} className="px-4 py-2 bg-text/10 hover:bg-text/10 rounded font-accent text-xs uppercase tracking-widest transition-colors">Change</button>
-                      {data.loadingLogo && (
-                        <button onClick={async () => {
-                          setData(p => ({...p, loadingLogo: null}));
-                          await api.put('/profile', { ...data, loadingLogo: null });
-                          await refreshProfile();
-                          showToast('Loading Logo removed');
-                        }} className="px-4 py-2 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded font-accent text-xs uppercase tracking-widest transition-colors">Remove</button>
-                      )}
-                    </div>
-                  </div>
-                </div>
+
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

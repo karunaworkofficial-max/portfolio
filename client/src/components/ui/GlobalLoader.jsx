@@ -48,13 +48,9 @@ const GlobalLoader = ({ name, logo }) => {
               <div className="absolute w-64 h-64 bg-primary/20 blur-[80px] rounded-full animate-pulse" style={{ animationDuration: '4s' }} />
               <div className="absolute w-32 h-32 bg-accent/20 blur-[50px] rounded-full animate-pulse mix-blend-screen" style={{ animationDuration: '2s', animationDelay: '1s' }} />
               
-              {logo ? (
-                <img src={logo} alt="Loading" className="w-32 h-32 object-contain relative z-10 filter drop-shadow-[0_0_20px_rgba(255,255,255,0.3)] animate-pulse" style={{ animationDuration: '3s' }} />
-              ) : (
-                <h1 className="text-3xl sm:text-4xl md:text-6xl font-heading tracking-wider uppercase text-text/90 whitespace-nowrap relative z-10 tracking-[0.2em] drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">
-                  {name || 'Loading'}
-                </h1>
-              )}
+              <h1 className="text-3xl sm:text-4xl md:text-6xl font-heading tracking-wider uppercase text-text/90 whitespace-nowrap relative z-10 tracking-[0.2em] drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">
+                LOADING
+              </h1>
             </div>
             
             <div className="w-full max-w-md mt-4">
