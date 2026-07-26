@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api'
+  baseURL: import.meta.env.MODE === 'production' 
+    ? 'https://portfolio-backend-3bzz.onrender.com/api' 
+    : '/api'
 });
 
 api.interceptors.request.use((config) => {
