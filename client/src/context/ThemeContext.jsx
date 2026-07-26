@@ -7,15 +7,36 @@ export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const hexToRgb = (hex) => {
+    let r = 0, g = 0, b = 0;
+    if (hex.length === 4) {
+      r = "0x" + hex[1] + hex[1];
+      g = "0x" + hex[2] + hex[2];
+      b = "0x" + hex[3] + hex[3];
+    } else if (hex.length === 7) {
+      r = "0x" + hex[1] + hex[2];
+      g = "0x" + hex[3] + hex[4];
+      b = "0x" + hex[5] + hex[6];
+    }
+    return `${+r} ${+g} ${+b}`;
+  };
+
   const applyThemeVariables = (themeData) => {
     const root = document.documentElement;
-    root.style.setProperty('--color-primary', themeData.primaryColor || '#6C63FF');
-    root.style.setProperty('--color-secondary', themeData.secondaryColor || '#FF6584');
-    root.style.setProperty('--color-accent', themeData.accentColor || '#00D4AA');
-    root.style.setProperty('--color-bg', themeData.backgroundColor || '#0a0a0a');
-    root.style.setProperty('--color-surface', themeData.surfaceColor || '#1a1a2e');
-    root.style.setProperty('--color-text', themeData.textColor || '#ffffff');
-    root.style.setProperty('--color-muted', themeData.mutedTextColor || '#888888');
+    const colors = {
+      primary: themeData.primaryColor || '#6C63FF',
+      secondary: themeData.secondaryColor || '#FF6584',
+      accent: themeData.accentColor || '#00D4AA',
+      bg: themeData.backgroundColor || '#0a0a0a',
+      surface: themeData.surfaceColor || '#1a1a2e',
+      text: themeData.textColor || '#ffffff',
+      muted: themeData.mutedTextColor || '#888888',
+    };
+
+    Object.entries(colors).forEach(([key, value]) => {
+      root.style.setProperty(`--color-${key}`, value);
+      root.style.setProperty(`--color-${key}-rgb`, hexToRgb(value));
+    });
     
     // Hardcode premium typography
     root.style.setProperty('--font-heading', '"Outfit", sans-serif');
