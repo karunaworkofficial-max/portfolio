@@ -41,6 +41,42 @@ const Home = () => {
     navigate(`/projects/${project.slug}`);
   };
 
+  // Calculate dynamic experience
+  const calculateExperience = () => {
+    if (!profile?.experience || profile.experience.length === 0) return 0;
+    
+    let minDate = new Date();
+    let maxDate = new Date(0);
+    let hasValidDates = false;
+
+    profile.experience.forEach(exp => {
+      if (exp.startDate) {
+        const start = new Date(exp.startDate);
+        if (!isNaN(start.getTime())) {
+          if (start < minDate) minDate = start;
+          hasValidDates = true;
+        }
+      }
+      
+      if (exp.current) {
+        maxDate = new Date();
+      } else if (exp.endDate) {
+        const end = new Date(exp.endDate);
+        if (!isNaN(end.getTime()) && end > maxDate) {
+          maxDate = end;
+        }
+      }
+    });
+
+    if (!hasValidDates) return 0;
+    if (maxDate < minDate) maxDate = new Date();
+    
+    const diffYears = (maxDate - minDate) / (1000 * 60 * 60 * 24 * 365.25);
+    return Math.floor(diffYears);
+  };
+
+  const dynamicYearsExp = calculateExperience();
+
   return (
     <motion.div 
       className="w-full min-h-screen bg-transparent"
@@ -93,7 +129,7 @@ const Home = () => {
             animate="visible"
             className="col-span-1 row-span-1 rounded-[2rem] bg-secondary/10 border border-secondary/20 backdrop-blur-xl p-8 flex flex-col justify-center items-center shadow-lg group hover:bg-secondary/20 transition-colors"
           >
-             <div className="text-5xl md:text-7xl font-heading text-secondary mb-2 group-hover:scale-110 transition-transform">{profile?.stats?.yearsOfExperience ?? profile?.yearsOfExperience ?? 0}+</div>
+             <div className="text-5xl md:text-7xl font-heading text-secondary mb-2 group-hover:scale-110 transition-transform">{dynamicYearsExp}+</div>
              <div className="text-xs uppercase tracking-widest font-accent text-text/70">Years Exp</div>
           </motion.div>
 
