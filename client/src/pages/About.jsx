@@ -113,7 +113,7 @@ const About = () => {
               <h2 className="text-sm font-accent text-primary uppercase tracking-[0.2em] mb-6">The Journey</h2>
               {profile.designPhilosophy && (
                 <div className="mb-12">
-                  <h3 className="text-3xl md:text-5xl font-heading text-white leading-tight drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                  <h3 className="text-2xl md:text-3xl font-heading text-white leading-relaxed drop-shadow-[0_0_8px_rgba(255,255,255,0.15)] max-w-4xl">
                     {profile.designPhilosophy}
                   </h3>
                 </div>
