@@ -125,40 +125,7 @@ const About = () => {
                 ))}
               </div>
             </motion.section>
-            {/* Certifications */}
-            {profile.certifications && profile.certifications.length > 0 && (
-              <motion.section 
-                initial="hidden" 
-                whileInView="visible" 
-                viewport={{ once: true }}
-                variants={staggerContainer}
-                className="mb-32"
-              >
-                <h2 className="text-sm font-accent text-primary uppercase tracking-[0.2em] mb-12">Certifications</h2>
-                <div className="grid gap-6">
-                  {profile.certifications.map((cert, idx) => (
-                    <motion.div 
-                      key={cert._id || idx}
-                      variants={fadeInUp}
-                      className="bg-surface/30 backdrop-blur-md border border-white/5 p-8 rounded-[2rem] hover:bg-surface/50 hover:border-primary/30 transition-all duration-300 group flex flex-col md:flex-row justify-between md:items-center gap-4"
-                    >
-                      <div>
-                        <h4 className="text-xl font-heading text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] mb-2">{cert.title}</h4>
-                        <p className="text-white/70 font-body text-md">{cert.issuer}</p>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <span className="text-xs font-accent text-primary drop-shadow-[0_0_5px_var(--color-primary)] tracking-widest block">{cert.year}</span>
-                        {cert.link && (
-                          <a href={cert.link} target="_blank" rel="noopener noreferrer" className="px-4 py-2 border border-white/10 rounded-full text-xs font-accent text-white/80 hover:text-white hover:border-primary transition-colors uppercase tracking-wider">
-                            View
-                          </a>
-                        )}
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.section>
-            )}
+
 
             {/* Experience Timeline */}
             <motion.section 
@@ -266,6 +233,40 @@ const About = () => {
               </div>
             </motion.section>
 
+            {/* Certifications */}
+            {profile.certifications && profile.certifications.length > 0 && (
+              <motion.section 
+                initial="hidden" 
+                whileInView="visible" 
+                viewport={{ once: true }}
+                variants={staggerContainer}
+                className="mt-32 mb-10"
+              >
+                <h2 className="text-sm font-accent text-primary uppercase tracking-[0.2em] mb-12">Certifications</h2>
+                <div className="grid gap-6">
+                  {profile.certifications.map((cert, idx) => (
+                    <motion.div 
+                      key={cert._id || idx}
+                      variants={fadeInUp}
+                      className="bg-surface/30 backdrop-blur-md border border-white/5 p-8 rounded-[2rem] hover:bg-surface/50 hover:border-primary/30 transition-all duration-300 group flex flex-col md:flex-row justify-between md:items-center gap-4"
+                    >
+                      <div>
+                        <h4 className="text-xl font-heading text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] mb-2">{cert.title}</h4>
+                        <p className="text-white/70 font-body text-md">{cert.issuer}</p>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <span className="text-xs font-accent text-primary drop-shadow-[0_0_5px_var(--color-primary)] tracking-widest block">{cert.year}</span>
+                        {cert.link && (
+                          <a href={cert.link} target="_blank" rel="noopener noreferrer" className="px-4 py-2 border border-white/10 rounded-full text-xs font-accent text-white/80 hover:text-white hover:border-primary transition-colors uppercase tracking-wider">
+                            View
+                          </a>
+                        )}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.section>
+            )}
           </div>
         </div>
       </div>
