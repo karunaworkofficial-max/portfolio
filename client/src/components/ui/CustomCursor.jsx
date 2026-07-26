@@ -32,16 +32,20 @@ const CustomCursor = ({ style = 'circle' }) => {
     const loop = () => {
       cursorX += (mouseX - cursorX) * 0.15;
       cursorY += (mouseY - cursorY) * 0.15;
-      cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
+      if (cursor) cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
+      const spotlight = document.getElementById('cursor-spotlight');
+      if (spotlight) {
+        spotlight.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
+      }
       requestAnimationFrame(loop);
     };
 
     const onMouseDown = () => {
-      cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%) scale(0.8)`;
+      if (cursor) cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%) scale(0.8)`;
       if (dot) dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%) scale(0.5)`;
     };
     const onMouseUp = () => {
-      cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%) scale(1)`;
+      if (cursor) cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%) scale(1)`;
       if (dot) dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%) scale(1)`;
     };
 
@@ -79,27 +83,28 @@ const CustomCursor = ({ style = 'circle' }) => {
   let content = null;
 
   if (style === 'circle' || !style) {
-    cursorClasses += " w-9 h-9 border-2 border-primary";
-    dotClasses += " w-1.5 h-1.5 bg-primary";
+    cursorClasses += " w-9 h-9 border-2 border-primary shadow-[0_0_10px_var(--color-primary),inset_0_0_10px_var(--color-primary)]";
+    dotClasses += " w-1.5 h-1.5 bg-primary shadow-[0_0_8px_var(--color-primary)]";
     
     if (hoverType === 'view') {
-      cursorClasses += " w-20 h-20 bg-primary/20 backdrop-blur-sm border-transparent mix-blend-difference";
+      cursorClasses += " w-20 h-20 bg-primary/20 backdrop-blur-sm border-transparent mix-blend-screen shadow-[0_0_30px_var(--color-primary)]";
       dotClasses += " opacity-0";
-      content = <span className="absolute inset-0 flex items-center justify-center text-[10px] font-accent uppercase text-text tracking-widest mix-blend-normal">View</span>;
+      content = <span className="absolute inset-0 flex items-center justify-center text-[10px] font-accent uppercase text-white tracking-widest drop-shadow-md">View</span>;
     } else if (hoverType === 'link' || hoverType === 'pointer') {
-      cursorClasses += " w-14 h-14 bg-primary/10 backdrop-blur-[1px]";
+      cursorClasses += " w-14 h-14 bg-primary/10 backdrop-blur-[1px] shadow-[0_0_20px_var(--color-primary),inset_0_0_15px_var(--color-primary)]";
       dotClasses += " scale-50";
     }
   } else if (style === 'dot') {
     cursorClasses += " hidden";
-    dotClasses += " w-3 h-3 bg-primary transition-all duration-300";
+    dotClasses += " w-3 h-3 bg-primary transition-all duration-300 shadow-[0_0_12px_var(--color-primary)]";
     if (hoverType) {
-      dotClasses += " w-10 h-10 mix-blend-difference bg-white";
+      dotClasses += " w-12 h-12 mix-blend-screen bg-primary/80 shadow-[0_0_30px_var(--color-primary)]";
     }
   }
 
   return (
     <>
+      <div id="cursor-spotlight" className="fixed top-0 left-0 w-[400px] h-[400px] bg-primary/10 blur-[100px] rounded-full pointer-events-none z-0 mix-blend-screen transition-opacity duration-500 opacity-50" />
       <div ref={cursorRef} className={cursorClasses}>
         {content}
       </div>

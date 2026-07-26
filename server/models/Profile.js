@@ -78,7 +78,9 @@ const profileSchema = new mongoose.Schema({
   clientLogos: [{
     name: String,
     logo: { url: String, publicId: String }
-  }]
+  }],
+  
+  loadingLogo: { url: String, publicId: String }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Profile', profileSchema);

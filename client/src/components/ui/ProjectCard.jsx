@@ -90,7 +90,7 @@ const ProjectCard = ({ project, layoutMode = 'grid', index }) => {
       </div>
       
       {/* Primary border on hover */}
-      <div className="absolute inset-0 border-2 border-primary opacity-0 group-hover:opacity-100 rounded-custom transition-opacity duration-500 pointer-events-none" />
+      <div className="absolute inset-0 border-[2px] border-transparent group-hover:border-primary/80 opacity-0 group-hover:opacity-100 rounded-[2rem] transition-all duration-500 pointer-events-none group-hover:shadow-[0_0_20px_var(--color-primary),inset_0_0_15px_var(--color-primary)]" />
     </motion.div>
   );
 };

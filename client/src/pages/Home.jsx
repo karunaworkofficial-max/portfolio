@@ -99,13 +99,13 @@ const Home = () => {
           {/* 1. Intro Block (col: 2, row: 2) */}
           <motion.div 
             variants={itemVariants}
-            className="md:col-span-2 md:row-span-2 rounded-[2.5rem] bg-surface/30 backdrop-blur-xl border border-white/5 p-8 md:p-12 flex flex-col justify-center relative overflow-hidden group shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:border-primary/30 transition-colors duration-500"
+            className="md:col-span-2 md:row-span-2 rounded-[2.5rem] bg-surface/30 backdrop-blur-xl border border-white/5 p-8 md:p-12 flex flex-col justify-center relative overflow-hidden group shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:border-primary/80 transition-all duration-500 hover:shadow-[0_0_30px_var(--color-primary),inset_0_0_20px_var(--color-primary)]"
           >
             <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-            <span className="text-primary font-accent uppercase tracking-[0.2em] text-sm mb-4 block">Welcome to my universe</span>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-heading leading-[1.1] mb-6 text-white">
+            <span className="text-primary font-accent uppercase tracking-[0.2em] text-sm mb-4 block drop-shadow-[0_0_8px_var(--color-primary)]">Welcome to my universe</span>
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-heading leading-[1.1] mb-6 text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
               Hello, I'm <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-400 to-secondary bg-300% animate-gradient-shift">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-400 to-secondary bg-300% animate-gradient-shift drop-shadow-[0_0_15px_var(--color-primary)]">
                 {profile?.name?.split(' ')[0] || 'Karuna'}
               </span>
             </h1>
@@ -117,7 +117,7 @@ const Home = () => {
           {/* 2. Profile Photo (col: 1, row: 2) */}
           <motion.div 
             variants={itemVariants}
-            className="md:col-span-1 md:row-span-2 rounded-[2.5rem] relative overflow-hidden group shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/5 bg-surface/30"
+            className="md:col-span-1 md:row-span-2 rounded-[2.5rem] relative overflow-hidden group shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/5 hover:border-accent/80 transition-all duration-500 hover:shadow-[0_0_30px_var(--color-accent),inset_0_0_20px_var(--color-accent)] bg-surface/30"
           >
             <img 
               src={profile?.photo?.url || 'https://placehold.co/600x800/222/555'} 
@@ -138,7 +138,7 @@ const Home = () => {
             <motion.div 
               variants={itemVariants}
               onClick={() => navigate(`/projects/${projects[0].slug}`)}
-              className="md:col-span-1 md:row-span-2 rounded-[2.5rem] relative overflow-hidden group cursor-pointer border border-white/5 shadow-[0_8px_30px_rgb(0,0,0,0.12)] bg-surface/30"
+              className="md:col-span-1 md:row-span-2 rounded-[2.5rem] relative overflow-hidden group cursor-pointer border border-white/5 hover:border-secondary/80 transition-all duration-500 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_0_30px_var(--color-secondary),inset_0_0_20px_var(--color-secondary)] bg-surface/30"
             >
               <img src={projects[0].thumbnail?.url} alt={projects[0].title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105" />
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-500" />
@@ -162,7 +162,7 @@ const Home = () => {
           {/* 4. Stats & Experience (col: 1, row: 1) */}
           <motion.div 
             variants={itemVariants}
-            className="md:col-span-1 rounded-[2.5rem] bg-surface/30 backdrop-blur-xl border border-white/5 p-6 flex flex-col justify-center items-center group shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:border-primary/20 transition-colors relative overflow-hidden"
+            className="md:col-span-1 rounded-[2.5rem] bg-surface/30 backdrop-blur-xl border border-white/5 p-6 flex flex-col justify-center items-center group shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:border-purple-500/80 hover:shadow-[0_0_30px_rgba(168,85,247,0.5),inset_0_0_20px_rgba(168,85,247,0.5)] transition-all duration-500 relative overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div className="text-5xl md:text-6xl font-heading text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-1 group-hover:scale-110 transition-transform duration-500 relative z-10">
@@ -174,7 +174,7 @@ const Home = () => {
           {/* 5. Stats & Projects (col: 1, row: 1) */}
           <motion.div 
             variants={itemVariants}
-            className="md:col-span-1 rounded-[2.5rem] bg-surface/30 backdrop-blur-xl border border-white/5 p-6 flex flex-col justify-center items-center group shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:border-secondary/20 transition-colors relative overflow-hidden"
+            className="md:col-span-1 rounded-[2.5rem] bg-surface/30 backdrop-blur-xl border border-white/5 p-6 flex flex-col justify-center items-center group shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:border-cyan-500/80 hover:shadow-[0_0_30px_rgba(6,182,212,0.5),inset_0_0_20px_rgba(6,182,212,0.5)] transition-all duration-500 relative overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div className="text-5xl md:text-6xl font-heading text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 mb-1 group-hover:scale-110 transition-transform duration-500 relative z-10">
@@ -187,7 +187,7 @@ const Home = () => {
           <motion.div 
             variants={itemVariants}
             onClick={() => navigate('/about')}
-            className="md:col-span-1 rounded-[2.5rem] bg-surface/30 backdrop-blur-xl border border-white/5 p-6 md:p-8 cursor-pointer flex flex-col justify-between group shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:bg-white/5 transition-colors overflow-hidden relative"
+            className="md:col-span-1 rounded-[2.5rem] bg-surface/30 backdrop-blur-xl border border-white/5 p-6 md:p-8 cursor-pointer flex flex-col justify-between group shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:border-primary/80 hover:shadow-[0_0_30px_var(--color-primary),inset_0_0_20px_var(--color-primary)] transition-all duration-500 overflow-hidden relative"
           >
             <div className="w-10 h-10 rounded-full bg-primary/20 text-primary flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors self-end absolute top-6 right-6">
               <svg className="w-5 h-5 -rotate-45 group-hover:rotate-0 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>

@@ -14,7 +14,7 @@ const PublicLayout = () => {
 
   return (
     <>
-      <GlobalLoader name={profile?.name} />
+      <GlobalLoader name={profile?.name} logo={profile?.loadingLogo?.url} />
       <ScrollProgress />
       <Navbar />
       <main>

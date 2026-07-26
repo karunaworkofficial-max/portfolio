@@ -39,7 +39,8 @@ const ProfileSettings = () => {
     experience: [], education: [], awards: [],
     socialLinks: { instagram: '', behance: '', dribbble: '', linkedin: '', twitter: '', github: '' },
     resumeUrl: '',
-    stats: { yearsOfExperience: 0, projectsCompleted: 0, happyClients: 0, awardsCount: 0, selfProjects: 0 }
+    stats: { yearsOfExperience: 0, projectsCompleted: 0, happyClients: 0, awardsCount: 0, selfProjects: 0 },
+    loadingLogo: null
   });
 
   const fileInputRef = useRef(null);
@@ -67,7 +68,8 @@ const ProfileSettings = () => {
         awards: profile.awards || [],
         socialLinks: profile.socialLinks || { instagram: '', behance: '', dribbble: '', linkedin: '', twitter: '', github: '' },
         resumeUrl: profile.resumeUrl || '',
-        stats: profile.stats || { yearsOfExperience: 0, projectsCompleted: 0, happyClients: 0, awardsCount: 0, selfProjects: 0 }
+        stats: profile.stats || { yearsOfExperience: 0, projectsCompleted: 0, happyClients: 0, awardsCount: 0, selfProjects: 0 },
+        loadingLogo: profile.loadingLogo || null
       });
     }
   }, [profile]);
@@ -135,6 +137,27 @@ const ProfileSettings = () => {
     }
   };
 
+  const loadingLogoInputRef = useRef(null);
+
+  const handleLoadingLogoUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      setLoading(true);
+      const base64Image = await fileToBase64(file);
+      const res = await api.post('/upload/image', { image: base64Image });
+      const newLogo = { url: res.data.data.url, publicId: res.data.data.publicId };
+      setData(p => ({ ...p, loadingLogo: newLogo }));
+      await api.put('/profile', { ...data, loadingLogo: newLogo });
+      await refreshProfile();
+      showToast('Loading Logo uploaded & saved');
+    } catch (err) {
+      showToast('Failed to upload Loading Logo');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // --- Render Tabs ---
   const tabs = ['Basic Info', 'Skills & Tools', 'Experience', 'Education', 'Awards', 'Social Links', 'Resume', 'Stats'];
 
@@ -175,29 +198,58 @@ const ProfileSettings = () => {
           {/* TAB: BASIC INFO */}
           {activeTab === 'Basic Info' && (
             <div className="space-y-8 animate-fadeIn">
-              <div className="flex items-center gap-8 mb-8 border-b border-text/20 pb-8">
-                <div className="relative">
-                  <div className="w-24 h-24 rounded-full bg-black border border-text/20 overflow-hidden flex items-center justify-center">
-                    {data.photo?.url ? (
-                      <img src={data.photo.url} alt="Profile" className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="text-3xl">👤</span>
-                    )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 border-b border-text/20 pb-8">
+                <div className="flex items-center gap-6">
+                  <div className="relative">
+                    <div className="w-24 h-24 rounded-full bg-black border border-text/20 overflow-hidden flex items-center justify-center">
+                      {data.photo?.url ? (
+                        <img src={data.photo.url} alt="Profile" className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-3xl">👤</span>
+                      )}
+                    </div>
+                    <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handlePhotoUpload} />
                   </div>
-                  <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handlePhotoUpload} />
+                  <div>
+                    <h3 className="font-accent tracking-widest uppercase text-sm mb-3">Profile Photo</h3>
+                    <div className="flex flex-wrap gap-2">
+                      <button onClick={() => fileInputRef.current?.click()} className="px-4 py-2 bg-text/10 hover:bg-text/10 rounded font-accent text-xs uppercase tracking-widest transition-colors">Change</button>
+                      {data.photo && (
+                        <button onClick={async () => {
+                          setData(p => ({...p, photo: null}));
+                          await api.put('/profile/photo', { photo: null });
+                          await refreshProfile();
+                          showToast('Photo removed');
+                        }} className="px-4 py-2 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded font-accent text-xs uppercase tracking-widest transition-colors">Remove</button>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-accent tracking-widest uppercase text-sm mb-3">Profile Photo</h3>
-                  <div className="flex gap-3">
-                    <button onClick={() => fileInputRef.current?.click()} className="px-4 py-2 bg-text/10 hover:bg-text/10 rounded font-accent text-xs uppercase tracking-widest transition-colors">Change</button>
-                    {data.photo && (
-                      <button onClick={async () => {
-                        setData(p => ({...p, photo: null}));
-                        await api.put('/profile/photo', { photo: null });
-                        await refreshProfile();
-                        showToast('Photo removed');
-                      }} className="px-4 py-2 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded font-accent text-xs uppercase tracking-widest transition-colors">Remove</button>
-                    )}
+
+                <div className="flex items-center gap-6">
+                  <div className="relative">
+                    <div className="w-24 h-24 rounded-full bg-black border border-text/20 overflow-hidden flex items-center justify-center p-2">
+                      {data.loadingLogo?.url ? (
+                        <img src={data.loadingLogo.url} alt="Loading Logo" className="w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]" />
+                      ) : (
+                        <span className="text-3xl text-primary font-heading font-bold">L</span>
+                      )}
+                    </div>
+                    <input type="file" ref={loadingLogoInputRef} className="hidden" accept="image/*" onChange={handleLoadingLogoUpload} />
+                  </div>
+                  <div>
+                    <h3 className="font-accent tracking-widest uppercase text-sm mb-3">Loading Screen Logo</h3>
+                    <div className="flex flex-wrap gap-2">
+                      <button onClick={() => loadingLogoInputRef.current?.click()} className="px-4 py-2 bg-text/10 hover:bg-text/10 rounded font-accent text-xs uppercase tracking-widest transition-colors">Change</button>
+                      {data.loadingLogo && (
+                        <button onClick={async () => {
+                          setData(p => ({...p, loadingLogo: null}));
+                          await api.put('/profile', { ...data, loadingLogo: null });
+                          await refreshProfile();
+                          showToast('Loading Logo removed');
+                        }} className="px-4 py-2 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded font-accent text-xs uppercase tracking-widest transition-colors">Remove</button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

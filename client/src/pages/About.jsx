@@ -6,18 +6,18 @@ import api from '../utils/api';
 import { fadeInUp, staggerContainer, fadeInLeft, fadeInRight } from '../utils/animations';
 
 const SkillBar = ({ skill, index }) => (
-  <motion.div variants={fadeInUp} className="mb-6">
+  <motion.div variants={fadeInUp} className="mb-6 group">
     <div className="flex justify-between mb-2">
-      <span className="font-accent text-sm tracking-wider uppercase text-white/80">{skill.name}</span>
-      <span className="font-accent text-sm text-primary">{skill.level}%</span>
+      <span className="font-accent text-sm tracking-wider uppercase text-white/80 group-hover:text-white transition-colors">{skill.name}</span>
+      <span className="font-accent text-sm text-primary drop-shadow-[0_0_8px_var(--color-primary)] animate-pulse">{skill.level}%</span>
     </div>
-    <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+    <div className="h-2.5 w-full bg-black/40 rounded-full overflow-hidden relative border border-white/10 shadow-[inset_0_0_10px_rgba(0,0,0,0.5)]">
       <motion.div 
         initial={{ width: 0 }}
         whileInView={{ width: `${skill.level}%` }}
         viewport={{ once: true, margin: "-50px" }}
-        transition={{ duration: 1, delay: index * 0.1, ease: "easeOut" }}
-        className="h-full bg-gradient-to-r from-primary to-secondary rounded-full"
+        transition={{ duration: 1.5, delay: index * 0.1, ease: "easeOut" }}
+        className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary via-accent to-secondary rounded-full shadow-[0_0_15px_var(--color-primary)]"
       />
     </div>
   </motion.div>
@@ -77,8 +77,8 @@ const About = () => {
                 />
               </div>
 
-              <h1 className="text-4xl font-heading text-white mb-2">{profile.name}</h1>
-              <p className="text-primary font-accent uppercase tracking-widest text-xs mb-6 block">Interactive Designer</p>
+              <h1 className="text-4xl font-heading text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70 drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] mb-2">{profile.name}</h1>
+              <p className="text-primary font-accent uppercase tracking-widest text-xs mb-6 block drop-shadow-[0_0_5px_var(--color-primary)]">Interactive Designer</p>
               
               <p className="text-white/60 font-body text-sm leading-relaxed mb-8">
                 {profile.tagline || 'Crafting digital experiences that merge logic with creativity.'}
@@ -112,7 +112,7 @@ const About = () => {
               <h2 className="text-sm font-accent text-primary uppercase tracking-[0.2em] mb-6">The Journey</h2>
               {profile.designPhilosophy && (
                 <div className="mb-12">
-                  <h3 className="text-3xl md:text-5xl font-heading text-white leading-tight">
+                  <h3 className="text-3xl md:text-5xl font-heading text-white leading-tight drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
                     {profile.designPhilosophy}
                   </h3>
                 </div>
@@ -162,8 +162,8 @@ const About = () => {
                       <span className="text-sm font-accent text-primary tracking-widest">{exp.period}</span>
                       {exp.type && <span className="text-[10px] uppercase font-accent border border-white/20 px-2 py-1 rounded text-white/50">{exp.type}</span>}
                     </div>
-                    <h4 className="text-3xl font-heading text-white mb-2">{exp.role}</h4>
-                    <p className="text-xl font-body text-white/70 mb-4">{exp.company}</p>
+                    <h4 className="text-3xl font-heading text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary drop-shadow-[0_0_10px_var(--color-primary)] mb-2">{exp.role}</h4>
+                    <p className="text-xl font-body text-white/90 mb-4 drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]">{exp.company}</p>
                     <p className="text-white/50 font-body leading-relaxed text-base">{exp.description}</p>
                   </motion.div>
                 ))}
@@ -186,8 +186,8 @@ const About = () => {
                     variants={fadeInUp}
                     className="bg-surface/30 backdrop-blur-md border border-white/5 p-8 rounded-[2rem] hover:bg-surface/50 hover:border-primary/30 transition-all duration-300 group"
                   >
-                    <span className="text-xs font-accent text-white/40 tracking-widest block mb-3">{edu.year}</span>
-                    <h4 className="text-2xl font-heading text-white mb-2">{edu.degree}</h4>
+                    <span className="text-xs font-accent text-primary drop-shadow-[0_0_5px_var(--color-primary)] tracking-widest block mb-3">{edu.year}</span>
+                    <h4 className="text-2xl font-heading text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] mb-2">{edu.degree}</h4>
                     <p className="text-white/70 font-body text-lg mb-4">{edu.institution}</p>
                     {edu.description && <p className="text-white/50 font-body text-sm leading-relaxed">{edu.description}</p>}
                   </motion.div>
