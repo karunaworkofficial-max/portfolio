@@ -96,37 +96,32 @@ const Home = () => {
             variants={bentoVariants}
             initial="hidden"
             animate="visible"
-            className="col-span-1 md:col-span-2 row-span-2 rounded-[2rem] bg-surface/40 backdrop-blur-xl border border-text/10 overflow-hidden relative shadow-2xl flex flex-col md:flex-row p-6 md:p-8 gap-8 items-center group"
+            className="col-span-1 md:col-span-2 row-span-2 rounded-[2rem] bg-surface/40 backdrop-blur-xl border border-text/10 overflow-hidden relative group p-10 flex flex-col justify-end shadow-2xl"
           >
-            {/* Image Side */}
-            <div className="w-full md:w-[45%] h-full flex-shrink-0 flex items-center justify-center">
-              <img 
-                src={profile?.photo?.url || 'https://placehold.co/800x1000/png'} 
-                alt={profile?.name}
-                className="w-full h-full object-cover rounded-[1.5rem] aspect-[4/5] shadow-lg group-hover:scale-[1.02] transition-transform duration-700" 
-              />
-            </div>
-            
-            {/* Text Side */}
-            <div className="w-full md:w-[55%] flex flex-col justify-center relative z-20 py-4 pr-4">
-               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading mb-6 leading-[1.1]">
+            <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/40 to-transparent z-10" />
+            <img 
+              src={profile?.photo?.url || 'https://placehold.co/800x800/png'} 
+              alt={profile?.name}
+              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ease-out opacity-80" 
+            />
+            <div className="relative z-20">
+
+               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-heading mb-4 leading-[0.95] whitespace-nowrap">
                  {profile?.name || 'Hello.'}
                </h1>
-               <p className="text-xl md:text-2xl text-text/80 font-body mb-10 leading-relaxed max-w-lg">
+               <p className="text-xl md:text-2xl text-text/80 font-body max-w-lg mb-6">
                  {profile?.tagline || 'Crafting digital experiences.'}
                </p>
                
                {profile?.resumeUrl && (
-                 <div>
-                   <a 
-                     href={profile.resumeUrl} 
-                     target="_blank" 
-                     rel="noopener noreferrer" 
-                     className="inline-flex items-center gap-3 px-8 py-4 bg-primary text-white font-accent uppercase tracking-widest text-sm font-bold rounded-full hover:bg-white hover:text-primary transition-all shadow-lg hover:shadow-primary/30 hover:-translate-y-1"
-                   >
-                     📄 Download Resume
-                   </a>
-                 </div>
+                 <a 
+                   href={profile.resumeUrl} 
+                   target="_blank" 
+                   rel="noopener noreferrer" 
+                   className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-accent uppercase tracking-widest text-xs rounded-full hover:bg-white hover:text-primary transition-colors shadow-lg"
+                 >
+                   📄 Download Resume
+                 </a>
                )}
             </div>
           </motion.div>
