@@ -59,6 +59,20 @@ const profileSchema = new mongoose.Schema({
     link: String
   }],
   
+  certifications: [{
+    title: String,
+    issuer: String,
+    year: String,
+    link: String
+  }],
+  
+  reviews: [{
+    clientName: String,
+    company: String,
+    rating: Number,
+    text: String
+  }],
+  
   socialLinks: {
     instagram: String,
     behance: String,

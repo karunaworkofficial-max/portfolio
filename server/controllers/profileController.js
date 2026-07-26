@@ -35,8 +35,11 @@ exports.updateTools = updateField('tools');
 exports.updateExperience = updateField('experience');
 exports.updateEducation = updateField('education');
 exports.updateAwards = updateField('awards');
+exports.updateCertifications = updateField('certifications');
+exports.updateReviews = updateField('reviews');
 exports.updateSocial = updateField('socialLinks');
 exports.updateClients = updateField('clientLogos');
+exports.updateLoadingLogo = updateField('loadingLogo');
 
 exports.updateStats = asyncHandler(async (req, res) => {
   const profile = await Profile.findOne();

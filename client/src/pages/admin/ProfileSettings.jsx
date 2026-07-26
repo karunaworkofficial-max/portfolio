@@ -36,7 +36,7 @@ const ProfileSettings = () => {
     availableForWork: true, availableForFreelance: true,
     photo: null,
     skills: [], tools: [], specializations: [],
-    experience: [], education: [], awards: [],
+    experience: [], education: [], awards: [], certifications: [], reviews: [],
     socialLinks: { instagram: '', behance: '', dribbble: '', linkedin: '', twitter: '', github: '' },
     resumeUrl: '',
     stats: { yearsOfExperience: 0, projectsCompleted: 0, happyClients: 0, awardsCount: 0, selfProjects: 0 },
@@ -66,6 +66,8 @@ const ProfileSettings = () => {
         experience: profile.experience || [],
         education: profile.education || [],
         awards: profile.awards || [],
+        certifications: profile.certifications || [],
+        reviews: profile.reviews || [],
         socialLinks: profile.socialLinks || { instagram: '', behance: '', dribbble: '', linkedin: '', twitter: '', github: '' },
         resumeUrl: profile.resumeUrl || '',
         stats: profile.stats || { yearsOfExperience: 0, projectsCompleted: 0, happyClients: 0, awardsCount: 0, selfProjects: 0 },
@@ -148,7 +150,7 @@ const ProfileSettings = () => {
       const res = await api.post('/upload/image', { image: base64Image });
       const newLogo = { url: res.data.data.url, publicId: res.data.data.publicId };
       setData(p => ({ ...p, loadingLogo: newLogo }));
-      await api.put('/profile', { ...data, loadingLogo: newLogo });
+      await api.put('/profile/loading-logo', { loadingLogo: newLogo });
       await refreshProfile();
       showToast('Loading Logo uploaded & saved');
     } catch (err) {
@@ -159,7 +161,7 @@ const ProfileSettings = () => {
   };
 
   // --- Render Tabs ---
-  const tabs = ['Basic Info', 'Skills & Tools', 'Experience', 'Education', 'Awards', 'Social Links', 'Resume', 'Stats'];
+  const tabs = ['Basic Info', 'Skills & Tools', 'Experience', 'Education', 'Certifications', 'Awards', 'Reviews', 'Social Links', 'Resume', 'Stats'];
 
   return (
     <div className="pb-24">
@@ -515,6 +517,27 @@ const ProfileSettings = () => {
             </div>
           )}
 
+          {/* TAB: CERTIFICATIONS */}
+          {activeTab === 'Certifications' && (
+            <div className="space-y-6 animate-fadeIn">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-heading">Certifications</h3>
+                <button onClick={() => setData(p => ({...p, certifications: [{ title: '', issuer: '', year: '', link: '' }, ...p.certifications]}))} className="text-primary hover:transition-colors text-sm font-accent tracking-widest uppercase">+ Add Certification</button>
+              </div>
+              <div className="space-y-4">
+                {data.certifications.map((cert, index) => (
+                  <div key={index} className="bg-bg border border-text/20 p-6 rounded relative flex flex-col md:flex-row gap-4 pr-12">
+                    <button onClick={() => setData(p => ({...p, certifications: p.certifications.filter((_, i) => i !== index)}))} className="absolute top-4 right-4 text-text/70 hover:text-red-500 transition-colors">✕</button>
+                    <input type="text" placeholder="Certification Title" value={cert.title} onChange={e => { const n = [...data.certifications]; n[index].title = e.target.value; setData(p => ({...p, certifications: n}))}} className="flex-1 bg-transparent border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
+                    <input type="text" placeholder="Issuer (e.g. Google)" value={cert.issuer} onChange={e => { const n = [...data.certifications]; n[index].issuer = e.target.value; setData(p => ({...p, certifications: n}))}} className="flex-1 bg-transparent border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
+                    <input type="text" placeholder="Year" value={cert.year} onChange={e => { const n = [...data.certifications]; n[index].year = e.target.value; setData(p => ({...p, certifications: n}))}} className="w-24 bg-transparent border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
+                    <input type="url" placeholder="Link" value={cert.link} onChange={e => { const n = [...data.certifications]; n[index].link = e.target.value; setData(p => ({...p, certifications: n}))}} className="flex-1 bg-transparent border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* TAB: AWARDS */}
           {activeTab === 'Awards' && (
             <div className="space-y-6 animate-fadeIn">
@@ -529,6 +552,29 @@ const ProfileSettings = () => {
                     <input type="text" placeholder="Award Title" value={awd.title} onChange={e => { const n = [...data.awards]; n[index].title = e.target.value; setData(p => ({...p, awards: n}))}} className="flex-1 bg-transparent border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
                     <input type="text" placeholder="Organization" value={awd.organization} onChange={e => { const n = [...data.awards]; n[index].organization = e.target.value; setData(p => ({...p, awards: n}))}} className="flex-1 bg-transparent border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
                     <input type="text" placeholder="Year" value={awd.year} onChange={e => { const n = [...data.awards]; n[index].year = e.target.value; setData(p => ({...p, awards: n}))}} className="w-24 bg-transparent border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* TAB: REVIEWS */}
+          {activeTab === 'Reviews' && (
+            <div className="space-y-6 animate-fadeIn">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-heading">Client Reviews</h3>
+                <button onClick={() => setData(p => ({...p, reviews: [{ clientName: '', company: '', rating: 5, text: '' }, ...p.reviews]}))} className="text-primary hover:transition-colors text-sm font-accent tracking-widest uppercase">+ Add Review</button>
+              </div>
+              <div className="space-y-4">
+                {data.reviews.map((rev, index) => (
+                  <div key={index} className="bg-bg border border-text/20 p-6 rounded relative flex flex-col gap-4 pr-12">
+                    <button onClick={() => setData(p => ({...p, reviews: p.reviews.filter((_, i) => i !== index)}))} className="absolute top-4 right-4 text-text/70 hover:text-red-500 transition-colors">✕</button>
+                    <div className="flex flex-col md:flex-row gap-4">
+                      <input type="text" placeholder="Client Name" value={rev.clientName} onChange={e => { const n = [...data.reviews]; n[index].clientName = e.target.value; setData(p => ({...p, reviews: n}))}} className="flex-1 bg-transparent border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
+                      <input type="text" placeholder="Company/Role" value={rev.company} onChange={e => { const n = [...data.reviews]; n[index].company = e.target.value; setData(p => ({...p, reviews: n}))}} className="flex-1 bg-transparent border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
+                      <input type="number" min="1" max="5" placeholder="Rating (1-5)" value={rev.rating} onChange={e => { const n = [...data.reviews]; n[index].rating = Number(e.target.value); setData(p => ({...p, reviews: n}))}} className="w-32 bg-transparent border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
+                    </div>
+                    <textarea placeholder="Review text..." value={rev.text} onChange={e => { const n = [...data.reviews]; n[index].text = e.target.value; setData(p => ({...p, reviews: n}))}} rows="3" className="w-full bg-transparent border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm resize-none"></textarea>
                   </div>
                 ))}
               </div>
