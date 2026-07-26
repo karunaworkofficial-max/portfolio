@@ -86,7 +86,7 @@ const About = () => {
 
               {profile.resumeUrl && (
                 <a 
-                  href={profile.resumeUrl.includes('cloudinary') ? profile.resumeUrl.replace('/upload/', '/upload/fl_attachment/') : profile.resumeUrl}
+                  href={profile.resumeUrl?.includes('cloudinary') ? profile.resumeUrl.replace('/upload/', '/upload/fl_attachment/') : profile.resumeUrl}
                   download="Resume.pdf"
                   target="_blank" 
                   rel="noopener noreferrer" 
