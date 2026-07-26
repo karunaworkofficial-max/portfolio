@@ -102,3 +102,9 @@ html.lenis, html.lenis body {
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
 }
+
+/* Fix select dropdown options visibility */
+select option {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}
