@@ -105,9 +105,20 @@ const Home = () => {
                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-heading mb-4 leading-[0.95] whitespace-nowrap">
                  {profile?.name || 'Hello.'}
                </h1>
-               <p className="text-xl md:text-2xl text-text/80 font-body max-w-lg">
+               <p className="text-xl md:text-2xl text-text/80 font-body max-w-lg mb-6">
                  {profile?.tagline || 'Crafting digital experiences.'}
                </p>
+               
+               {profile?.resumeUrl && (
+                 <a 
+                   href={profile.resumeUrl} 
+                   target="_blank" 
+                   rel="noopener noreferrer" 
+                   className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-accent uppercase tracking-widest text-xs rounded-full hover:bg-white hover:text-primary transition-colors shadow-lg"
+                 >
+                   📄 Download Resume
+                 </a>
+               )}
             </div>
           </motion.div>
 

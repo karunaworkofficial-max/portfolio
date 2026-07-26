@@ -19,6 +19,21 @@ exports.uploadImage = asyncHandler(async (req, res) => {
   });
 });
 
+exports.uploadFile = asyncHandler(async (req, res) => {
+  const { file } = req.body; // expecting base64 string
+  if (!file) { res.status(400); throw new Error('No file provided'); }
+  
+  const result = await cloudinary.uploader.upload(file, {
+    resource_type: 'auto'
+  });
+  
+  res.json({
+    success: true,
+    data: { url: result.secure_url, publicId: result.public_id },
+    message: 'File uploaded successfully'
+  });
+});
+
 exports.uploadImages = asyncHandler(async (req, res) => {
   const { images } = req.body; // array of base64 strings
   if (!images || !images.length) { res.status(400); throw new Error('No images provided'); }
