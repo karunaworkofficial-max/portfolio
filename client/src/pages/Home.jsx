@@ -111,7 +111,7 @@ const Home = () => {
                
                {profile?.resumeUrl && (
                  <a 
-                   href={profile.resumeUrl} 
+                   href={profile.resumeUrl.includes('cloudinary.com') && !profile.resumeUrl.includes('fl_attachment') ? profile.resumeUrl.replace('/upload/', '/upload/fl_attachment/') : profile.resumeUrl} 
                    target="_blank" 
                    rel="noopener noreferrer" 
                    className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-accent uppercase tracking-widest text-xs rounded-full hover:bg-white hover:text-primary transition-colors shadow-lg"

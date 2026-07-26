@@ -395,7 +395,7 @@ const About = () => {
               Get in Touch
             </a>
             {profile.resumeUrl && (
-              <a href={profile.resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-surface border border-text/20 text-text font-heading text-xl rounded hover:border-primary transition-colors w-full sm:w-auto text-center">
+              <a href={profile.resumeUrl.includes('cloudinary.com') && !profile.resumeUrl.includes('fl_attachment') ? profile.resumeUrl.replace('/upload/', '/upload/fl_attachment/') : profile.resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-surface border border-text/20 text-text font-heading text-xl rounded hover:border-primary transition-colors w-full sm:w-auto text-center">
                 Download Resume
               </a>
             )}
