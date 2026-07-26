@@ -126,21 +126,20 @@ const About = () => {
       className="min-h-screen pt-24 pb-20"
     >
       {/* Hero Section */}
-      <div className="container mx-auto px-6 lg:px-12 pt-12 pb-24">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <div className="max-w-6xl mx-auto px-6 lg:px-12 pt-12 pb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           <motion.div 
             variants={fadeInLeft} 
             initial="hidden" 
             animate="visible"
-            className="order-2 lg:order-1 relative"
+            className="order-2 lg:order-1 relative flex justify-center lg:justify-end"
           >
-            <div className="relative w-full aspect-square max-w-md mx-auto lg:mx-0 group">
-              <div className="absolute inset-0 bg-primary/20 rounded-full blur-3xl group-hover:bg-primary/30 transition-colors duration-700" />
+            <div className="relative w-full aspect-[4/5] max-w-sm group">
+              <div className="absolute inset-0 bg-primary/20 rounded-3xl blur-3xl group-hover:bg-primary/30 transition-colors duration-700" />
               <img 
                 src={profile.photo?.url || 'https://placehold.co/800x800/png'} 
                 alt={profile.name} 
-                className="relative z-10 w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}
+                className="relative z-10 w-full h-full object-cover rounded-3xl transition-transform duration-700 hover:scale-105 shadow-xl border border-white/5"
               />
             </div>
           </motion.div>
