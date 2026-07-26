@@ -174,7 +174,7 @@ const About = () => {
 
       {/* Bio Section */}
       <div className="bg-surface/30 border-y border-text/20 py-24">
-        <div className="container mx-auto px-6 lg:px-12 max-w-5xl">
+        <div className="container mx-auto px-6 lg:px-12 max-w-6xl">
           <motion.div 
             initial="hidden" 
             whileInView="visible" 
@@ -182,17 +182,17 @@ const About = () => {
             variants={fadeInUp}
           >
             {profile.designPhilosophy && (
-              <div className="mb-12 relative">
-                <span className="absolute -top-12 -left-8 text-8xl text-text/70 font-heading pointer-events-none">"</span>
-                <p className="text-3xl md:text-4xl font-heading text-primary leading-tight relative z-10 italic">
+              <div className="mb-16 relative text-center">
+                <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-8xl text-text/10 font-heading pointer-events-none">"</span>
+                <p className="text-3xl md:text-4xl lg:text-5xl font-heading text-primary leading-tight relative z-10 italic max-w-4xl mx-auto">
                   {profile.designPhilosophy}
                 </p>
               </div>
             )}
             
-            <div className="prose prose-invert prose-xl max-w-none font-body text-text/70 leading-relaxed">
+            <div className="prose prose-invert prose-xl max-w-4xl mx-auto font-body text-text/80 leading-[2.2] md:text-center tracking-wide">
               {profile.bio?.split('\n').map((paragraph, idx) => (
-                <p key={idx}>{paragraph}</p>
+                <p key={idx} className="mb-8 last:mb-0">{paragraph}</p>
               ))}
             </div>
           </motion.div>
@@ -208,39 +208,39 @@ const About = () => {
           variants={staggerContainer}
           className="grid grid-cols-2 md:grid-cols-5 gap-8 divide-x divide-white/10"
         >
-          <motion.div variants={fadeInUp} className="text-center px-4">
-            <div className="text-5xl md:text-6xl font-heading text-text mb-2">
+          <motion.div variants={fadeInUp} className="text-center px-4 group">
+            <div className="text-5xl md:text-6xl font-heading mb-2 bg-gradient-to-r from-purple-400 to-blue-400 text-transparent bg-clip-text group-hover:scale-110 transition-transform">
               <Counter to={projectStats.totalProjects || 0} />+
             </div>
-            <div className="text-xs md:text-sm font-accent uppercase tracking-widest text-muted">Projects</div>
+            <div className="text-xs md:text-sm font-accent uppercase tracking-widest text-text/50">Projects</div>
           </motion.div>
           
-          <motion.div variants={fadeInUp} className="text-center px-4">
-            <div className="text-5xl md:text-6xl font-heading text-text mb-2">
+          <motion.div variants={fadeInUp} className="text-center px-4 group">
+            <div className="text-5xl md:text-6xl font-heading mb-2 bg-gradient-to-r from-pink-400 to-orange-400 text-transparent bg-clip-text group-hover:scale-110 transition-transform">
               <Counter to={projectStats.totalClients || 0} />+
             </div>
-            <div className="text-xs md:text-sm font-accent uppercase tracking-widest text-muted">Clients</div>
+            <div className="text-xs md:text-sm font-accent uppercase tracking-widest text-text/50">Clients</div>
           </motion.div>
           
-          <motion.div variants={fadeInUp} className="text-center px-4">
-            <div className="text-5xl md:text-6xl font-heading text-text mb-2">
+          <motion.div variants={fadeInUp} className="text-center px-4 group">
+            <div className="text-5xl md:text-6xl font-heading mb-2 bg-gradient-to-r from-green-400 to-emerald-400 text-transparent bg-clip-text group-hover:scale-110 transition-transform">
               <Counter to={profile.stats?.selfProjects ?? profile.selfProjects ?? 0} />+
             </div>
-            <div className="text-xs md:text-sm font-accent uppercase tracking-widest text-muted">Self Projects</div>
+            <div className="text-xs md:text-sm font-accent uppercase tracking-widest text-text/50">Self Projects</div>
           </motion.div>
 
-          <motion.div variants={fadeInUp} className="text-center px-4">
-            <div className="text-5xl md:text-6xl font-heading text-text mb-2">
+          <motion.div variants={fadeInUp} className="text-center px-4 group">
+            <div className="text-5xl md:text-6xl font-heading mb-2 bg-gradient-to-r from-blue-400 to-cyan-400 text-transparent bg-clip-text group-hover:scale-110 transition-transform">
               <Counter to={dynamicYearsExp} />+
             </div>
-            <div className="text-xs md:text-sm font-accent uppercase tracking-widest text-muted">Years Exp.</div>
+            <div className="text-xs md:text-sm font-accent uppercase tracking-widest text-text/50">Years Exp.</div>
           </motion.div>
           
-          <motion.div variants={fadeInUp} className="text-center px-4">
-            <div className="text-5xl md:text-6xl font-heading text-text mb-2">
+          <motion.div variants={fadeInUp} className="text-center px-4 group">
+            <div className="text-5xl md:text-6xl font-heading mb-2 bg-gradient-to-r from-yellow-400 to-amber-400 text-transparent bg-clip-text group-hover:scale-110 transition-transform">
               <Counter to={profile.stats?.awardsCount ?? profile.awardsCount ?? 0} />+
             </div>
-            <div className="text-xs md:text-sm font-accent uppercase tracking-widest text-muted">Awards</div>
+            <div className="text-xs md:text-sm font-accent uppercase tracking-widest text-text/50">Awards</div>
           </motion.div>
         </motion.div>
       </div>
@@ -335,7 +335,13 @@ const About = () => {
                     variants={fadeInLeft}
                     className="relative pl-8"
                   >
-                    <div className={`absolute -left-2 top-1.5 w-4 h-4 rounded-full border-4 border-bg ${exp.current ? 'bg-primary' : 'bg-text/10'} z-10 transition-colors duration-500`} />
+                    <motion.div 
+                      variants={{
+                        hidden: { backgroundColor: "rgba(255,255,255,0.1)", boxShadow: "0 0 0px rgba(170,59,255,0)" },
+                        visible: { backgroundColor: exp.current ? "#aa3bff" : "#a855f7", boxShadow: "0 0 15px 2px rgba(170,59,255,0.8)", transition: { duration: 0.5, delay: 0.2 } }
+                      }}
+                      className="absolute -left-2 top-1.5 w-4 h-4 rounded-full border-4 border-bg z-10" 
+                    />
                     {exp.current && (
                       <div className="absolute -left-2 top-1.5 w-4 h-4 rounded-full bg-primary animate-ping opacity-75 z-0" />
                     )}

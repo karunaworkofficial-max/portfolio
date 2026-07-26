@@ -84,15 +84,30 @@ const Footer = () => {
                 {Object.entries(profile.socialLinks).map(([platform, url]) => {
                   if (!url) return null;
                   
-                  // Map platform name to a specific icon
+                  // Map platform name to a specific icon with brand colors
                   const getIcon = (platformName) => {
                     const name = platformName.toLowerCase();
-                    if (name === 'instagram') return <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>;
-                    if (name === 'linkedin') return <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>;
+                    if (name === 'instagram') return (
+                      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <defs>
+                          <linearGradient id="ig-grad" x1="2" y1="22" x2="22" y2="2">
+                            <stop offset="0%" stopColor="#feda75" />
+                            <stop offset="25%" stopColor="#fa7e1e" />
+                            <stop offset="50%" stopColor="#d62976" />
+                            <stop offset="75%" stopColor="#962fbf" />
+                            <stop offset="100%" stopColor="#4f5bd5" />
+                          </linearGradient>
+                        </defs>
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="url(#ig-grad)"></rect>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" stroke="url(#ig-grad)"></path>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="url(#ig-grad)"></line>
+                      </svg>
+                    );
+                    if (name === 'linkedin') return <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="#0077b5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>;
                     if (name === 'twitter') return <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>;
                     if (name === 'github') return <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>;
-                    if (name === 'dribbble') return <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"></path></svg>;
-                    if (name === 'behance') return <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M22 7h-7v2h7V7zm1.726 10c-.442 1.297-2.029 3-5.101 3-3.074 0-5.564-1.729-5.564-5.675 0-3.91 2.325-5.92 5.466-5.92 3.082 0 4.964 1.782 5.374 4.8h-8.4c.022 1.493.7 2.89 2.583 2.89 1.614 0 2.152-.717 2.562-1.475h3.08zM19.16 11.5c0-1.153-.755-1.727-1.54-1.727-.785 0-1.516.574-1.516 1.727h3.056zM8.93 15.35c.67.625 1.83 1 2.87 1 2.45 0 3.72-1.125 3.72-3.1 0-1.925-1.22-2.75-2.82-3.025v-.125c1.22-.275 2.32-1.175 2.32-2.75 0-2.1-1.32-3.15-3.5-3.15H2v15h9.45c2.4 0 3.8-1.075 3.8-3.325 0-1.925-1.27-2.9-2.9-3.225v-.125c1.17.2 2.3.925 2.3 2.55 0 1.575-1 2.525-2.67 2.525H5v-2.3zm-.13-9.1c1.375 0 2.225.625 2.225 1.775 0 1.25-.85 1.875-2.225 1.875H5v-3.65h3.8z"/></svg>;
+                    if (name === 'dribbble') return <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="#ea4c89" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"></path></svg>;
+                    if (name === 'behance') return <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#1769ff"><path d="M22 7h-7v2h7V7zm1.726 10c-.442 1.297-2.029 3-5.101 3-3.074 0-5.564-1.729-5.564-5.675 0-3.91 2.325-5.92 5.466-5.92 3.082 0 4.964 1.782 5.374 4.8h-8.4c.022 1.493.7 2.89 2.583 2.89 1.614 0 2.152-.717 2.562-1.475h3.08zM19.16 11.5c0-1.153-.755-1.727-1.54-1.727-.785 0-1.516.574-1.516 1.727h3.056zM8.93 15.35c.67.625 1.83 1 2.87 1 2.45 0 3.72-1.125 3.72-3.1 0-1.925-1.22-2.75-2.82-3.025v-.125c1.22-.275 2.32-1.175 2.32-2.75 0-2.1-1.32-3.15-3.5-3.15H2v15h9.45c2.4 0 3.8-1.075 3.8-3.325 0-1.925-1.27-2.9-2.9-3.225v-.125c1.17.2 2.3.925 2.3 2.55 0 1.575-1 2.525-2.67 2.525H5v-2.3zm-.13-9.1c1.375 0 2.225.625 2.225 1.775 0 1.25-.85 1.875-2.225 1.875H5v-3.65h3.8z"/></svg>;
                     return <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>;
                   };
 
@@ -102,7 +117,7 @@ const Footer = () => {
                         href={url} 
                         target="_blank" 
                         rel="noopener noreferrer" 
-                        className="w-12 h-12 rounded-full border border-text/10 bg-surface/30 flex justify-center items-center text-text/60 hover:text-bg hover:bg-primary hover:border-primary transition-all group shadow-sm hover:shadow-primary/20 hover:-translate-y-1"
+                        className="w-12 h-12 rounded-full border border-text/10 bg-surface/30 flex justify-center items-center hover:bg-surface hover:border-text/30 transition-all group shadow-sm hover:shadow-md hover:-translate-y-1"
                         data-cursor="link"
                         aria-label={platform}
                         title={platform}
