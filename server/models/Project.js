@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const projectSchema = new mongoose.Schema({
-  title: { type: String, required: true },
+  title: { type: String, default: '' },
   slug: { type: String, unique: true },
   subtitle: { type: String },
   description: { type: String },
@@ -12,8 +12,9 @@ const projectSchema = new mongoose.Schema({
       'brand-identity', 'logo-design', 'poster-design', 'packaging-design',
       'editorial-design', 'social-media-design', 'typography', 'illustration',
       'print-design', 'ui-design', 'motion-graphics', 'infographic',
-      'merchandise', 'album-art', 'book-cover', 'other'
-    ]
+      'merchandise', 'album-art', 'book-cover', 'other', ''
+    ],
+    default: ''
   },
   designType: String,
   clientName: String,
@@ -72,7 +73,11 @@ const projectSchema = new mongoose.Schema({
 projectSchema.pre('save', function() {
   // auto-generate slug from title
   if (this.isModified('title') && !this.slug) {
-    this.slug = this.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    if (this.title && this.title.trim() !== '') {
+      this.slug = this.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    } else {
+      this.slug = 'untitled-' + Math.random().toString(36).substring(2, 8);
+    }
   }
   // generate accentColor from first color in colorPalette
   if (this.isModified('colorPalette') && this.colorPalette && this.colorPalette.length > 0 && !this.accentColor) {

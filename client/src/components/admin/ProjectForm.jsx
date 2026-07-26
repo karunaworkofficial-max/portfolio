@@ -176,11 +176,11 @@ const ProjectForm = ({ initialData, mode = 'add' }) => {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
-              <label className="block text-xs font-accent uppercase tracking-widest opacity-60 mb-2">Project Title *</label>
+              <label className="block text-xs font-accent uppercase tracking-widest opacity-60 mb-2">Project Title</label>
               <input type="text" name="title" value={formData.title} onChange={handleChange} className="w-full bg-transparent border border-text/20 rounded px-4 py-3 font-body focus:border-primary focus:outline-none" />
             </div>
             <div>
-              <label className="block text-xs font-accent uppercase tracking-widest opacity-60 mb-2">Category *</label>
+              <label className="block text-xs font-accent uppercase tracking-widest opacity-60 mb-2">Category</label>
               <select name="category" value={formData.category} onChange={handleChange} className="w-full bg-bg border border-text/20 rounded px-4 py-3 font-body focus:border-primary focus:outline-none appearance-none cursor-pointer">
                 <option value="" disabled>Select Category</option>
                 {CATEGORIES.map(c => <option key={c} value={c.toLowerCase().replace(/\s+/g, '-')}>{c}</option>)}
@@ -224,7 +224,7 @@ const ProjectForm = ({ initialData, mode = 'add' }) => {
           </h2>
           <div className="space-y-6">
             <div>
-              <label className="block text-xs font-accent uppercase tracking-widest opacity-60 mb-2">The Brief *</label>
+              <label className="block text-xs font-accent uppercase tracking-widest opacity-60 mb-2">The Brief</label>
               <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={4} placeholder="What the client asked for..." className="w-full bg-bg border border-text/20 rounded px-4 py-3 font-body focus:border-primary focus:outline-none resize-none" />
             </div>
             <div>
