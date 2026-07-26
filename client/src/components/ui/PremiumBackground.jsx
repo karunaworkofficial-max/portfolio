@@ -19,43 +19,27 @@ const PremiumBackground = () => {
 
   return (
     <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden bg-bg">
-      {/* 1. Base Grid Pattern for texture */}
+      {/* 1. Realistic Matte Noise Texture */}
       <div 
-        className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" 
+        className="absolute inset-0 opacity-[0.4] dark:opacity-[0.25]"
         style={{
-          backgroundImage: 'linear-gradient(to right, var(--color-text) 1px, transparent 1px), linear-gradient(to bottom, var(--color-text) 1px, transparent 1px)',
-          backgroundSize: '40px 40px'
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+          mixBlendMode: 'overlay',
         }}
       />
 
-      {/* 1b. Neon Perspective Grid (Cyberpunk style) */}
-      <div className="absolute inset-0 overflow-hidden" style={{ perspective: '800px' }}>
-        <div 
-          className="absolute w-[200%] h-[200%] -left-[50%] -top-[50%] opacity-10"
-          style={{
-            backgroundImage: 'linear-gradient(to right, var(--color-primary) 1px, transparent 1px), linear-gradient(to bottom, var(--color-primary) 1px, transparent 1px)',
-            backgroundSize: '4rem 4rem',
-            transform: 'rotateX(75deg) translateY(100px) scale(1)',
-            maskImage: 'radial-gradient(ellipse at center, #000 0%, transparent 60%)',
-          }}
-        />
-      </div>
-
-      {/* 2. Interactive Spotlight tracking mouse */}
+      {/* 2. Interactive Premium Spotlight */}
       <div 
-        className="absolute inset-0 opacity-40 dark:opacity-20 transition-opacity duration-300 mix-blend-screen"
+        className="absolute inset-0 opacity-30 dark:opacity-15 transition-opacity duration-300 mix-blend-soft-light"
         style={{
           background: `radial-gradient(800px circle at ${mousePosition.x}px ${mousePosition.y}px, var(--color-primary), transparent 40%)`,
         }}
       />
 
-      {/* 3. Floating Ambient Neon Fluid Blobs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-primary/20 blur-[100px] mix-blend-screen animate-blob shadow-[0_0_100px_var(--color-primary)]" />
-      <div className="absolute top-[20%] right-[-10%] w-[35vw] h-[35vw] rounded-full bg-secondary/20 blur-[120px] mix-blend-screen animate-blob animation-delay-2000 shadow-[0_0_100px_var(--color-secondary)]" />
-      <div className="absolute bottom-[-10%] left-[20%] w-[50vw] h-[50vw] rounded-full bg-accent/20 blur-[150px] mix-blend-screen animate-blob animation-delay-4000 shadow-[0_0_100px_var(--color-accent)]" />
-      
-      {/* 4. Scanner Laser Beam */}
-      <div className="absolute top-0 left-0 w-[200%] h-1 bg-primary/30 blur-[2px] opacity-20 shadow-[0_0_15px_var(--color-primary)] animate-laser-scan rotate-45 transform origin-top-left" />
+      {/* 3. Subtle Floating Ambient Glows */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-primary/10 blur-[120px] animate-blob" />
+      <div className="absolute top-[20%] right-[-10%] w-[35vw] h-[35vw] rounded-full bg-secondary/10 blur-[150px] animate-blob animation-delay-2000" />
+      <div className="absolute bottom-[-10%] left-[20%] w-[50vw] h-[50vw] rounded-full bg-accent/10 blur-[140px] animate-blob animation-delay-4000" />
     </div>
   );
 };
