@@ -141,7 +141,7 @@ const About = () => {
                   style={{ scaleY }} 
                 />
 
-                {profile.experience?.map((exp, idx) => (
+                {profile.experience?.filter(exp => exp.role && exp.role.toLowerCase().includes('graphic designer')).map((exp, idx) => (
                   <motion.div 
                     key={exp._id || idx}
                     initial="hidden"

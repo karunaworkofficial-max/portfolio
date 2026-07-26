@@ -52,10 +52,19 @@ const Home = () => {
 
   const calculateExperience = () => {
     if (!profile?.experience || profile.experience.length === 0) return 0;
+    
+    // Only consider experience where role contains "graphic designer"
+    const graphicDesignExp = profile.experience.filter(exp => 
+      exp.role && exp.role.toLowerCase().includes('graphic designer')
+    );
+    
+    if (graphicDesignExp.length === 0) return 0;
+
     let minDate = new Date();
     let maxDate = new Date(0);
     let hasValidDates = false;
-    profile.experience.forEach(exp => {
+    
+    graphicDesignExp.forEach(exp => {
       if (exp.startDate) {
         const start = new Date(exp.startDate);
         if (!isNaN(start.getTime())) {
