@@ -1,0 +1,304 @@
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { motion, useMotionValue, useTransform } from 'framer-motion';
+import api from '../utils/api';
+import { fadeInUp, staggerContainer } from '../utils/animations';
+import Lightbox from '../components/ui/Lightbox';
+import BeforeAfterSlider from '../components/ui/BeforeAfterSlider';
+import ColorPalette from '../components/ui/ColorPalette';
+import FilmStripSlider from '../components/ui/FilmStripSlider';
+
+const TiltImage = ({ img, title, idx, onClick }) => {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  
+  const rotateX = useTransform(y, [-300, 300], [8, -8]);
+  const rotateY = useTransform(x, [-300, 300], [-8, 8]);
+
+  const handleMouseMove = (event) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    x.set(event.clientX - centerX);
+    y.set(event.clientY - centerY);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.div 
+      initial="hidden" 
+      whileInView="visible" 
+      viewport={{ once: true, margin: "-50px" }} 
+      variants={fadeInUp}
+      style={{ perspective: 1200 }}
+      className="cursor-zoom-in break-inside-avoid relative overflow-visible rounded-custom group"
+      onClick={() => onClick(idx)}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      <motion.div
+        style={{ rotateX, rotateY }}
+        className="w-full overflow-hidden rounded-custom border border-white/10 bg-surface transition-all duration-300 ease-out group-hover:shadow-2xl group-hover:shadow-primary/20 group-hover:border-primary/30"
+      >
+        <img 
+          src={img.url} 
+          alt={`${title} gallery ${idx + 1}`} 
+          className="w-full h-auto object-contain block pointer-events-none"
+        />
+      </motion.div>
+    </motion.div>
+  );
+};
+
+
+const ProjectDetail = () => {
+  const { slug } = useParams();
+  const navigate = useNavigate();
+  
+  const [project, setProject] = useState(null);
+  const [loading, setLoading] = useState(true);
+  
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [gridCols, setGridCols] = useState(2);
+
+  useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        setLoading(true);
+        const { data } = await api.get(`/projects/${slug}`);
+        setProject(data.data);
+      } catch (err) {
+        console.error('Error fetching project detail', err);
+        navigate('/projects');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProject();
+    window.scrollTo(0, 0);
+  }, [slug, navigate]);
+
+  if (loading || !project) {
+    return (
+      <div className="min-h-screen pt-24 flex items-center justify-center">
+        <div className="text-xl font-accent animate-pulse text-primary">Loading...</div>
+      </div>
+    );
+  }
+
+  const allImages = project.images || [];
+  
+  const openLightbox = (index) => {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
+
+  const nextLightboxImage = () => setLightboxIndex((prev) => (prev + 1) % allImages.length);
+  const prevLightboxImage = () => setLightboxIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="min-h-screen"
+    >
+      {/* Back Button */}
+      <button 
+        onClick={() => navigate('/projects')}
+        className="fixed top-24 left-6 z-40 bg-black/50 backdrop-blur border border-white/10 px-4 py-2 rounded-full font-accent text-sm hover:bg-primary transition-colors flex items-center gap-2"
+      >
+        <span>←</span> All Projects
+      </button>
+
+      {/* Hero Section */}
+      <div className="relative h-[80vh] w-full overflow-hidden">
+        <div className="absolute inset-0 bg-black">
+          {allImages.length > 0 ? (
+            <FilmStripSlider images={allImages} />
+          ) : (
+            <img 
+              src={project.thumbnail?.url || 'https://placehold.co/1920x1080/png'} 
+              alt={project.title}
+              className="w-full h-full object-cover opacity-60 scale-105"
+            />
+          )}
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/40 to-transparent pointer-events-none" />
+        
+        <div className="absolute inset-0 flex flex-col justify-end pb-24 px-6 md:px-12 lg:px-24 container mx-auto pointer-events-none">
+          <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="pointer-events-auto">
+            <motion.div variants={fadeInUp} className="mb-6 flex gap-4 items-center">
+              <span className="px-4 py-1.5 bg-primary text-white text-xs font-accent uppercase tracking-widest rounded-full">
+                {project.category?.replace('-', ' ')}
+              </span>
+              <span className="text-white/70 font-accent text-sm">{project.projectYear}</span>
+            </motion.div>
+            <motion.h1 variants={fadeInUp} className="text-5xl md:text-7xl lg:text-8xl font-heading mb-4 leading-tight">
+              {project.title}
+            </motion.h1>
+            {project.subtitle && (
+              <motion.p variants={fadeInUp} className="text-xl md:text-3xl font-body text-white/70 max-w-3xl">
+                {project.subtitle}
+              </motion.p>
+            )}
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Info Bar */}
+      <div className="container mx-auto px-6 md:px-12 lg:px-24 py-16 border-b border-white/10">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
+          {/* Overview */}
+          <div className="md:col-span-7 lg:col-span-8">
+            <h3 className="text-lg font-accent uppercase tracking-widest text-primary mb-6">Overview</h3>
+            <div 
+              className="prose prose-invert prose-lg max-w-none font-body text-white/70 leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: project.description }}
+            />
+            {project.colorPalette && project.colorPalette.length > 0 && (
+              <ColorPalette colors={project.colorPalette} />
+            )}
+          </div>
+          
+          {/* Quick Facts */}
+          <div className="md:col-span-5 lg:col-span-4 bg-surface/50 p-8 rounded-custom border border-text/20 h-fit">
+            <div className="space-y-6">
+              {project.clientName && (
+                <div>
+                  <h4 className="text-xs font-accent uppercase tracking-widest opacity-50 mb-1">Client</h4>
+                  <p className="font-body text-lg">{project.clientName}</p>
+                </div>
+              )}
+              {project.clientIndustry && (
+                <div>
+                  <h4 className="text-xs font-accent uppercase tracking-widest opacity-50 mb-1">Industry</h4>
+                  <p className="font-body text-lg">{project.clientIndustry}</p>
+                </div>
+              )}
+              {project.duration && (
+                <div>
+                  <h4 className="text-xs font-accent uppercase tracking-widest opacity-50 mb-1">Duration</h4>
+                  <p className="font-body text-lg">{project.duration}</p>
+                </div>
+              )}
+              {project.tools && project.tools.length > 0 && (
+                <div>
+                  <h4 className="text-xs font-accent uppercase tracking-widest opacity-50 mb-2">Tools</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {project.tools.map(tool => (
+                      <span key={tool} className="text-xs bg-text/10 px-2 py-1 rounded font-accent text-text/70">
+                        {tool}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {project.liveUrl && (
+                <div className="pt-4 border-t border-text/20">
+                  <a 
+                    href={project.liveUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-block px-6 py-3 bg-primary text-text font-accent uppercase tracking-widest text-sm rounded hover:bg-secondary transition-colors w-full text-center"
+                  >
+                    View Live Site ↗
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Case Study Details (Brief, Approach, Solution) */}
+      <div className="container mx-auto px-6 md:px-12 lg:px-24 py-20 space-y-24">
+        {project.challenge && (
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeInUp} className="max-w-4xl">
+            <h3 className="text-3xl md:text-5xl font-heading mb-8 relative inline-block">
+              <span className="text-primary mr-4">01.</span>The Challenge
+            </h3>
+            <p className="text-xl font-body text-text/70 leading-relaxed">{project.challenge}</p>
+          </motion.div>
+        )}
+        
+        {project.approach && (
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeInUp} className="max-w-4xl ml-auto text-left md:text-right">
+            <h3 className="text-3xl md:text-5xl font-heading mb-8 relative inline-block">
+              <span className="text-secondary mr-4">02.</span>The Approach
+            </h3>
+            <p className="text-xl font-body text-text/70 leading-relaxed">{project.approach}</p>
+          </motion.div>
+        )}
+        
+        {project.solution && (
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeInUp} className="max-w-4xl">
+            <h3 className="text-3xl md:text-5xl font-heading mb-8 relative inline-block">
+              <span className="text-accent mr-4">03.</span>The Solution
+            </h3>
+            <p className="text-xl font-body text-text/70 leading-relaxed">{project.solution}</p>
+          </motion.div>
+        )}
+      </div>
+
+      {/* Before / After Slider */}
+      {project.beforeImage?.url && project.afterImage?.url && (
+        <div className="container mx-auto px-6 md:px-12 lg:px-24 py-16">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp}>
+             <BeforeAfterSlider beforeImage={project.beforeImage.url} afterImage={project.afterImage.url} />
+          </motion.div>
+        </div>
+      )}
+
+      {/* Main Image Gallery */}
+      <div className="container mx-auto px-6 md:px-12 lg:px-24 py-12">
+        {allImages.length > 0 && (
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
+            <h3 className="text-2xl font-heading text-text/70">Gallery ({allImages.length})</h3>
+            <div className="flex items-center gap-2 bg-surface/50 border border-text/20 rounded-full p-1 w-fit">
+              <span className="text-[10px] font-accent uppercase tracking-widest text-text/50 pl-3">Columns:</span>
+              {[1, 2, 3, 4, 5, 6].map(col => (
+                <button
+                  key={col}
+                  onClick={() => setGridCols(col)}
+                  className={`w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center text-[10px] md:text-xs font-accent transition-colors ${gridCols === col ? 'bg-primary text-white' : 'hover:bg-text/10 text-text/70'}`}
+                  title={`${col} Columns`}
+                >
+                  {col}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+        <div className={`gap-6 md:gap-8 ${gridCols === 1 ? 'columns-1' : gridCols === 2 ? 'columns-1 md:columns-2' : gridCols === 3 ? 'columns-1 sm:columns-2 md:columns-3' : gridCols === 4 ? 'columns-2 md:columns-4' : gridCols === 5 ? 'columns-2 sm:columns-3 md:columns-5' : 'columns-2 sm:columns-3 md:columns-6'}`}>
+          {allImages.map((img, idx) => (
+            <div key={idx} className="mb-6 md:mb-8 break-inside-avoid">
+              <TiltImage 
+                img={img} 
+                idx={idx} 
+                title={project.title} 
+                onClick={openLightbox} 
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <Lightbox 
+        images={allImages} 
+        currentIndex={lightboxIndex} 
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        onNext={nextLightboxImage}
+        onPrev={prevLightboxImage}
+      />
+    </motion.div>
+  );
+};
+
+export default ProjectDetail;

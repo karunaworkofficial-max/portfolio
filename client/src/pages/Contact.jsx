@@ -1,0 +1,416 @@
+import React, { useState, useContext, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ProfileContext } from '../context/ProfileContext';
+import { ThemeContext } from '../context/ThemeContext';
+import api from '../utils/api';
+import { fadeInUp, staggerContainer, fadeInLeft } from '../utils/animations';
+
+const InputField = ({ label, name, type = 'text', value, onChange, error, placeholder, textarea = false }) => {
+  return (
+    <div className="mb-6 relative group">
+      <label className="block text-xs font-accent uppercase tracking-widest opacity-60 mb-2 transition-colors group-focus-within:text-primary">
+        {label}
+      </label>
+      {textarea ? (
+        <textarea
+          name={name}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          rows={4}
+          className={`w-full bg-transparent border-b-2 ${error ? 'border-red-500' : 'border-text/20 group-focus-within:border-primary'} px-4 py-3 font-body focus:outline-none transition-colors resize-none`}
+        />
+      ) : (
+        <input
+          type={type}
+          name={name}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          className={`w-full bg-transparent border-b-2 ${error ? 'border-red-500' : 'border-text/20 group-focus-within:border-primary'} px-4 py-3 font-body focus:outline-none transition-colors`}
+        />
+      )}
+      {error && <span className="absolute -bottom-5 left-0 text-xs text-red-500 font-accent">{error}</span>}
+    </div>
+  );
+};
+
+const SelectField = ({ label, name, value, onChange, options }) => {
+  return (
+    <div className="mb-6 relative group">
+      <label className="block text-xs font-accent uppercase tracking-widest opacity-60 mb-2 transition-colors group-focus-within:text-primary">
+        {label}
+      </label>
+      <select
+        name={name}
+        value={value}
+        onChange={onChange}
+        className="w-full bg-transparent border-b-2 border-text/20 group-focus-within:border-primary px-4 py-3 font-body focus:outline-none transition-colors appearance-none cursor-pointer"
+      >
+        <option value="" disabled>Select an option</option>
+        {options.map((opt, i) => (
+          <option key={i} value={opt} className="bg-surface text-text">
+            {opt}
+          </option>
+        ))}
+      </select>
+      <div className="absolute right-4 top-10 pointer-events-none opacity-50">
+        ▼
+      </div>
+    </div>
+  );
+};
+
+const Contact = () => {
+  const { profile } = useContext(ProfileContext);
+  const { theme } = useContext(ThemeContext);
+  
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    projectType: '',
+    budget: '',
+    timeline: '',
+    message: ''
+  });
+  
+  const [errors, setErrors] = useState({});
+  const [status, setStatus] = useState('idle'); // idle, loading, success, error
+  const [serverError, setServerError] = useState('');
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.name.trim()) newErrors.name = 'Name is required';
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Invalid email format';
+    }
+    if (!formData.message.trim()) {
+      newErrors.message = 'Message is required';
+    } else if (formData.message.length < 20) {
+      newErrors.message = 'Message must be at least 20 characters';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validate()) return;
+    
+    setStatus('loading');
+    setServerError('');
+    
+    const mapEnum = (val, type) => {
+      if (!val) return undefined;
+      const map = {
+        projectType: {
+          'Brand Identity': 'brand-identity',
+          'Logo Design': 'logo',
+          'Packaging Design': 'packaging',
+          'Social Media Design': 'social-media',
+          'Print Design': 'print',
+          'Web/UI Design': 'web-design',
+          'Other': 'other'
+        },
+        budget: {
+          'Under $500': 'under-500',
+          '$500 - $1,000': '500-1000',
+          '$1,000 - $2,500': '1000-2500',
+          '$2,500 - $5,000': '2500-5000',
+          '$5,000+': '5000-plus',
+          'Not sure yet': 'not-sure'
+        },
+        timeline: {
+          'ASAP': 'asap',
+          '1-2 weeks': '1-2-weeks',
+          '1 month': '1-month',
+          '2-3 months': '2-3-months',
+          'Flexible': 'flexible'
+        }
+      };
+      return map[type][val] || undefined;
+    };
+
+    const payload = { ...formData };
+    if (payload.projectType) {
+      payload.projectType = mapEnum(payload.projectType, 'projectType');
+    } else {
+      delete payload.projectType;
+    }
+    
+    if (payload.budget) {
+      payload.budget = mapEnum(payload.budget, 'budget');
+    } else {
+      delete payload.budget;
+    }
+    
+    if (payload.timeline) {
+      payload.timeline = mapEnum(payload.timeline, 'timeline');
+    } else {
+      delete payload.timeline;
+    }
+    
+    try {
+      await api.post('/messages', payload);
+      setStatus('success');
+      setFormData({
+        name: '', email: '', projectType: '', budget: '', timeline: '', message: ''
+      });
+      setTimeout(() => setStatus('idle'), 5000);
+    } catch (err) {
+      setStatus('error');
+      setServerError(err.response?.data?.message || 'Something went wrong. Please try again.');
+    }
+  };
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="min-h-screen pt-24 pb-20 relative"
+    >
+
+
+      <div className="container mx-auto px-6 lg:px-12 pt-12">
+        <motion.div initial="hidden" animate="visible" variants={fadeInUp} className="mb-20 max-w-3xl">
+          <h1 className="text-5xl md:text-7xl font-heading mb-6">Let's Create Something Amazing.</h1>
+          <p className="text-xl md:text-2xl font-body text-text/70">
+            Have a project in mind? I'd love to hear about it. Fill out the form below and I'll get back to you within 24 hours.
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+          
+          {/* Form Column */}
+          <div className="lg:col-span-7">
+            <AnimatePresence mode="wait">
+              {status === 'success' ? (
+                <motion.div 
+                  key="success"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  className="bg-surface/50 border border-primary/30 p-12 rounded-custom flex flex-col items-center justify-center text-center h-full min-h-[500px]"
+                >
+                  <div className="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center mb-6">
+                    <motion.svg 
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: 1 }}
+                      transition={{ duration: 0.5, delay: 0.2 }}
+                      width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </motion.svg>
+                  </div>
+                  <h3 className="text-3xl font-heading mb-4">Message Sent!</h3>
+                  <p className="text-text/70 font-body">
+                    Thank you for reaching out. I've received your message and will get back to you shortly.
+                  </p>
+                  <button 
+                    onClick={() => setStatus('idle')}
+                    className="mt-8 px-6 py-2 border border-text/20 rounded font-accent uppercase tracking-widest text-sm hover:bg-text/10 transition-colors"
+                  >
+                    Send another message
+                  </button>
+                </motion.div>
+              ) : (
+                <motion.form 
+                  key="form"
+                  initial="hidden" 
+                  animate="visible" 
+                  variants={staggerContainer}
+                  onSubmit={handleSubmit}
+                  className="bg-surface/30 p-8 md:p-12 rounded-custom border border-text/20"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                    <motion.div variants={fadeInUp}>
+                      <InputField label="Name *" name="name" value={formData.name} onChange={handleChange} error={errors.name} placeholder="Your name" />
+                    </motion.div>
+                    <motion.div variants={fadeInUp}>
+                      <InputField label="Email *" name="email" type="email" value={formData.email} onChange={handleChange} error={errors.email} placeholder="your@email.com" />
+                    </motion.div>
+                  </div>
+                  
+                  <motion.div variants={fadeInUp}>
+                    <SelectField 
+                      label="Project Type" 
+                      name="projectType" 
+                      value={formData.projectType} 
+                      onChange={handleChange}
+                      options={['Brand Identity', 'Logo Design', 'Packaging Design', 'Social Media Design', 'Print Design', 'Web/UI Design', 'Other']}
+                    />
+                  </motion.div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                    <motion.div variants={fadeInUp}>
+                      <SelectField 
+                        label="Budget Range" 
+                        name="budget" 
+                        value={formData.budget} 
+                        onChange={handleChange}
+                        options={['Under $500', '$500 - $1,000', '$1,000 - $2,500', '$2,500 - $5,000', '$5,000+', 'Not sure yet']}
+                      />
+                    </motion.div>
+                    <motion.div variants={fadeInUp}>
+                      <SelectField 
+                        label="Timeline" 
+                        name="timeline" 
+                        value={formData.timeline} 
+                        onChange={handleChange}
+                        options={['ASAP', '1-2 weeks', '1 month', '2-3 months', 'Flexible']}
+                      />
+                    </motion.div>
+                  </div>
+
+                  <motion.div variants={fadeInUp}>
+                    <InputField 
+                      label="Message *" 
+                      name="message" 
+                      value={formData.message} 
+                      onChange={handleChange} 
+                      error={errors.message} 
+                      textarea 
+                      placeholder="Tell me about your project, your vision, and what you're looking for..."
+                    />
+                  </motion.div>
+
+                  {serverError && (
+                    <motion.div variants={fadeInUp} className="mb-6 p-4 bg-red-500/10 border border-red-500/50 rounded text-red-500 text-sm font-body">
+                      {serverError}
+                    </motion.div>
+                  )}
+
+                  <motion.div variants={fadeInUp} className="mt-8">
+                    <button 
+                      type="submit" 
+                      disabled={status === 'loading'}
+                      className={`w-full md:w-auto px-10 py-4 bg-primary text-text font-heading text-xl rounded hover:bg-secondary transition-all flex items-center justify-center gap-3 ${status === 'loading' ? 'opacity-70 cursor-not-allowed' : 'hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/20'}`}
+                    >
+                      {status === 'loading' ? (
+                        <>
+                          <svg className="animate-spin h-5 w-5 text-text" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          Send Message
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                          </svg>
+                        </>
+                      )}
+                    </button>
+                  </motion.div>
+                </motion.form>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Info Column */}
+          <div className="lg:col-span-5 space-y-12">
+            
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInLeft}>
+              <div className="bg-surface/50 p-8 rounded-custom border border-text/20">
+                <div className="flex items-center gap-3 mb-8 pb-8 border-b border-text/20">
+                  <div className="relative flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                  </div>
+                  <span className="font-accent uppercase tracking-widest text-sm opacity-80">Currently Available</span>
+                </div>
+                
+                <div className="space-y-6">
+                  {profile?.email && (
+                    <div>
+                      <h4 className="text-xs font-accent uppercase tracking-widest opacity-50 mb-1">Email</h4>
+                      <a href={`mailto:${profile.email}`} className="text-lg font-body hover:text-primary transition-colors">{profile.email}</a>
+                    </div>
+                  )}
+                  {profile?.location && (profile.location.city || profile.location.country) && (
+                    <div>
+                      <h4 className="text-xs font-accent uppercase tracking-widest opacity-50 mb-1">Location</h4>
+                      <p className="text-lg font-body">
+                        {[profile.location.city, profile.location.country].filter(Boolean).join(', ')}
+                      </p>
+                    </div>
+                  )}
+                  <div>
+                    <h4 className="text-xs font-accent uppercase tracking-widest opacity-50 mb-1">Working Hours</h4>
+                    <p className="text-lg font-body">Mon - Fri, 9am - 6pm</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {profile?.socialLinks && Object.values(profile.socialLinks).some(link => link) && (
+              <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInLeft}>
+                <h3 className="text-2xl font-heading mb-6">Find me online</h3>
+                <div className="flex flex-wrap gap-4">
+                  {Object.entries(profile.socialLinks).map(([platform, url]) => {
+                    if (!url) return null;
+                    return (
+                      <a 
+                        key={platform} 
+                        href={url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="w-12 h-12 bg-surface border border-text/20 rounded-full flex items-center justify-center hover:bg-primary hover:border-primary hover:scale-110 transition-all capitalize font-accent text-sm"
+                        title={platform}
+                      >
+                        {platform.substring(0, 2)}
+                      </a>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
+
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInLeft} className="bg-surface/30 p-8 rounded-custom border border-text/20">
+              <h3 className="text-2xl font-heading mb-6">How I Work</h3>
+              <div className="space-y-6">
+                {[
+                  { step: '01', title: 'Discovery', desc: 'We discuss your goals, vision, and project requirements.' },
+                  { step: '02', title: 'Proposal', desc: 'I provide a detailed timeline, scope, and pricing.' },
+                  { step: '03', title: 'Design', desc: 'The creative magic happens with regular updates.' },
+                  { step: '04', title: 'Delivery', desc: 'Final files are handed over, ready for launch.' }
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-4">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full border border-text/20 bg-bg text-[10px] font-accent text-primary shrink-0 shadow">
+                      {item.step}
+                    </div>
+                    <div>
+                      <div className="font-heading text-lg mb-1">{item.title}</div>
+                      <div className="text-sm font-body text-text/70">{item.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+export default Contact;

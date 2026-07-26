@@ -1,0 +1,36 @@
+name: Deploy Portfolio CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-lint:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install Frontend Dependencies
+        working-directory: ./client
+        run: npm ci
+
+      - name: Build Frontend
+        working-directory: ./client
+        run: npm run build
+
+      - name: Install Backend Dependencies
+        working-directory: ./server
+        run: npm ci
+
+      - name: Notify Deployments
+        run: |
+          echo "Build successful! Vercel and Render will automatically detect this push to the main branch and begin their respective deployment pipelines."
