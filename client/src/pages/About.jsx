@@ -67,7 +67,7 @@ const About = () => {
               transition={{ duration: 0.8 }}
               className="bg-surface/30 backdrop-blur-xl border border-white/5 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden group"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
               
               <div className="w-full aspect-square rounded-[2rem] overflow-hidden mb-8 relative border border-white/10">
                 <img 
@@ -90,7 +90,7 @@ const About = () => {
                   download="Resume.pdf"
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="w-full py-4 rounded-full bg-white/5 border border-white/10 text-white font-accent uppercase tracking-widest text-xs hover:bg-primary hover:border-primary transition-colors flex justify-center items-center gap-2"
+                  className="relative z-10 w-full py-4 rounded-full bg-white/5 border border-white/10 text-white font-accent uppercase tracking-widest text-xs hover:bg-primary hover:border-primary transition-colors flex justify-center items-center gap-2"
                 >
                   Download Resume
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
