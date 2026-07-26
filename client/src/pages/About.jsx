@@ -41,7 +41,7 @@ const About = () => {
 
   if (loading || !profile) {
     return (
-      <div className="min-h-screen pt-24 flex items-center justify-center bg-transparent">
+      <div className="min-h-screen pt-24 flex items-center justify-center bg-bg">
         <div className="text-xl font-accent animate-pulse text-primary">Loading...</div>
       </div>
     );
@@ -54,7 +54,7 @@ const About = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1, transition: { duration: 0.8 } }}
       exit={{ opacity: 0 }}
-      className="min-h-screen pt-32 pb-20 relative bg-transparent"
+      className="min-h-screen pt-32 pb-20 relative bg-bg"
     >
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
         <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
@@ -86,11 +86,7 @@ const About = () => {
 
               {profile.resumeUrl && (
                 <a 
-                  href={
-                    profile.resumeUrl?.includes('cloudinary') ? profile.resumeUrl.replace('/upload/', '/upload/fl_attachment/') :
-                    profile.resumeUrl?.includes('drive.google.com') ? profile.resumeUrl.replace(/\/file\/d\/([^\/]+)\/(?:view|edit).*/, '/uc?export=download&id=$1') :
-                    profile.resumeUrl
-                  }
+                  href={profile.resumeUrl?.includes('cloudinary') ? profile.resumeUrl.replace('/upload/', '/upload/fl_attachment/') : profile.resumeUrl}
                   download="Resume.pdf"
                   target="_blank" 
                   rel="noopener noreferrer" 

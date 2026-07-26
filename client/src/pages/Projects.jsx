@@ -65,7 +65,7 @@ const Projects = () => {
 
   return (
     <motion.div 
-      className="min-h-screen pt-32 pb-20 relative bg-transparent"
+      className="min-h-screen pt-32 pb-20 relative bg-bg"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1, transition: { duration: 0.8 } }}
       exit={{ opacity: 0 }}
