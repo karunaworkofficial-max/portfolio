@@ -43,7 +43,6 @@ const ProfileSettings = () => {
   });
 
   const fileInputRef = useRef(null);
-  const resumeInputRef = useRef(null);
 
   useEffect(() => {
     if (profile) {
@@ -131,24 +130,6 @@ const ProfileSettings = () => {
       showToast('Photo uploaded & saved');
     } catch (err) {
       showToast('Failed to upload photo');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleResumeUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    try {
-      setLoading(true);
-      showToast('Uploading resume...');
-      const base64File = await fileToBase64(file);
-      const res = await api.post('/upload/file', { file: base64File });
-      setData(p => ({ ...p, resumeUrl: res.data.data.url }));
-      showToast('Resume uploaded. Remember to save.');
-    } catch (err) {
-      console.error(err);
-      showToast('Failed to upload resume');
     } finally {
       setLoading(false);
     }
@@ -539,17 +520,6 @@ const ProfileSettings = () => {
                 )}
                 
                 <div className="max-w-md mx-auto space-y-4">
-                  <div className="flex gap-4 items-center justify-center mb-4">
-                    <input type="file" ref={resumeInputRef} className="hidden" accept=".pdf,.doc,.docx" onChange={handleResumeUpload} />
-                    <button 
-                      onClick={() => resumeInputRef.current?.click()}
-                      className="px-6 py-2 bg-text/10 hover:bg-text/20 rounded font-accent text-sm uppercase tracking-widest transition-colors flex items-center gap-2"
-                    >
-                      <span>Upload File</span>
-                    </button>
-                    <span className="text-text/50 text-sm">OR</span>
-                  </div>
-
                   <input 
                     type="url" 
                     placeholder="Paste an external URL (e.g. Google Drive)" 
