@@ -86,7 +86,8 @@ const About = () => {
 
               {profile.resumeUrl && (
                 <a 
-                  href={profile.resumeUrl} 
+                  href={profile.resumeUrl.includes('cloudinary') ? profile.resumeUrl.replace('/upload/', '/upload/fl_attachment/') : profile.resumeUrl}
+                  download="Resume.pdf"
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="w-full py-4 rounded-full bg-white/5 border border-white/10 text-white font-accent uppercase tracking-widest text-xs hover:bg-primary hover:border-primary transition-colors flex justify-center items-center gap-2"
