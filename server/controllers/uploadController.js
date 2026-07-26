@@ -22,15 +22,30 @@ exports.uploadImage = asyncHandler(async (req, res) => {
 exports.uploadFile = asyncHandler(async (req, res) => {
   const { file } = req.body; // expecting base64 string
   if (!file) { res.status(400); throw new Error('No file provided'); }
-  
-  // We use resource_type: 'image' (or auto) because Cloudinary's 'raw' type does NOT parse base64 Data URIs 
-  // and saves the literal string instead, corrupting the PDF. 
-  const result = await cloudinary.uploader.upload(file, {
-    resource_type: 'image',
-    format: 'pdf',
-    public_id: `resume_${Date.now()}`
-  });
-  
+
+  // Extract base64 part
+  const matches = file.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+  if (!matches || matches.length !== 3) {
+    throw new Error('Invalid base64 string');
+  }
+
+  const buffer = Buffer.from(matches[2], 'base64');
+
+  const uploadToCloudinary = (buffer) => {
+    return new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { resource_type: 'raw', public_id: `resume_${Date.now()}.pdf` },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+      stream.end(buffer);
+    });
+  };
+
+  const result = await uploadToCloudinary(buffer);
+
   res.json({
     success: true,
     data: { url: result.secure_url, publicId: result.public_id },
