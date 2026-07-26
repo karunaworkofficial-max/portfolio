@@ -50,7 +50,7 @@ const TagInput = ({ tags = [], onChange, placeholder = "Type and press enter", s
           onFocus={() => setShowSuggestions(true)}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
           placeholder={placeholder}
-          className="w-full bg-surface/50 border border-text/20 rounded px-4 py-3 text-text font-body focus:outline-none focus:border-primary transition-colors text-sm"
+          className="w-full bg-transparent border border-text/20 rounded px-4 py-3 text-text font-body focus:outline-none focus:border-primary transition-colors text-sm"
         />
         {showSuggestions && input && filteredSuggestions.length > 0 && (
           <div className="absolute z-10 w-full mt-1 bg-surface border border-text/20 rounded shadow-2xl max-h-48 overflow-y-auto">

@@ -300,7 +300,7 @@ const ProfileSettings = () => {
                             
                             <select value={skill.category} onChange={(e) => {
                               const newSkills = [...data.skills]; newSkills[index].category = e.target.value; setData(p => ({...p, skills: newSkills}));
-                            }} className="bg-surface border border-text/20 rounded px-2 py-2 text-sm focus:outline-none">
+                            }} className="bg-transparent border border-text/20 rounded px-2 py-2 text-sm focus:outline-none">
                               <option value="design">Design</option>
                               <option value="tools">Tools</option>
                               <option value="soft-skills">Soft Skills</option>
@@ -339,7 +339,7 @@ const ProfileSettings = () => {
                       
                       <select value={tool.proficiency} onChange={(e) => {
                         const newTools = [...data.tools]; newTools[index].proficiency = e.target.value; setData(p => ({...p, tools: newTools}));
-                      }} className="bg-surface border-none rounded text-xs focus:outline-none px-2 w-32">
+                      }} className="bg-transparent border-none rounded text-xs focus:outline-none px-2 w-32">
                         <option value="beginner">Beginner</option>
                         <option value="intermediate">Intermediate</option>
                         <option value="advanced">Advanced</option>
@@ -383,15 +383,15 @@ const ProfileSettings = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div>
                                 <label className="block text-[10px] font-accent uppercase tracking-widest opacity-60 mb-1">Company</label>
-                                <input type="text" value={exp.company} onChange={e => { const n = [...data.experience]; n[index].company = e.target.value; setData(p => ({...p, experience: n}))}} className="w-full bg-surface border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
+                                <input type="text" value={exp.company} onChange={e => { const n = [...data.experience]; n[index].company = e.target.value; setData(p => ({...p, experience: n}))}} className="w-full bg-transparent border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
                               </div>
                               <div>
                                 <label className="block text-[10px] font-accent uppercase tracking-widest opacity-60 mb-1">Role/Position</label>
-                                <input type="text" value={exp.role} onChange={e => { const n = [...data.experience]; n[index].role = e.target.value; setData(p => ({...p, experience: n}))}} className="w-full bg-surface border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
+                                <input type="text" value={exp.role} onChange={e => { const n = [...data.experience]; n[index].role = e.target.value; setData(p => ({...p, experience: n}))}} className="w-full bg-transparent border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
                               </div>
                               <div>
                                 <label className="block text-[10px] font-accent uppercase tracking-widest opacity-60 mb-1">Type</label>
-                                <select value={exp.type} onChange={e => { const n = [...data.experience]; n[index].type = e.target.value; setData(p => ({...p, experience: n}))}} className="w-full bg-surface border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm">
+                                <select value={exp.type} onChange={e => { const n = [...data.experience]; n[index].type = e.target.value; setData(p => ({...p, experience: n}))}} className="w-full bg-transparent border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm">
                                   <option value="full-time">Full-time</option>
                                   <option value="freelance">Freelance</option>
                                   <option value="contract">Contract</option>
@@ -401,11 +401,11 @@ const ProfileSettings = () => {
                               <div className="flex gap-2">
                                 <div className="flex-1">
                                   <label className="block text-[10px] font-accent uppercase tracking-widest opacity-60 mb-1">Start Date</label>
-                                  <input type="text" placeholder="e.g. Jan 2020" value={exp.startDate} onChange={e => { const n = [...data.experience]; n[index].startDate = e.target.value; setData(p => ({...p, experience: n}))}} className="w-full bg-surface border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
+                                  <input type="text" placeholder="e.g. Jan 2020" value={exp.startDate} onChange={e => { const n = [...data.experience]; n[index].startDate = e.target.value; setData(p => ({...p, experience: n}))}} className="w-full bg-transparent border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
                                 </div>
                                 <div className="flex-1">
                                   <label className="block text-[10px] font-accent uppercase tracking-widest opacity-60 mb-1">End Date</label>
-                                  <input type="text" placeholder="e.g. Present" value={exp.current ? 'Present' : exp.endDate} disabled={exp.current} onChange={e => { const n = [...data.experience]; n[index].endDate = e.target.value; setData(p => ({...p, experience: n}))}} className={`w-full bg-surface border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm ${exp.current ? 'opacity-50' : ''}`} />
+                                  <input type="text" placeholder="e.g. Present" value={exp.current ? 'Present' : exp.endDate} disabled={exp.current} onChange={e => { const n = [...data.experience]; n[index].endDate = e.target.value; setData(p => ({...p, experience: n}))}} className={`w-full bg-transparent border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm ${exp.current ? 'opacity-50' : ''}`} />
                                 </div>
                               </div>
                               <div className="md:col-span-2">
@@ -416,7 +416,7 @@ const ProfileSettings = () => {
                               </div>
                               <div className="md:col-span-2">
                                 <label className="block text-[10px] font-accent uppercase tracking-widest opacity-60 mb-1">Description</label>
-                                <textarea rows={3} value={exp.description} onChange={e => { const n = [...data.experience]; n[index].description = e.target.value; setData(p => ({...p, experience: n}))}} className="w-full bg-surface border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm resize-none" />
+                                <textarea rows={3} value={exp.description} onChange={e => { const n = [...data.experience]; n[index].description = e.target.value; setData(p => ({...p, experience: n}))}} className="w-full bg-transparent border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm resize-none" />
                               </div>
                             </div>
                           </div>
@@ -442,19 +442,19 @@ const ProfileSettings = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pr-8">
                       <div>
                         <label className="block text-[10px] font-accent uppercase tracking-widest opacity-60 mb-1">Institution</label>
-                        <input type="text" value={edu.institution} onChange={e => { const n = [...data.education]; n[index].institution = e.target.value; setData(p => ({...p, education: n}))}} className="w-full bg-surface border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
+                        <input type="text" value={edu.institution} onChange={e => { const n = [...data.education]; n[index].institution = e.target.value; setData(p => ({...p, education: n}))}} className="w-full bg-transparent border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
                       </div>
                       <div>
                         <label className="block text-[10px] font-accent uppercase tracking-widest opacity-60 mb-1">Degree</label>
-                        <input type="text" value={edu.degree} onChange={e => { const n = [...data.education]; n[index].degree = e.target.value; setData(p => ({...p, education: n}))}} className="w-full bg-surface border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
+                        <input type="text" value={edu.degree} onChange={e => { const n = [...data.education]; n[index].degree = e.target.value; setData(p => ({...p, education: n}))}} className="w-full bg-transparent border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
                       </div>
                       <div>
                         <label className="block text-[10px] font-accent uppercase tracking-widest opacity-60 mb-1">Field of Study</label>
-                        <input type="text" value={edu.field} onChange={e => { const n = [...data.education]; n[index].field = e.target.value; setData(p => ({...p, education: n}))}} className="w-full bg-surface border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
+                        <input type="text" value={edu.field} onChange={e => { const n = [...data.education]; n[index].field = e.target.value; setData(p => ({...p, education: n}))}} className="w-full bg-transparent border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
                       </div>
                       <div>
                         <label className="block text-[10px] font-accent uppercase tracking-widest opacity-60 mb-1">Year</label>
-                        <input type="text" value={edu.year} onChange={e => { const n = [...data.education]; n[index].year = e.target.value; setData(p => ({...p, education: n}))}} className="w-full bg-surface border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
+                        <input type="text" value={edu.year} onChange={e => { const n = [...data.education]; n[index].year = e.target.value; setData(p => ({...p, education: n}))}} className="w-full bg-transparent border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
                       </div>
                     </div>
                   </div>
@@ -474,9 +474,9 @@ const ProfileSettings = () => {
                 {data.awards.map((awd, index) => (
                   <div key={index} className="bg-bg border border-text/20 p-6 rounded relative flex flex-col md:flex-row gap-4 pr-12">
                     <button onClick={() => setData(p => ({...p, awards: p.awards.filter((_, i) => i !== index)}))} className="absolute top-4 right-4 text-text/70 hover:text-red-500 transition-colors">✕</button>
-                    <input type="text" placeholder="Award Title" value={awd.title} onChange={e => { const n = [...data.awards]; n[index].title = e.target.value; setData(p => ({...p, awards: n}))}} className="flex-1 bg-surface border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
-                    <input type="text" placeholder="Organization" value={awd.organization} onChange={e => { const n = [...data.awards]; n[index].organization = e.target.value; setData(p => ({...p, awards: n}))}} className="flex-1 bg-surface border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
-                    <input type="text" placeholder="Year" value={awd.year} onChange={e => { const n = [...data.awards]; n[index].year = e.target.value; setData(p => ({...p, awards: n}))}} className="w-24 bg-surface border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
+                    <input type="text" placeholder="Award Title" value={awd.title} onChange={e => { const n = [...data.awards]; n[index].title = e.target.value; setData(p => ({...p, awards: n}))}} className="flex-1 bg-transparent border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
+                    <input type="text" placeholder="Organization" value={awd.organization} onChange={e => { const n = [...data.awards]; n[index].organization = e.target.value; setData(p => ({...p, awards: n}))}} className="flex-1 bg-transparent border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
+                    <input type="text" placeholder="Year" value={awd.year} onChange={e => { const n = [...data.awards]; n[index].year = e.target.value; setData(p => ({...p, awards: n}))}} className="w-24 bg-transparent border border-text/20 rounded px-3 py-2 focus:border-primary focus:outline-none text-sm" />
                   </div>
                 ))}
               </div>
@@ -525,7 +525,7 @@ const ProfileSettings = () => {
                     placeholder="Or paste an external URL (e.g. Google Drive)" 
                     value={data.resumeUrl}
                     onChange={e => setData(p => ({...p, resumeUrl: e.target.value}))}
-                    className="w-full bg-surface border border-text/20 rounded px-4 py-3 focus:border-primary focus:outline-none text-sm"
+                    className="w-full bg-transparent border border-text/20 rounded px-4 py-3 focus:border-primary focus:outline-none text-sm"
                   />
                 </div>
               </div>
@@ -547,7 +547,7 @@ const ProfileSettings = () => {
                       type="number" 
                       value={data.stats?.[stat] ?? data[stat] ?? 0} 
                       onChange={e => setData(p => ({...p, [stat]: parseInt(e.target.value) || 0, stats: {...(p.stats || {}), [stat]: parseInt(e.target.value) || 0}}))} 
-                      className="w-full bg-surface border border-text/20 rounded px-4 py-3 focus:border-primary focus:outline-none text-center text-xl font-heading" 
+                      className="w-full bg-transparent border border-text/20 rounded px-4 py-3 focus:border-primary focus:outline-none text-center text-xl font-heading" 
                     />
                   </div>
                 ))}
