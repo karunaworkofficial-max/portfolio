@@ -23,10 +23,12 @@ exports.uploadFile = asyncHandler(async (req, res) => {
   const { file } = req.body; // expecting base64 string
   if (!file) { res.status(400); throw new Error('No file provided'); }
   
-  // Use raw resource type and add .pdf extension to public_id
+  // We use resource_type: 'image' (or auto) because Cloudinary's 'raw' type does NOT parse base64 Data URIs 
+  // and saves the literal string instead, corrupting the PDF. 
   const result = await cloudinary.uploader.upload(file, {
-    resource_type: 'raw',
-    public_id: `resume_${Date.now()}.pdf`
+    resource_type: 'image',
+    format: 'pdf',
+    public_id: `resume_${Date.now()}`
   });
   
   res.json({
