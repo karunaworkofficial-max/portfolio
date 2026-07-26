@@ -6,7 +6,12 @@ const GlobalLoader = ({ name, logo }) => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // The loader will run once on mount (which happens on first load and refresh)
+    // Check if already visited in this session
+    const hasVisited = sessionStorage.getItem('hasVisited');
+    if (hasVisited) {
+      setLoading(false);
+      return;
+    }
 
     let current = 0;
     const interval = setInterval(() => {
@@ -16,6 +21,7 @@ const GlobalLoader = ({ name, logo }) => {
         clearInterval(interval);
         setTimeout(() => {
           setLoading(false);
+          sessionStorage.setItem('hasVisited', 'true');
         }, 1200);
       }
       setProgress(current);
