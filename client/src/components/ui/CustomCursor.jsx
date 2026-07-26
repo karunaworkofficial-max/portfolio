@@ -16,37 +16,24 @@ const CustomCursor = ({ style = 'circle' }) => {
     const dot = dotRef.current;
     if (!cursor) return;
 
-    let mouseX = window.innerWidth / 2;
-    let mouseY = window.innerHeight / 2;
-    let cursorX = mouseX;
-    let cursorY = mouseY;
-
     const onMouseMove = (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      if (dot) {
-        dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
-      }
-    };
-
-    const loop = () => {
-      cursorX += (mouseX - cursorX) * 0.15;
-      cursorY += (mouseY - cursorY) * 0.15;
-      if (cursor) cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
+      const mouseX = e.clientX;
+      const mouseY = e.clientY;
+      if (dot) dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
+      if (cursor) cursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
       const spotlight = document.getElementById('cursor-spotlight');
       if (spotlight) {
-        spotlight.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
+        spotlight.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
       }
-      requestAnimationFrame(loop);
     };
 
     const onMouseDown = () => {
-      if (cursor) cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%) scale(0.8)`;
-      if (dot) dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%) scale(0.5)`;
+      if (cursor) cursor.style.transform += ` scale(0.8)`;
+      if (dot) dot.style.transform += ` scale(0.5)`;
     };
     const onMouseUp = () => {
-      if (cursor) cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%) scale(1)`;
-      if (dot) dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%) scale(1)`;
+      if (cursor) cursor.style.transform = cursor.style.transform.replace(' scale(0.8)', '');
+      if (dot) dot.style.transform = dot.style.transform.replace(' scale(0.5)', '');
     };
 
     const handleMouseOver = (e) => {
@@ -64,14 +51,12 @@ const CustomCursor = ({ style = 'circle' }) => {
     window.addEventListener('mousedown', onMouseDown);
     window.addEventListener('mouseup', onMouseUp);
     document.addEventListener('mouseover', handleMouseOver);
-    const rafId = requestAnimationFrame(loop);
 
     return () => {
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mousedown', onMouseDown);
       window.removeEventListener('mouseup', onMouseUp);
       document.removeEventListener('mouseover', handleMouseOver);
-      cancelAnimationFrame(rafId);
     };
   }, []);
 
