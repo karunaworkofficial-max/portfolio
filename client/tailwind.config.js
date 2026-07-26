@@ -27,6 +27,7 @@ export default {
         'spin-slow': 'spin 8s linear infinite',
         'float': 'float 6s ease-in-out infinite',
         'blob': 'blob 10s infinite alternate',
+        'gradient-shift': 'gradient-shift 8s ease infinite',
       },
       keyframes: {
         float: {
@@ -38,7 +39,14 @@ export default {
           '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
           '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
           '100%': { transform: 'translate(0px, 0px) scale(1)' },
+        },
+        'gradient-shift': {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
         }
+      },
+      backgroundSize: {
+        '300%': '300%',
       }
     },
   },

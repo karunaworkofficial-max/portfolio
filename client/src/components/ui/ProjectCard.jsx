@@ -17,7 +17,7 @@ const ProjectCard = ({ project, layoutMode = 'grid', index }) => {
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
-      className={`group relative overflow-hidden rounded-custom cursor-pointer border border-white/10 bg-surface`}
+      className={`group relative overflow-hidden rounded-[2rem] cursor-pointer border border-white/10 bg-surface/30 break-inside-avoid inline-block w-full mb-6 shadow-xl`}
       onClick={() => navigate(`/projects/${project.slug}`)}
     >
       {/* Image */}
