@@ -27,18 +27,9 @@ exports.uploadFile = asyncHandler(async (req, res) => {
     resource_type: 'auto'
   });
   
-  let secure_url = result.secure_url;
-  // Force download by adding fl_attachment
-  if (secure_url.includes('/upload/')) {
-    secure_url = secure_url.replace('/upload/', '/upload/fl_attachment/');
-  }
-  // Cloudinary sometimes drops the extension for PDFs if uploaded as image without use_filename,
-  // but if it's auto and base64 has mimetype, it usually adds it. 
-  // We'll rely on fl_attachment to force download.
-
   res.json({
     success: true,
-    data: { url: secure_url, publicId: result.public_id },
+    data: { url: result.secure_url, publicId: result.public_id },
     message: 'File uploaded successfully'
   });
 });
