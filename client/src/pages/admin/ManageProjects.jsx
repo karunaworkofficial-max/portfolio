@@ -110,6 +110,77 @@ const SortableRow = ({ project, selected, toggleSelect, onToggleStatus, onConfir
   );
 };
 
+const SortableGridItem = ({ project, selected, toggleSelect, confirmDelete }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: project._id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 10 : 1,
+  };
+
+  return (
+    <motion.div 
+      ref={setNodeRef}
+      style={style}
+      variants={fadeInUp} 
+      initial="hidden" 
+      animate="visible" 
+      className={`bg-surface/50 border border-text/20 rounded-custom overflow-hidden group transition-all ${isDragging ? 'shadow-2xl scale-105' : ''}`}
+    >
+      <div className="relative aspect-[4/3] overflow-hidden bg-black">
+        <img src={project.thumbnail?.url || 'https://placehold.co/400x300'} alt={project.title} className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500" />
+        <div className="absolute inset-0 bg-gradient-to-t from-bg to-transparent opacity-80 pointer-events-none" />
+        
+        {/* Drag Handle Overlay */}
+        <div 
+          {...attributes} 
+          {...listeners} 
+          className="absolute inset-0 z-10 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 bg-black/20 flex items-center justify-center transition-opacity"
+        >
+          <div className="bg-black/50 backdrop-blur-md p-3 rounded-full text-white/80">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>
+          </div>
+        </div>
+
+        <div className="absolute top-2 left-2 z-20">
+          <input 
+            type="checkbox" 
+            checked={selected}
+            onChange={() => toggleSelect(project._id)}
+            className="w-4 h-4 rounded border-text/20 bg-bg text-primary focus:ring-primary cursor-pointer shadow-lg"
+          />
+        </div>
+        
+        <div className="absolute top-2 right-2 flex gap-1 z-20">
+          {project.isFeatured && <span className="bg-yellow-500 text-bg text-[10px] font-accent font-bold uppercase tracking-widest px-2 py-0.5 rounded shadow-lg">Featured</span>}
+          {!project.isVisible && <span className="bg-red-500 text-text text-[10px] font-accent font-bold uppercase tracking-widest px-2 py-0.5 rounded shadow-lg">Hidden</span>}
+        </div>
+
+        <div className="absolute bottom-0 left-0 w-full p-4 z-20 pointer-events-none">
+          <span className="text-[10px] font-accent tracking-widest uppercase text-primary mb-1 block">{project.category}</span>
+          <h4 className="font-heading text-lg leading-tight">{project.title}</h4>
+        </div>
+      </div>
+      
+      <div className="p-4 flex justify-between items-center border-t border-text/20">
+        <div className="text-xs text-text/70 font-accent">{project.views || 0} views</div>
+        <div className="flex gap-2">
+          <Link to={`/admin/projects/edit/${project._id}`} className="text-text/70 hover:text-text transition-colors p-1 relative z-20">✎</Link>
+          <button onClick={() => confirmDelete(project)} className="text-text/70 hover:text-red-500 transition-colors p-1 relative z-20">🗑</button>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
 const ManageProjects = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -428,39 +499,13 @@ const ManageProjects = () => {
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
               <SortableContext items={filteredProjects.map(p => p._id)} strategy={verticalListSortingStrategy}>
                 {filteredProjects.map(project => (
-                  <motion.div key={project._id} variants={fadeInUp} initial="hidden" animate="visible" className="bg-surface/50 border border-text/20 rounded-custom overflow-hidden group">
-                    <div className="relative aspect-[4/3] overflow-hidden bg-black">
-                      <img src={project.thumbnail?.url || 'https://placehold.co/400x300'} alt={project.title} className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-bg to-transparent opacity-80" />
-                      
-                      <div className="absolute top-2 left-2">
-                        <input 
-                          type="checkbox" 
-                          checked={selectedIds.includes(project._id)}
-                          onChange={() => toggleSelect(project._id)}
-                          className="w-4 h-4 rounded border-text/20 bg-bg text-primary focus:ring-primary cursor-pointer shadow-lg"
-                        />
-                      </div>
-                      
-                      <div className="absolute top-2 right-2 flex gap-1">
-                        {project.isFeatured && <span className="bg-yellow-500 text-bg text-[10px] font-accent font-bold uppercase tracking-widest px-2 py-0.5 rounded shadow-lg">Featured</span>}
-                        {!project.isVisible && <span className="bg-red-500 text-text text-[10px] font-accent font-bold uppercase tracking-widest px-2 py-0.5 rounded shadow-lg">Hidden</span>}
-                      </div>
-
-                      <div className="absolute bottom-0 left-0 w-full p-4">
-                        <span className="text-[10px] font-accent tracking-widest uppercase text-primary mb-1 block">{project.category}</span>
-                        <h4 className="font-heading text-lg leading-tight">{project.title}</h4>
-                      </div>
-                    </div>
-                    
-                    <div className="p-4 flex justify-between items-center border-t border-text/20">
-                      <div className="text-xs text-text/70 font-accent">{project.views || 0} views</div>
-                      <div className="flex gap-2">
-                        <Link to={`/admin/projects/edit/${project._id}`} className="text-text/70 hover:text-text transition-colors p-1">✎</Link>
-                        <button onClick={() => confirmDelete(project)} className="text-text/70 hover:text-red-500 transition-colors p-1">🗑</button>
-                      </div>
-                    </div>
-                  </motion.div>
+                  <SortableGridItem 
+                    key={project._id}
+                    project={project}
+                    selected={selectedIds.includes(project._id)}
+                    toggleSelect={toggleSelect}
+                    confirmDelete={confirmDelete}
+                  />
                 ))}
               </SortableContext>
             </DndContext>
