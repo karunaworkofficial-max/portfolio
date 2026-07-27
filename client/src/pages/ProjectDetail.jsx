@@ -262,8 +262,8 @@ const ProjectDetail = () => {
       )}
 
       {/* Main Image Gallery */}
-      <div className="container mx-auto px-6 md:px-12 lg:px-24 py-12">
-        {allImages.length > 0 && (
+      <div className={`py-12 ${project.displayAsCarousel ? 'w-full' : 'container mx-auto px-6 md:px-12 lg:px-24'}`}>
+        {allImages.length > 0 && !project.displayAsCarousel && (
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
             <h3 className="text-2xl font-heading text-text/70">Gallery ({allImages.length})</h3>
             <div className="flex items-center gap-2 bg-surface/50 border border-text/20 rounded-full p-1 w-fit">
@@ -281,18 +281,38 @@ const ProjectDetail = () => {
             </div>
           </div>
         )}
-        <div className={`gap-6 md:gap-8 ${gridCols === 1 ? 'columns-1' : gridCols === 2 ? 'columns-1 md:columns-2' : gridCols === 3 ? 'columns-1 sm:columns-2 md:columns-3' : gridCols === 4 ? 'columns-2 md:columns-4' : gridCols === 5 ? 'columns-2 sm:columns-3 md:columns-5' : 'columns-2 sm:columns-3 md:columns-6'}`}>
-          {allImages.map((img, idx) => (
-            <div key={idx} className="mb-6 md:mb-8 break-inside-avoid">
-              <TiltImage 
-                img={img} 
-                idx={idx} 
-                title={project.title} 
-                onClick={openLightbox} 
-              />
+
+        {project.displayAsCarousel && allImages.length > 0 ? (
+          <div className="w-full relative group">
+            <p className="text-center text-text/50 font-accent tracking-widest text-xs uppercase mb-6 animate-pulse">
+              ← Scroll horizontally to view →
+            </p>
+            <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide h-[60vh] md:h-[85vh] bg-[#0a0a0a] items-center justify-start cursor-grab active:cursor-grabbing">
+              {allImages.map((img, idx) => (
+                <img 
+                  key={idx}
+                  src={img.url} 
+                  alt={`${project.title} gallery ${idx + 1}`} 
+                  className="h-full w-auto max-w-none flex-none snap-center object-contain cursor-zoom-in"
+                  onClick={() => openLightbox(idx)}
+                />
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        ) : (
+          <div className={`gap-6 md:gap-8 ${gridCols === 1 ? 'columns-1' : gridCols === 2 ? 'columns-1 md:columns-2' : gridCols === 3 ? 'columns-1 sm:columns-2 md:columns-3' : gridCols === 4 ? 'columns-2 md:columns-4' : gridCols === 5 ? 'columns-2 sm:columns-3 md:columns-5' : 'columns-2 sm:columns-3 md:columns-6'}`}>
+            {allImages.map((img, idx) => (
+              <div key={idx} className="mb-6 md:mb-8 break-inside-avoid">
+                <TiltImage 
+                  img={img} 
+                  idx={idx} 
+                  title={project.title} 
+                  onClick={openLightbox} 
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <Lightbox 

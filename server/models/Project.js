@@ -65,6 +65,7 @@ const projectSchema = new mongoose.Schema({
   isVisible: { type: Boolean, default: true },
   isFeatured: { type: Boolean, default: false },
   is3DShowcase: { type: Boolean, default: false },
+  displayAsCarousel: { type: Boolean, default: false },
   views: { type: Number, default: 0 },
   accentColor: String
 }, { timestamps: true });

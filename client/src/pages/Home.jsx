@@ -105,10 +105,10 @@ const Home = () => {
           className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4 md:gap-6 auto-rows-[minmax(180px,_auto)]"
         >
           
-          {/* 1. Intro Block (col: 2, row: 2) */}
+          {/* 1. Intro Block (col: 3, row: 2) */}
           <motion.div 
             variants={itemVariants}
-            className="md:col-span-2 md:row-span-2 rounded-[2.5rem] bg-white/5 backdrop-blur-2xl border border-white/10 p-8 md:p-12 flex flex-col justify-center relative overflow-hidden group shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:border-primary/50 hover:bg-white/10 transition-all duration-500 hover:shadow-[0_0_25px_rgba(170,59,255,0.15),inset_0_0_15px_rgba(170,59,255,0.15)]"
+            className="md:col-span-3 md:row-span-2 rounded-[2.5rem] bg-white/5 backdrop-blur-2xl border border-white/10 p-8 md:p-12 flex flex-col justify-center relative overflow-hidden group shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:border-primary/50 hover:bg-white/10 transition-all duration-500 hover:shadow-[0_0_25px_rgba(170,59,255,0.15),inset_0_0_15px_rgba(170,59,255,0.15)]"
           >
             <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
             <span className="text-primary font-accent uppercase tracking-[0.2em] text-sm mb-4 block">Welcome to my universe</span>
@@ -141,32 +141,6 @@ const Home = () => {
               </div>
             </div>
           </motion.div>
-
-          {/* 3. Featured Project 1 (col: 1, row: 2) */}
-          {projects[0] ? (
-            <motion.div 
-              variants={itemVariants}
-              onClick={() => navigate(`/projects/${projects[0].slug}`)}
-              className="md:col-span-1 md:row-span-2 rounded-[2.5rem] relative overflow-hidden group cursor-pointer border border-white/10 hover:border-secondary/50 transition-all duration-500 shadow-[0_8px_30px_rgb(0,0,0,0.12)] bg-white/5 backdrop-blur-2xl hover:shadow-[0_0_25px_rgba(6,182,212,0.15),inset_0_0_15px_rgba(6,182,212,0.15)]"
-            >
-              <img src={projects[0].thumbnail?.url} alt={projects[0].title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105" />
-              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-500" />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="absolute bottom-0 left-0 p-6 w-full transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                <p className="text-white/70 font-accent text-xs uppercase tracking-widest mb-2">{projects[0].category}</p>
-                <h3 className="text-white font-heading text-2xl leading-tight">{projects[0].title}</h3>
-                <div className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                  <span className="inline-flex items-center gap-2 text-white text-sm font-accent uppercase tracking-widest">
-                    View Project <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                  </span>
-                </div>
-              </div>
-            </motion.div>
-          ) : (
-             <motion.div variants={itemVariants} className="md:col-span-1 md:row-span-2 rounded-[2.5rem] bg-surface/30 backdrop-blur-xl border border-white/5 flex items-center justify-center">
-                <p className="text-white/30 font-accent uppercase tracking-widest text-sm">Featured Project</p>
-             </motion.div>
-          )}
 
           {/* 4. Stats & Experience (col: 1, row: 1) */}
           <motion.div 
