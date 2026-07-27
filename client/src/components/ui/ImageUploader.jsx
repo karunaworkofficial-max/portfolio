@@ -25,7 +25,8 @@ const SortableImageItem = ({ id, img, index, coverIndex, setCoverIndex, updateIm
           type="checkbox"
           checked={isSelected}
           onChange={() => toggleSelection(index)}
-          className="w-4 h-4 rounded border-text/20 bg-bg text-primary focus:ring-primary cursor-pointer"
+          className="w-6 h-6 rounded border-2 border-primary bg-bg text-primary focus:ring-primary cursor-pointer accent-primary shrink-0"
+          title="Select for bulk action"
         />
         <div 
           {...attributes} 
@@ -130,7 +131,7 @@ const ImageUploader = ({ images, setImages, coverIndex, setCoverIndex }) => {
   const replaceInputRef = useRef(null);
   const [dragActive, setDragActive] = useState(false);
   const [replacingIndex, setReplacingIndex] = useState(null);
-  const [selectedImages, setSelectedImages] = useState(new Set());
+  const [selectedImages, setSelectedImages] = useState([]);
   const [bulkGroupName, setBulkGroupName] = useState('');
 
   const sensors = useSensors(
@@ -252,15 +253,13 @@ const ImageUploader = ({ images, setImages, coverIndex, setCoverIndex }) => {
 
   const toggleSelection = (index) => {
     setSelectedImages(prev => {
-      const next = new Set(prev);
-      if (next.has(index)) next.delete(index);
-      else next.add(index);
-      return next;
+      if (prev.includes(index)) return prev.filter(i => i !== index);
+      return [...prev, index];
     });
   };
 
   const applyBulkGroup = () => {
-    if (selectedImages.size === 0) return;
+    if (selectedImages.length === 0) return;
     setImages(prev => {
       const next = [...prev];
       selectedImages.forEach(idx => {
@@ -270,12 +269,12 @@ const ImageUploader = ({ images, setImages, coverIndex, setCoverIndex }) => {
       });
       return next;
     });
-    setSelectedImages(new Set());
+    setSelectedImages([]);
     setBulkGroupName('');
   };
 
   const makeBulkStatic = () => {
-    if (selectedImages.size === 0) return;
+    if (selectedImages.length === 0) return;
     setImages(prev => {
       const next = [...prev];
       selectedImages.forEach(idx => {
@@ -285,7 +284,7 @@ const ImageUploader = ({ images, setImages, coverIndex, setCoverIndex }) => {
       });
       return next;
     });
-    setSelectedImages(new Set());
+    setSelectedImages([]);
   };
 
   return (
@@ -326,10 +325,10 @@ const ImageUploader = ({ images, setImages, coverIndex, setCoverIndex }) => {
 
       {images.length > 0 && (
         <div className="mt-8 space-y-4">
-          {selectedImages.size > 0 && (
-            <div className="bg-primary/10 border border-primary/30 p-4 rounded-custom flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sticky top-0 z-10 shadow-lg backdrop-blur">
+          {selectedImages.length > 0 && (
+            <div className="bg-primary/10 border border-primary/30 p-4 rounded-custom flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sticky top-24 z-40 shadow-lg backdrop-blur">
               <div className="text-sm font-accent tracking-widest uppercase text-primary">
-                {selectedImages.size} Image{selectedImages.size > 1 ? 's' : ''} Selected
+                {selectedImages.length} Image{selectedImages.length > 1 ? 's' : ''} Selected
               </div>
               <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
                 <input 
@@ -387,7 +386,7 @@ const ImageUploader = ({ images, setImages, coverIndex, setCoverIndex }) => {
                     updateImage={updateImage}
                     handleReplaceClick={handleReplaceClick}
                     removeImage={removeImage}
-                    isSelected={selectedImages.has(index)}
+                    isSelected={selectedImages.includes(index)}
                     toggleSelection={toggleSelection}
                   />
                 ))}
