@@ -93,6 +93,28 @@ const ProjectDetail = () => {
 
   const allImages = project.images || [];
   
+  const imageBlocks = [];
+  let currentGroup = [];
+  let currentType = null;
+  
+  allImages.forEach((img, index) => {
+    img.originalIndex = index;
+    const type = img.isCarousel ? 'carousel' : 'grid';
+    
+    if (currentType !== type) {
+      if (currentGroup.length > 0) {
+        imageBlocks.push({ type: currentType, items: currentGroup });
+      }
+      currentGroup = [img];
+      currentType = type;
+    } else {
+      currentGroup.push(img);
+    }
+  });
+  if (currentGroup.length > 0) {
+    imageBlocks.push({ type: currentType, items: currentGroup });
+  }
+  
   const openLightbox = (index) => {
     setLightboxIndex(index);
     setLightboxOpen(true);
@@ -262,9 +284,9 @@ const ProjectDetail = () => {
       )}
 
       {/* Main Image Gallery */}
-      <div className={`py-12 ${project.displayAsCarousel ? 'w-full' : 'container mx-auto px-6 md:px-12 lg:px-24'}`}>
-        {allImages.length > 0 && !project.displayAsCarousel && (
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
+      <div className="py-12 w-full">
+        {allImages.length > 0 && (
+          <div className="container mx-auto px-6 md:px-12 lg:px-24 flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
             <h3 className="text-2xl font-heading text-text/70">Gallery ({allImages.length})</h3>
             <div className="flex items-center gap-2 bg-surface/50 border border-text/20 rounded-full p-1 w-fit">
               <span className="text-[10px] font-accent uppercase tracking-widest text-text/50 pl-3">Columns:</span>
@@ -282,37 +304,45 @@ const ProjectDetail = () => {
           </div>
         )}
 
-        {project.displayAsCarousel && allImages.length > 0 ? (
-          <div className="w-full relative group">
-            <p className="text-center text-text/50 font-accent tracking-widest text-xs uppercase mb-6 animate-pulse">
-              ← Scroll horizontally to view →
-            </p>
-            <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide h-[60vh] md:h-[85vh] bg-[#0a0a0a] items-center justify-start cursor-grab active:cursor-grabbing">
-              {allImages.map((img, idx) => (
-                <img 
-                  key={idx}
-                  src={img.url} 
-                  alt={`${project.title} gallery ${idx + 1}`} 
-                  className="h-full w-auto max-w-none flex-none snap-center object-contain cursor-zoom-in"
-                  onClick={() => openLightbox(idx)}
-                />
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div className={`gap-6 md:gap-8 ${gridCols === 1 ? 'columns-1' : gridCols === 2 ? 'columns-1 md:columns-2' : gridCols === 3 ? 'columns-1 sm:columns-2 md:columns-3' : gridCols === 4 ? 'columns-2 md:columns-4' : gridCols === 5 ? 'columns-2 sm:columns-3 md:columns-5' : 'columns-2 sm:columns-3 md:columns-6'}`}>
-            {allImages.map((img, idx) => (
-              <div key={idx} className="mb-6 md:mb-8 break-inside-avoid">
-                <TiltImage 
-                  img={img} 
-                  idx={idx} 
-                  title={project.title} 
-                  onClick={openLightbox} 
-                />
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="flex flex-col gap-12">
+          {imageBlocks.map((block, blockIdx) => {
+            if (block.type === 'carousel') {
+              return (
+                <div key={blockIdx} className="w-full relative group py-8 bg-[#050505]">
+                  <p className="text-center text-text/50 font-accent tracking-widest text-xs uppercase mb-6 animate-pulse">
+                    ← Scroll horizontally to view →
+                  </p>
+                  <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide h-[60vh] md:h-[85vh] items-center justify-start cursor-grab active:cursor-grabbing">
+                    {block.items.map((img, idx) => (
+                      <img 
+                        key={idx}
+                        src={img.url} 
+                        alt={`${project.title} carousel ${idx + 1}`} 
+                        className="h-full w-auto max-w-none flex-none snap-center object-contain cursor-zoom-in"
+                        onClick={() => openLightbox(img.originalIndex)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              );
+            } else {
+              return (
+                <div key={blockIdx} className={`container mx-auto px-6 md:px-12 lg:px-24 gap-6 md:gap-8 ${gridCols === 1 ? 'columns-1' : gridCols === 2 ? 'columns-1 md:columns-2' : gridCols === 3 ? 'columns-1 sm:columns-2 md:columns-3' : gridCols === 4 ? 'columns-2 md:columns-4' : gridCols === 5 ? 'columns-2 sm:columns-3 md:columns-5' : 'columns-2 sm:columns-3 md:columns-6'}`}>
+                  {block.items.map((img, idx) => (
+                    <div key={idx} className="mb-6 md:mb-8 break-inside-avoid">
+                      <TiltImage 
+                        img={img} 
+                        idx={img.originalIndex} 
+                        title={project.title} 
+                        onClick={openLightbox} 
+                      />
+                    </div>
+                  ))}
+                </div>
+              );
+            }
+          })}
+        </div>
       </div>
 
       <Lightbox 

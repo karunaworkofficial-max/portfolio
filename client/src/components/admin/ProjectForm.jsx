@@ -28,7 +28,7 @@ const ProjectForm = ({ initialData, mode = 'add' }) => {
     solution: '', results: '',
     videoUrl: '', tools: [], deliverables: [],
     testimonialText: '', testimonialAuthor: '', testimonialRole: '',
-    isVisible: true, featured: false, showcase3D: false, displayAsCarousel: false, accentColor: '#6C63FF',
+    isVisible: true, featured: false, showcase3D: false, accentColor: '#6C63FF',
     colorPalette: []
   });
 
@@ -66,7 +66,6 @@ const ProjectForm = ({ initialData, mode = 'add' }) => {
         isVisible: initialData.isVisible !== false,
         featured: initialData.featured || false,
         showcase3D: initialData.showcase3D || false,
-        displayAsCarousel: initialData.displayAsCarousel || false,
         accentColor: initialData.accentColor || '#6C63FF',
         colorPalette: initialData.colorPalette || []
       });
@@ -399,16 +398,6 @@ const ProjectForm = ({ initialData, mode = 'add' }) => {
               </div>
             </label>
 
-            <label className="flex items-center gap-4 cursor-pointer">
-              <div className={`w-12 h-6 rounded-full transition-colors relative ${formData.displayAsCarousel ? 'bg-primary' : 'bg-text/10'}`}>
-                <div className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-transform ${formData.displayAsCarousel ? 'translate-x-7' : 'translate-x-1'}`} />
-              </div>
-              <input type="checkbox" className="hidden" name="displayAsCarousel" checked={formData.displayAsCarousel} onChange={handleChange} />
-              <div>
-                <div className="text-sm font-accent tracking-widest uppercase">Display as Carousel</div>
-                <div className="text-xs font-body text-text/70">Render project images as a seamless horizontal carousel (ideal for social media posts)</div>
-              </div>
-            </label>
           </div>
         </section>
       </div>

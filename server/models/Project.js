@@ -39,7 +39,8 @@ const projectSchema = new mongoose.Schema({
     alt: String,
     width: Number,
     height: Number,
-    isMockup: Boolean
+    isMockup: Boolean,
+    isCarousel: Boolean
   }],
   thumbnail: {
     url: String,

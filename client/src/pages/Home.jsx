@@ -254,7 +254,7 @@ const Home = () => {
               {[...projects, ...projects, ...projects].map((p, i) => (
                 <div 
                   key={`${p._id}-${i}`} 
-                  onClick={() => navigate(`/project/${p.slug}`)} 
+                  onClick={() => navigate(`/projects/${p.slug}`)} 
                   className="flex-none w-72 md:w-96 mx-4 relative group cursor-pointer rounded-[2rem] overflow-hidden border border-white/10 hover:border-primary/50 transition-colors bg-surface/30 shadow-lg"
                 >
                   <div className="aspect-video relative overflow-hidden bg-black">

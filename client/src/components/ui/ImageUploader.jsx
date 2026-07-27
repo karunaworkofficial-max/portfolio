@@ -41,7 +41,8 @@ const ImageUploader = ({ images, setImages, coverIndex, setCoverIndex }) => {
       url: URL.createObjectURL(file),
       isNew: true,
       alt: '',
-      isMockup: false
+      isMockup: false,
+      isCarousel: false
     }));
     
     setImages(prev => {
@@ -79,7 +80,8 @@ const ImageUploader = ({ images, setImages, coverIndex, setCoverIndex }) => {
           url: URL.createObjectURL(file),
           isNew: true,
           alt: images[replacingIndex].alt || '',
-          isMockup: images[replacingIndex].isMockup || false
+          isMockup: images[replacingIndex].isMockup || false,
+          isCarousel: images[replacingIndex].isCarousel || false
         };
         
         setImages(prev => {
@@ -179,15 +181,26 @@ const ImageUploader = ({ images, setImages, coverIndex, setCoverIndex }) => {
                       </div>
                     </div>
                     
-                    <label className="flex items-center gap-2 mt-3 cursor-pointer w-fit">
-                      <input 
-                        type="checkbox" 
-                        checked={img.isMockup || false}
-                        onChange={(e) => updateImage(i, 'isMockup', e.target.checked)}
-                        className="w-4 h-4 rounded border-text/20 bg-bg text-primary focus:ring-primary cursor-pointer"
-                      />
-                      <span className="text-xs font-accent text-text/70 tracking-widest uppercase">Is Device Mockup</span>
-                    </label>
+                    <div className="flex items-center gap-6 mt-3">
+                      <label className="flex items-center gap-2 cursor-pointer w-fit">
+                        <input 
+                          type="checkbox" 
+                          checked={img.isMockup || false}
+                          onChange={(e) => updateImage(i, 'isMockup', e.target.checked)}
+                          className="w-4 h-4 rounded border-text/20 bg-bg text-primary focus:ring-primary cursor-pointer"
+                        />
+                        <span className="text-xs font-accent text-text/70 tracking-widest uppercase">Is Device Mockup</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer w-fit">
+                        <input 
+                          type="checkbox" 
+                          checked={img.isCarousel || false}
+                          onChange={(e) => updateImage(i, 'isCarousel', e.target.checked)}
+                          className="w-4 h-4 rounded border-text/20 bg-bg text-primary focus:ring-primary cursor-pointer"
+                        />
+                        <span className="text-xs font-accent text-text/70 tracking-widest uppercase">Is Carousel</span>
+                      </label>
+                    </div>
                   </div>
                   
                   <div className="mt-4 flex gap-4">
