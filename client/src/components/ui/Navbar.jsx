@@ -59,22 +59,22 @@ const Navbar = () => {
   const navLinks = [
     { 
       name: 'Home', 
-      path: '/#top',
+      path: '/',
       icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
     },
     { 
       name: 'Projects', 
-      path: '/#projects',
+      path: '/projects',
       icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
     },
     { 
       name: 'About', 
-      path: '/#about',
+      path: '/about',
       icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
     },
     { 
       name: 'Contact', 
-      path: '/#contact',
+      path: '/contact',
       icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
     }
   ];
@@ -103,7 +103,7 @@ const Navbar = () => {
                   to={link.path}
                   data-cursor="link"
                   className={`font-accent text-sm tracking-widest uppercase transition-colors relative group overflow-hidden flex items-center gap-2 ${
-                    (location.pathname === '/' && location.hash === link.path.replace('/', '')) || (location.pathname === '/' && !location.hash && link.path === '/#top') ? 'text-primary' : 'text-text/70 hover:text-text'
+                    location.pathname === link.path ? 'text-primary' : 'text-text/70 hover:text-text'
                   }`}
                 >
                   <span className="opacity-50 group-hover:opacity-100 transition-opacity">{link.icon}</span>
@@ -116,7 +116,7 @@ const Navbar = () => {
             </div>
             
             <Link 
-              to="/#contact" 
+              to="/contact" 
               data-cursor="pointer"
               className="px-6 py-2 bg-text text-bg font-accent uppercase tracking-widest text-sm rounded hover:bg-primary hover:text-text transition-colors"
             >
@@ -180,7 +180,7 @@ const Navbar = () => {
                 className="mt-8"
               >
                 <Link 
-                  to="/#contact" 
+                  to="/contact" 
                   className="px-8 py-3 bg-primary text-text font-accent uppercase tracking-widest text-sm rounded hover:bg-secondary transition-colors"
                 >
                   Let's Talk

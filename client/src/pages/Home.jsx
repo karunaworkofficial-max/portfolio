@@ -1,14 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 import { ThemeContext } from '../context/ThemeContext';
 import { ProfileContext } from '../context/ProfileContext';
 import api from '../utils/api';
-
-import Projects from './Projects';
-import About from './About';
-import Contact from './Contact';
 
 const itemVariants = {
   hidden: { opacity: 0, y: 40, scale: 0.95 },
@@ -34,21 +30,6 @@ const Home = () => {
   const [projects, setProjects] = useState([]);
   const [projectStats, setProjectStats] = useState({ totalProjects: 0, totalClients: 0 });
   const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    if (location.hash) {
-      const id = location.hash.replace('#', '');
-      const element = document.getElementById(id);
-      if (element) {
-        setTimeout(() => {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-      }
-    } else {
-      window.scrollTo(0, 0);
-    }
-  }, [location]);
 
   useEffect(() => {
     const fetchFeatured = async () => {
@@ -66,6 +47,7 @@ const Home = () => {
       }
     };
     fetchFeatured();
+    window.scrollTo(0, 0);
   }, []);
 
   const calculateExperience = () => {
@@ -106,7 +88,6 @@ const Home = () => {
 
   return (
     <motion.div 
-      id="top"
       className="w-full min-h-screen relative bg-[#0a0a0a]"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1, transition: { duration: 0.8 } }}
@@ -188,7 +169,7 @@ const Home = () => {
           {/* 6. About Link (col: 1, row: 1) */}
           <motion.div 
             variants={itemVariants}
-            onClick={() => navigate('/#about')}
+            onClick={() => navigate('/about')}
             className="md:col-span-1 rounded-[2.5rem] bg-white/5 backdrop-blur-2xl border border-white/10 p-6 md:p-8 cursor-pointer flex flex-col justify-between group shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:border-primary/50 hover:bg-white/10 transition-all duration-500 overflow-hidden relative hover:shadow-[0_0_25px_rgba(170,59,255,0.15),inset_0_0_15px_rgba(170,59,255,0.15)]"
           >
             <div className="w-10 h-10 rounded-full bg-primary/20 text-primary flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors self-end absolute top-6 right-6">
@@ -203,7 +184,7 @@ const Home = () => {
           {/* 7. Contact Link (col: 1, row: 1) */}
           <motion.div 
             variants={itemVariants}
-            onClick={() => navigate('/#contact')}
+            onClick={() => navigate('/contact')}
             className="md:col-span-1 rounded-[2.5rem] bg-gradient-to-br from-primary to-secondary p-6 md:p-8 cursor-pointer flex flex-col justify-between group shadow-[0_8px_30px_rgba(170,59,255,0.3)] hover:shadow-[0_15px_40px_rgba(170,59,255,0.5)] transition-all overflow-hidden relative"
           >
             <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors duration-300" />
@@ -293,11 +274,6 @@ const Home = () => {
           </motion.div>
         )}
       </div>
-
-      {/* Single Page Sections */}
-      <Projects />
-      <About />
-      <Contact />
     </motion.div>
   );
 };
