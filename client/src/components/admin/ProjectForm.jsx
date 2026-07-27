@@ -38,6 +38,7 @@ const ProjectForm = ({ initialData, mode = 'add' }) => {
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState('');
   const [fonts, setFonts] = useState([]);
+  const [videoUploading, setVideoUploading] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -78,6 +79,32 @@ const ProjectForm = ({ initialData, mode = 'add' }) => {
       }
     }
   }, [initialData]);
+
+  const handleVideoUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    setVideoUploading(true);
+    try {
+      const fileToBase64 = (f) => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(f);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+      });
+      
+      const base64Video = await fileToBase64(file);
+      const { data } = await api.post('/upload/video', { video: base64Video });
+      
+      setFormData(prev => ({ ...prev, videoUrl: data.data.url }));
+      showToast('Video uploaded successfully');
+    } catch (err) {
+      console.error(err);
+      alert('Error uploading video. File might be too large or invalid format.');
+    } finally {
+      setVideoUploading(false);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -246,6 +273,40 @@ const ProjectForm = ({ initialData, mode = 'add' }) => {
             Media
           </h2>
           <ImageUploader images={images} setImages={setImages} coverIndex={coverIndex} setCoverIndex={setCoverIndex} />
+
+          <div className="mt-8 border-t border-text/20 pt-8">
+            <h3 className="text-xl font-heading mb-4 text-white">Project Video (Optional)</h3>
+            <p className="text-sm font-body text-text/70 mb-4">Upload a short preview video. It will auto-play on the home and project details page.</p>
+            
+            <div className="flex items-center gap-6">
+              {formData.videoUrl ? (
+                <div className="relative w-64 h-36 bg-black rounded overflow-hidden">
+                  <video src={formData.videoUrl} className="w-full h-full object-cover" autoPlay loop muted playsInline />
+                  <button 
+                    type="button" 
+                    onClick={() => setFormData(p => ({...p, videoUrl: ''}))}
+                    className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded hover:bg-red-600 transition-colors"
+                  >✕</button>
+                </div>
+              ) : (
+                <div className="w-64 h-36 bg-surface/30 border-2 border-dashed border-text/20 rounded flex items-center justify-center relative">
+                  {videoUploading ? (
+                    <span className="text-sm font-accent tracking-widest text-primary animate-pulse">Uploading...</span>
+                  ) : (
+                    <>
+                      <span className="text-4xl opacity-50">🎥</span>
+                      <input 
+                        type="file" 
+                        accept="video/mp4,video/webm" 
+                        onChange={handleVideoUpload}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      />
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
         </section>
 
         <section className="bg-surface/50 border border-text/20 rounded-custom p-8">

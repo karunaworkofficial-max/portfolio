@@ -29,6 +29,7 @@ export default {
         'blob': 'blob 10s infinite alternate',
         'gradient-shift': 'gradient-shift 8s ease infinite',
         'laser-scan': 'laser-scan 10s linear infinite',
+        'marquee': 'marquee 30s linear infinite',
       },
       keyframes: {
         float: {
@@ -44,6 +45,10 @@ export default {
         'gradient-shift': {
           '0%, 100%': { backgroundPosition: '0% 50%' },
           '50%': { backgroundPosition: '100% 50%' },
+        },
+        marquee: {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-50%)' },
         },
         'laser-scan': {
           '0%': { transform: 'translateY(-100%) rotate(45deg)' },

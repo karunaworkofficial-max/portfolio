@@ -3,7 +3,9 @@ import { motion } from 'framer-motion';
 
 const ImageUploader = ({ images, setImages, coverIndex, setCoverIndex }) => {
   const fileInputRef = useRef(null);
+  const replaceInputRef = useRef(null);
   const [dragActive, setDragActive] = useState(false);
+  const [replacingIndex, setReplacingIndex] = useState(null);
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -63,6 +65,34 @@ const ImageUploader = ({ images, setImages, coverIndex, setCoverIndex }) => {
     });
   };
 
+  const handleReplaceClick = (index) => {
+    setReplacingIndex(index);
+    replaceInputRef.current?.click();
+  };
+
+  const handleReplaceChange = (e) => {
+    if (e.target.files && e.target.files[0] && replacingIndex !== null) {
+      const file = e.target.files[0];
+      if (file.type.startsWith('image/')) {
+        const imageObject = {
+          file,
+          url: URL.createObjectURL(file),
+          isNew: true,
+          alt: images[replacingIndex].alt || '',
+          isMockup: images[replacingIndex].isMockup || false
+        };
+        
+        setImages(prev => {
+          const next = [...prev];
+          next[replacingIndex] = imageObject;
+          return next;
+        });
+      }
+    }
+    setReplacingIndex(null);
+    if(replaceInputRef.current) replaceInputRef.current.value = null; // reset
+  };
+
   return (
     <div>
       <div 
@@ -78,6 +108,13 @@ const ImageUploader = ({ images, setImages, coverIndex, setCoverIndex }) => {
           multiple 
           accept="image/jpeg, image/png, image/webp" 
           onChange={handleChange}
+          className="hidden" 
+        />
+        <input 
+          ref={replaceInputRef}
+          type="file"
+          accept="image/jpeg, image/png, image/webp" 
+          onChange={handleReplaceChange}
           className="hidden" 
         />
         <div className="text-4xl mb-4 opacity-50">🖼️</div>
@@ -122,14 +159,24 @@ const ImageUploader = ({ images, setImages, coverIndex, setCoverIndex }) => {
                         onChange={(e) => updateImage(i, 'alt', e.target.value)}
                         className="w-full sm:w-2/3 bg-bg border border-text/20 rounded px-3 py-1.5 text-text font-body text-sm focus:outline-none focus:border-primary"
                       />
-                      <button 
-                        type="button" 
-                        onClick={() => removeImage(i)}
-                        className="text-text/70 hover:text-red-500 p-1"
-                        title="Remove Image"
-                      >
-                        ✕
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button 
+                          type="button" 
+                          onClick={() => handleReplaceClick(i)}
+                          className="text-text/70 hover:text-primary p-1 text-xs font-accent tracking-widest uppercase"
+                          title="Replace Image"
+                        >
+                          Replace
+                        </button>
+                        <button 
+                          type="button" 
+                          onClick={() => removeImage(i)}
+                          className="text-text/70 hover:text-red-500 p-1 font-bold"
+                          title="Remove Image"
+                        >
+                          ✕
+                        </button>
+                      </div>
                     </div>
                     
                     <label className="flex items-center gap-2 mt-3 cursor-pointer w-fit">

@@ -263,6 +263,42 @@ const Home = () => {
             </div>
           </motion.div>
         )}
+
+        {/* Scrolling Projects Marquee */}
+        {projects && projects.length > 0 && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="mt-24 w-full overflow-hidden relative border-y border-white/5 bg-surface/10 py-12 z-10 -mx-[50vw] right-[50%] left-[50%] w-[100vw]"
+            style={{ width: '100vw', marginLeft: '-50vw', marginRight: '-50vw' }}
+          >
+            <div className="absolute left-0 top-0 bottom-0 w-16 md:w-48 bg-gradient-to-r from-[#0a0a0a] to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-16 md:w-48 bg-gradient-to-l from-[#0a0a0a] to-transparent z-10 pointer-events-none" />
+            
+            <div className="flex w-[200%] animate-marquee hover:[animation-play-state:paused]">
+              {[...projects, ...projects, ...projects].map((p, i) => (
+                <div 
+                  key={`${p._id}-${i}`} 
+                  onClick={() => navigate(`/project/${p.slug}`)} 
+                  className="flex-none w-72 md:w-96 mx-4 relative group cursor-pointer rounded-[2rem] overflow-hidden border border-white/10 hover:border-primary/50 transition-colors bg-surface/30 shadow-lg"
+                >
+                  <div className="aspect-video relative overflow-hidden bg-black">
+                    {p.videoUrl ? (
+                      <video src={p.videoUrl} autoPlay loop muted playsInline className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" />
+                    ) : (
+                      <img src={p.thumbnail?.url} alt={p.title} className="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" />
+                    )}
+                  </div>
+                  <div className="p-6 absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 to-transparent">
+                    <p className="text-primary font-accent tracking-widest text-[10px] uppercase mb-1 drop-shadow-md">{p.category}</p>
+                    <h3 className="text-white font-heading text-xl truncate drop-shadow-md">{p.title || 'Untitled'}</h3>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
       </div>
     </motion.div>
   );

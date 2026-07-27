@@ -18,6 +18,22 @@ exports.uploadImage = asyncHandler(async (req, res) => {
     message: 'Image uploaded successfully'
   });
 });
+exports.uploadVideo = asyncHandler(async (req, res) => {
+  const { video } = req.body; // expecting base64 string
+  if (!video) { res.status(400); throw new Error('No video provided'); }
+  
+  const result = await cloudinary.uploader.upload(video, {
+    resource_type: 'video',
+    quality: 'auto',
+    fetch_format: 'auto'
+  });
+  
+  res.json({
+    success: true,
+    data: { url: result.secure_url, publicId: result.public_id },
+    message: 'Video uploaded successfully'
+  });
+});
 
 exports.uploadFile = asyncHandler(async (req, res) => {
   const { file } = req.body; // expecting base64 string

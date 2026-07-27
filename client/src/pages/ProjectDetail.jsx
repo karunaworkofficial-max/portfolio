@@ -119,7 +119,13 @@ const ProjectDetail = () => {
       {/* Hero Section */}
       <div className="relative h-[80vh] w-full overflow-hidden">
         <div className="absolute inset-0 bg-black">
-          {allImages.length > 0 ? (
+          {project.videoUrl ? (
+            <video 
+              src={project.videoUrl} 
+              autoPlay loop muted playsInline 
+              className="w-full h-full object-cover opacity-60"
+            />
+          ) : allImages.length > 0 ? (
             <FilmStripSlider images={allImages} />
           ) : (
             <img 
