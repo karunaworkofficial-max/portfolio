@@ -4,7 +4,7 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, us
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const SortableImageItem = ({ id, img, index, coverIndex, setCoverIndex, updateImage, handleReplaceClick, removeImage }) => {
+const SortableImageItem = ({ id, img, index, coverIndex, setCoverIndex, updateImage, handleReplaceClick, removeImage, isSelected, toggleSelection }) => {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
   const style = {
@@ -20,13 +20,21 @@ const SortableImageItem = ({ id, img, index, coverIndex, setCoverIndex, updateIm
       animate={{ opacity: 1, y: 0 }}
       className={`flex flex-col sm:flex-row gap-4 p-4 rounded-custom border transition-colors ${coverIndex === index ? 'border-primary bg-primary/5' : 'border-text/20 bg-surface/50'}`}
     >
-      <div 
-        {...attributes} 
-        {...listeners} 
-        className="flex items-center justify-center px-2 cursor-grab active:cursor-grabbing text-text/50 hover:text-primary transition-colors"
-        title="Drag to reorder"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>
+      <div className="flex items-center gap-3">
+        <input 
+          type="checkbox"
+          checked={isSelected}
+          onChange={() => toggleSelection(index)}
+          className="w-4 h-4 rounded border-text/20 bg-bg text-primary focus:ring-primary cursor-pointer"
+        />
+        <div 
+          {...attributes} 
+          {...listeners} 
+          className="flex items-center justify-center px-2 cursor-grab active:cursor-grabbing text-text/50 hover:text-primary transition-colors"
+          title="Drag to reorder"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>
+        </div>
       </div>
       <div className="w-full sm:w-48 h-32 bg-black rounded overflow-hidden relative shrink-0">
         <img src={img.url} alt="preview" className="w-full h-full object-cover" />
@@ -122,6 +130,8 @@ const ImageUploader = ({ images, setImages, coverIndex, setCoverIndex }) => {
   const replaceInputRef = useRef(null);
   const [dragActive, setDragActive] = useState(false);
   const [replacingIndex, setReplacingIndex] = useState(null);
+  const [selectedImages, setSelectedImages] = useState(new Set());
+  const [bulkGroupName, setBulkGroupName] = useState('');
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -240,6 +250,44 @@ const ImageUploader = ({ images, setImages, coverIndex, setCoverIndex }) => {
     if(replaceInputRef.current) replaceInputRef.current.value = null; // reset
   };
 
+  const toggleSelection = (index) => {
+    setSelectedImages(prev => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  };
+
+  const applyBulkGroup = () => {
+    if (selectedImages.size === 0) return;
+    setImages(prev => {
+      const next = [...prev];
+      selectedImages.forEach(idx => {
+        if (next[idx]) {
+          next[idx] = { ...next[idx], isCarousel: true, carouselGroupName: bulkGroupName };
+        }
+      });
+      return next;
+    });
+    setSelectedImages(new Set());
+    setBulkGroupName('');
+  };
+
+  const makeBulkStatic = () => {
+    if (selectedImages.size === 0) return;
+    setImages(prev => {
+      const next = [...prev];
+      selectedImages.forEach(idx => {
+        if (next[idx]) {
+          next[idx] = { ...next[idx], isCarousel: false, carouselGroupName: '' };
+        }
+      });
+      return next;
+    });
+    setSelectedImages(new Set());
+  };
+
   return (
     <div>
       <div 
@@ -277,9 +325,47 @@ const ImageUploader = ({ images, setImages, coverIndex, setCoverIndex }) => {
       </div>
 
       {images.length > 0 && (
-        <div className="mt-8">
-          <h4 className="text-sm font-accent uppercase tracking-widest text-text/70 mb-4">Uploaded Images ({images.length})</h4>
-          
+        <div className="mt-8 space-y-4">
+          {selectedImages.size > 0 && (
+            <div className="bg-primary/10 border border-primary/30 p-4 rounded-custom flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sticky top-0 z-10 shadow-lg backdrop-blur">
+              <div className="text-sm font-accent tracking-widest uppercase text-primary">
+                {selectedImages.size} Image{selectedImages.size > 1 ? 's' : ''} Selected
+              </div>
+              <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                <input 
+                  type="text" 
+                  placeholder="Bulk Group Name (e.g. Set 1)" 
+                  value={bulkGroupName}
+                  onChange={(e) => setBulkGroupName(e.target.value)}
+                  className="w-full sm:w-64 bg-bg border border-primary/30 rounded px-3 py-1.5 text-text font-body text-xs focus:outline-none focus:border-primary"
+                />
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <button 
+                    type="button" 
+                    onClick={applyBulkGroup}
+                    className="flex-1 sm:flex-none px-4 py-1.5 bg-primary text-white text-xs font-accent tracking-widest uppercase rounded hover:bg-secondary transition-colors whitespace-nowrap"
+                  >
+                    Group as Carousel
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={makeBulkStatic}
+                    className="flex-1 sm:flex-none px-4 py-1.5 border border-text/20 text-text/70 text-xs font-accent tracking-widest uppercase rounded hover:bg-text/10 transition-colors whitespace-nowrap"
+                  >
+                    Make Static
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={() => setSelectedImages(new Set())}
+                    className="p-1.5 text-text/50 hover:text-text rounded transition-colors"
+                    title="Deselect All"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           <DndContext 
             sensors={sensors}
             collisionDetection={closestCenter}
@@ -290,17 +376,19 @@ const ImageUploader = ({ images, setImages, coverIndex, setCoverIndex }) => {
               strategy={verticalListSortingStrategy}
             >
               <div className="space-y-4">
-                {images.map((img, i) => (
+                {images.map((img, index) => (
                   <SortableImageItem 
                     key={img.url}
                     id={img.url}
                     img={img}
-                    index={i}
+                    index={index}
                     coverIndex={coverIndex}
                     setCoverIndex={setCoverIndex}
                     updateImage={updateImage}
                     handleReplaceClick={handleReplaceClick}
                     removeImage={removeImage}
+                    isSelected={selectedImages.has(index)}
+                    toggleSelection={toggleSelection}
                   />
                 ))}
               </div>
