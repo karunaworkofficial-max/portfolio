@@ -1,6 +1,11 @@
 import React, { useEffect, useCallback, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const swipeConfidenceThreshold = 10000;
+const swipePower = (offset, velocity) => {
+  return Math.abs(offset) * velocity;
+};
+
 const Lightbox = ({ images, currentIndex, isOpen, onClose, onNext, onPrev }) => {
   const [isZoomMode, setIsZoomMode] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -41,7 +46,6 @@ const Lightbox = ({ images, currentIndex, isOpen, onClose, onNext, onPrev }) => 
     let x = e.clientX - left;
     let y = e.clientY - top;
 
-    // Keep lens strictly within the image bounding box for realistic magnifier feel
     x = Math.max(0, Math.min(x, width));
     y = Math.max(0, Math.min(y, height));
 
@@ -53,7 +57,7 @@ const Lightbox = ({ images, currentIndex, isOpen, onClose, onNext, onPrev }) => 
     e.stopPropagation();
     setIsZoomMode(!isZoomMode);
     if (!isZoomMode) {
-      handleMouseMove(e); // Initialize position instantly when zooming in
+      handleMouseMove(e);
     }
   };
 
@@ -90,12 +94,23 @@ const Lightbox = ({ images, currentIndex, isOpen, onClose, onNext, onPrev }) => 
 
         <motion.div
           key={currentIndex}
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.95 }}
+          initial={{ opacity: 0, scale: 0.95, x: 20 }}
+          animate={{ opacity: 1, scale: 1, x: 0 }}
+          exit={{ opacity: 0, scale: 0.95, x: -20 }}
           transition={{ duration: 0.3 }}
-          className="relative max-w-[90vw] max-h-[90vh] w-full h-full flex items-center justify-center"
+          className={`relative max-w-[90vw] max-h-[90vh] w-full h-full flex items-center justify-center ${isZoomMode ? '' : 'cursor-grab active:cursor-grabbing'}`}
           onClick={(e) => e.stopPropagation()}
+          drag={isZoomMode ? false : "x"}
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.8}
+          onDragEnd={(e, { offset, velocity }) => {
+            const swipe = swipePower(offset.x, velocity.x);
+            if (swipe < -swipeConfidenceThreshold) {
+              onNext();
+            } else if (swipe > swipeConfidenceThreshold) {
+              onPrev();
+            }
+          }}
         >
           <div 
             className="relative touch-none"

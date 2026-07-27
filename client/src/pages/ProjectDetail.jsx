@@ -93,6 +93,7 @@ const ProjectDetail = () => {
   }
 
   const allImages = project.images || [];
+  allImages.forEach((img, idx) => img.originalIndex = idx);
   
   const staticImages = allImages.filter(img => !img.isCarousel);
   const carouselImages = allImages.filter(img => img.isCarousel);
@@ -110,13 +111,22 @@ const ProjectDetail = () => {
     groupMap[groupName].push(img);
   });
   
-  const openLightbox = (index) => {
+  const [lightboxImages, setLightboxImages] = useState([]);
+
+  useEffect(() => {
+    if (project?.images) {
+      setLightboxImages(project.images);
+    }
+  }, [project]);
+
+  const openLightbox = (index, images = allImages) => {
+    setLightboxImages(images);
     setLightboxIndex(index);
     setLightboxOpen(true);
   };
 
-  const nextLightboxImage = () => setLightboxIndex((prev) => (prev + 1) % allImages.length);
-  const prevLightboxImage = () => setLightboxIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
+  const nextLightboxImage = () => setLightboxIndex((prev) => (prev + 1) % lightboxImages.length);
+  const prevLightboxImage = () => setLightboxIndex((prev) => (prev - 1 + lightboxImages.length) % lightboxImages.length);
 
   return (
     <motion.div
@@ -300,7 +310,7 @@ const ProjectDetail = () => {
               </div>
             </div>
             
-            {activeGalleryTab === 'static' && (
+            {activeGalleryTab === 'static' || activeGalleryTab === 'carousel' ? (
               <div className="flex items-center gap-2 bg-surface/50 border border-text/20 rounded-full p-1 w-fit">
                 <span className="text-[10px] font-accent uppercase tracking-widest text-text/50 pl-3">Columns:</span>
                 {[1, 2, 3, 4, 5, 6].map(col => (
@@ -314,7 +324,7 @@ const ProjectDetail = () => {
                   </button>
                 ))}
               </div>
-            )}
+            ) : null}
           </div>
         )}
 
@@ -335,45 +345,44 @@ const ProjectDetail = () => {
           )}
 
           {activeGalleryTab === 'carousel' && (
-            <div className="flex flex-col gap-16">
+            <div className={`container mx-auto px-6 md:px-12 lg:px-24 gap-6 md:gap-8 ${gridCols === 1 ? 'columns-1' : gridCols === 2 ? 'columns-1 md:columns-2' : gridCols === 3 ? 'columns-1 sm:columns-2 md:columns-3' : gridCols === 4 ? 'columns-2 md:columns-4' : gridCols === 5 ? 'columns-2 sm:columns-3 md:columns-5' : 'columns-2 sm:columns-3 md:columns-6'}`}>
               {carouselGroups.length === 0 && (
-                <div className="container mx-auto px-6 text-center text-text/50 font-body py-12">
+                <div className="w-full text-center text-text/50 font-body py-12 col-span-full">
                   No carousel groups available for this project.
                 </div>
               )}
-              {carouselGroups.map((group, groupIdx) => (
-                <div key={groupIdx} className="w-full relative group py-8 bg-[#050505]">
-                  <div className="container mx-auto px-6 md:px-12 lg:px-24 mb-6 text-center flex flex-col items-center">
-                    <h4 className="text-xl font-heading text-text bg-surface/50 border border-text/20 px-6 py-2 rounded-full inline-block">{group.name}</h4>
-                    <p className="text-text/50 font-accent tracking-widest text-xs uppercase mt-4 animate-pulse">
-                      ← Scroll horizontally to view →
-                    </p>
-                  </div>
-                  <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide h-[60vh] md:h-[85vh] items-center justify-start cursor-grab active:cursor-grabbing px-6">
-                    {group.items.map((img, i) => (
-                      <div 
-                        key={i} 
-                        className="snap-center shrink-0 w-auto h-full flex-none cursor-zoom-in"
-                        onClick={() => openLightbox(img.originalIndex)}
-                      >
-                        <img
-                          src={img.url}
-                          alt={img.alt || `Carousel image ${i + 1}`}
-                          className="h-full w-auto object-contain pointer-events-none"
-                          loading="lazy"
-                        />
+              {carouselGroups.map((group, groupIdx) => {
+                const coverImage = group.items[0];
+                if (!coverImage) return null;
+                return (
+                  <div key={groupIdx} className="mb-6 md:mb-8 break-inside-avoid">
+                    <div className="relative group cursor-pointer" onClick={() => openLightbox(0, group.items)}>
+                      <TiltImage 
+                        img={coverImage} 
+                        idx={coverImage.originalIndex} 
+                        title={group.name} 
+                        onClick={() => openLightbox(0, group.items)} 
+                      />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-custom flex items-center justify-center pointer-events-none">
+                        <div className="text-white font-heading text-xl border border-white/30 px-6 py-2 rounded-full backdrop-blur-sm">
+                          {group.name} ({group.items.length})
+                        </div>
                       </div>
-                    ))}
+                      <div className="absolute top-4 right-4 bg-black/70 backdrop-blur px-3 py-1 rounded-full border border-white/10 flex items-center gap-2 z-10 pointer-events-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                        <span className="text-[10px] font-accent tracking-widest text-white uppercase">{group.items.length} Photos</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
       </div>
 
       <Lightbox 
-        images={allImages} 
+        images={lightboxImages} 
         currentIndex={lightboxIndex} 
         isOpen={lightboxOpen}
         onClose={() => setLightboxOpen(false)}
