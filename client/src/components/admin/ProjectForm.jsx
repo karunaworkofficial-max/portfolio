@@ -141,11 +141,11 @@ const ProjectForm = ({ initialData, mode = 'add' }) => {
       });
 
       const processedImages = await Promise.all(images.map(async (img) => {
-        if (!img.isNew) return { url: img.url, alt: img.alt, isMockup: img.isMockup, publicId: img.publicId };
+        if (!img.isNew) return { url: img.url, alt: img.alt, isMockup: img.isMockup, isCarousel: img.isCarousel, carouselGroupName: img.carouselGroupName, publicId: img.publicId };
         
         const base64Image = await fileToBase64(img.file);
         const { data } = await api.post('/upload/image', { image: base64Image });
-        return { url: data.data.url, alt: img.alt, isMockup: img.isMockup, publicId: data.data.publicId };
+        return { url: data.data.url, alt: img.alt, isMockup: img.isMockup, isCarousel: img.isCarousel, carouselGroupName: img.carouselGroupName, publicId: data.data.publicId };
       }));
 
       const payload = {

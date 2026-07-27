@@ -40,7 +40,8 @@ const projectSchema = new mongoose.Schema({
     width: Number,
     height: Number,
     isMockup: Boolean,
-    isCarousel: Boolean
+    isCarousel: Boolean,
+    carouselGroupName: String
   }],
   thumbnail: {
     url: String,

@@ -67,25 +67,39 @@ const SortableImageItem = ({ id, img, index, coverIndex, setCoverIndex, updateIm
             </div>
           </div>
           
-          <div className="flex items-center gap-6 mt-3">
-            <label className="flex items-center gap-2 cursor-pointer w-fit">
-              <input 
-                type="checkbox" 
-                checked={img.isMockup || false}
-                onChange={(e) => updateImage(index, 'isMockup', e.target.checked)}
-                className="w-4 h-4 rounded border-text/20 bg-bg text-primary focus:ring-primary cursor-pointer"
-              />
-              <span className="text-xs font-accent text-text/70 tracking-widest uppercase">Is Device Mockup</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer w-fit">
-              <input 
-                type="checkbox" 
-                checked={img.isCarousel || false}
-                onChange={(e) => updateImage(index, 'isCarousel', e.target.checked)}
-                className="w-4 h-4 rounded border-text/20 bg-bg text-primary focus:ring-primary cursor-pointer"
-              />
-              <span className="text-xs font-accent text-text/70 tracking-widest uppercase">Is Carousel</span>
-            </label>
+          <div className="flex flex-col gap-3 mt-3">
+            <div className="flex items-center gap-6">
+              <label className="flex items-center gap-2 cursor-pointer w-fit">
+                <input 
+                  type="checkbox" 
+                  checked={img.isMockup || false}
+                  onChange={(e) => updateImage(index, 'isMockup', e.target.checked)}
+                  className="w-4 h-4 rounded border-text/20 bg-bg text-primary focus:ring-primary cursor-pointer"
+                />
+                <span className="text-xs font-accent text-text/70 tracking-widest uppercase">Is Device Mockup</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer w-fit">
+                <input 
+                  type="checkbox" 
+                  checked={img.isCarousel || false}
+                  onChange={(e) => updateImage(index, 'isCarousel', e.target.checked)}
+                  className="w-4 h-4 rounded border-text/20 bg-bg text-primary focus:ring-primary cursor-pointer"
+                />
+                <span className="text-xs font-accent text-text/70 tracking-widest uppercase">Is Carousel</span>
+              </label>
+            </div>
+            
+            {img.isCarousel && (
+              <div className="w-full sm:w-2/3">
+                <input 
+                  type="text" 
+                  placeholder="Carousel Group Name (e.g. Set 1)" 
+                  value={img.carouselGroupName || ''}
+                  onChange={(e) => updateImage(index, 'carouselGroupName', e.target.value)}
+                  className="w-full bg-bg border border-text/20 rounded px-3 py-1.5 text-text font-body text-xs focus:outline-none focus:border-primary"
+                />
+              </div>
+            )}
           </div>
         </div>
         
@@ -171,7 +185,8 @@ const ImageUploader = ({ images, setImages, coverIndex, setCoverIndex }) => {
       isNew: true,
       alt: '',
       isMockup: false,
-      isCarousel: false
+      isCarousel: false,
+      carouselGroupName: ''
     }));
     
     setImages(prev => {
@@ -210,7 +225,8 @@ const ImageUploader = ({ images, setImages, coverIndex, setCoverIndex }) => {
           isNew: true,
           alt: images[replacingIndex].alt || '',
           isMockup: images[replacingIndex].isMockup || false,
-          isCarousel: images[replacingIndex].isCarousel || false
+          isCarousel: images[replacingIndex].isCarousel || false,
+          carouselGroupName: images[replacingIndex].carouselGroupName || ''
         };
         
         setImages(prev => {
