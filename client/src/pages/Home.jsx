@@ -307,11 +307,38 @@ const Home = ({ isAdmin = false }) => {
                   const isSecondary = idx % 4 === 2;
                   
                   if (isPrimary) {
-                    return <span key={idx} className="text-4xl md:text-6xl font-heading text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent font-bold uppercase tracking-widest whitespace-nowrap opacity-80">{item}</span>;
+                    return (
+                      <EditableText 
+                        key={idx}
+                        as="span"
+                        isAdmin={isAdmin}
+                        value={item}
+                        onSave={(val) => updateSettingByPath(`home.marquee.items.${idx}`, val)}
+                        className="text-4xl md:text-6xl font-heading text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent font-bold uppercase tracking-widest whitespace-nowrap opacity-80"
+                      />
+                    );
                   } else if (isSecondary) {
-                    return <span key={idx} className="text-4xl md:text-6xl font-heading text-transparent bg-clip-text bg-gradient-to-r from-secondary to-pink-500 font-bold uppercase tracking-widest whitespace-nowrap opacity-80">{item}</span>;
+                    return (
+                      <EditableText 
+                        key={idx}
+                        as="span"
+                        isAdmin={isAdmin}
+                        value={item}
+                        onSave={(val) => updateSettingByPath(`home.marquee.items.${idx}`, val)}
+                        className="text-4xl md:text-6xl font-heading text-transparent bg-clip-text bg-gradient-to-r from-secondary to-pink-500 font-bold uppercase tracking-widest whitespace-nowrap opacity-80"
+                      />
+                    );
                   } else {
-                    return <span key={idx} className="text-4xl md:text-6xl font-heading text-white/80 font-bold uppercase tracking-widest whitespace-nowrap text-stroke-primary">{item}</span>;
+                    return (
+                      <EditableText 
+                        key={idx}
+                        as="span"
+                        isAdmin={isAdmin}
+                        value={item}
+                        onSave={(val) => updateSettingByPath(`home.marquee.items.${idx}`, val)}
+                        className="text-4xl md:text-6xl font-heading text-white/80 font-bold uppercase tracking-widest whitespace-nowrap text-stroke-primary"
+                      />
+                    );
                   }
                 })}
               </div>

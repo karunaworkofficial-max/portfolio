@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { Check, X } from 'lucide-react';
 
 const EditableText = ({ 
   value, 
@@ -46,26 +47,44 @@ const EditableText = ({
   }
 
   if (isEditing) {
-    return multiline ? (
-      <textarea
-        ref={inputRef}
-        value={currentValue}
-        onChange={(e) => setCurrentValue(e.target.value)}
-        onBlur={handleSave}
-        onKeyDown={handleKeyDown}
-        className={`w-full bg-black/50 text-white border border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary rounded p-1 ${className}`}
-        rows={3}
-      />
-    ) : (
-      <input
-        ref={inputRef}
-        type="text"
-        value={currentValue}
-        onChange={(e) => setCurrentValue(e.target.value)}
-        onBlur={handleSave}
-        onKeyDown={handleKeyDown}
-        className={`w-full bg-black/50 text-white border border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary rounded p-1 ${className}`}
-      />
+    return (
+      <div className="relative inline-block w-full z-50">
+        {multiline ? (
+          <textarea
+            ref={inputRef}
+            value={currentValue}
+            onChange={(e) => setCurrentValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className={`w-full bg-black/80 text-white border-2 border-primary focus:outline-none focus:ring-2 focus:ring-primary rounded p-2 shadow-2xl ${className}`}
+            rows={3}
+          />
+        ) : (
+          <input
+            ref={inputRef}
+            type="text"
+            value={currentValue}
+            onChange={(e) => setCurrentValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className={`w-full bg-black/80 text-white border-2 border-primary focus:outline-none focus:ring-2 focus:ring-primary rounded p-2 shadow-2xl ${className}`}
+          />
+        )}
+        <div className="absolute -bottom-10 right-0 flex gap-2">
+          <button 
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsEditing(false); setCurrentValue(value); }}
+            className="p-1.5 bg-red-500 text-white rounded hover:bg-red-600 shadow-lg"
+            title="Cancel"
+          >
+            <X size={16} />
+          </button>
+          <button 
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleSave(); }}
+            className="p-1.5 bg-green-500 text-white rounded hover:bg-green-600 shadow-lg"
+            title="Save"
+          >
+            <Check size={16} />
+          </button>
+        </div>
+      </div>
     );
   }
 
