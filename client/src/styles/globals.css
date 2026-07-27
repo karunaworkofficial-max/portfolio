@@ -46,6 +46,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
   background: var(--color-bg);

@@ -71,10 +71,12 @@ const ProjectDetail = () => {
   // Carousel Drilldown State
   const [activeCarouselGroup, setActiveCarouselGroup] = useState(null);
   const sliderRef = useRef(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
-  const [hasDragged, setHasDragged] = useState(false);
+  const dragState = useRef({
+    isDragging: false,
+    startX: 0,
+    scrollLeft: 0,
+    hasDragged: false
+  });
 
   // Switch tab resets carousel group
   useEffect(() => {
@@ -85,25 +87,24 @@ const ProjectDetail = () => {
 
   const startDrag = (e) => {
     if (!sliderRef.current) return;
-    setIsDragging(true);
-    setHasDragged(false);
-    setStartX(e.pageX - sliderRef.current.offsetLeft);
-    setScrollLeft(sliderRef.current.scrollLeft);
+    dragState.current.isDragging = true;
+    dragState.current.hasDragged = false;
+    dragState.current.startX = e.pageX - sliderRef.current.offsetLeft;
+    dragState.current.scrollLeft = sliderRef.current.scrollLeft;
   };
   
   const stopDrag = () => {
-    setIsDragging(false);
-    // Don't reset hasDragged here so click handler can read it
-    setTimeout(() => setHasDragged(false), 50); 
+    dragState.current.isDragging = false;
+    setTimeout(() => { dragState.current.hasDragged = false; }, 50); 
   };
   
   const onDrag = (e) => {
-    if (!isDragging || !sliderRef.current) return;
+    if (!dragState.current.isDragging || !sliderRef.current) return;
     e.preventDefault();
-    setHasDragged(true);
+    dragState.current.hasDragged = true;
     const x = e.pageX - sliderRef.current.offsetLeft;
-    const walk = (x - startX) * 2; 
-    sliderRef.current.scrollLeft = scrollLeft - walk;
+    const walk = (x - dragState.current.startX) * 2; 
+    sliderRef.current.scrollLeft = dragState.current.scrollLeft - walk;
   };
 
   useEffect(() => {
@@ -426,7 +427,7 @@ const ProjectDetail = () => {
                   </div>
                   <div 
                     ref={sliderRef}
-                    className="flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory scrollbar-hide h-[50vh] md:h-[75vh] items-center justify-start cursor-grab active:cursor-grabbing px-6 md:px-24 w-full touch-pan-x"
+                    className="flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory h-[50vh] md:h-[75vh] items-center justify-start cursor-grab active:cursor-grabbing w-full touch-pan-x pb-6 custom-scrollbar"
                     onMouseDown={startDrag}
                     onMouseLeave={stopDrag}
                     onMouseUp={stopDrag}
@@ -435,9 +436,9 @@ const ProjectDetail = () => {
                     {activeCarouselGroup.items.map((img, i) => (
                       <div 
                         key={i} 
-                        className="snap-center shrink-0 w-auto h-full flex-none cursor-zoom-in mx-2 md:mx-4"
+                        className="snap-center shrink-0 w-auto h-full flex-none cursor-zoom-in"
                         onClick={(e) => {
-                          if (hasDragged) {
+                          if (dragState.current.hasDragged) {
                             e.stopPropagation();
                             return;
                           }
