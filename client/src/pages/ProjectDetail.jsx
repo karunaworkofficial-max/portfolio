@@ -67,6 +67,44 @@ const ProjectDetail = () => {
   const [gridCols, setGridCols] = useState(3);
   const [activeGalleryTab, setActiveGalleryTab] = useState('static');
   const [lightboxImages, setLightboxImages] = useState([]);
+  
+  // Carousel Drilldown State
+  const [activeCarouselGroup, setActiveCarouselGroup] = useState(null);
+  const sliderRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [hasDragged, setHasDragged] = useState(false);
+
+  // Switch tab resets carousel group
+  useEffect(() => {
+    if (activeGalleryTab !== 'carousel') {
+      setActiveCarouselGroup(null);
+    }
+  }, [activeGalleryTab]);
+
+  const startDrag = (e) => {
+    if (!sliderRef.current) return;
+    setIsDragging(true);
+    setHasDragged(false);
+    setStartX(e.pageX - sliderRef.current.offsetLeft);
+    setScrollLeft(sliderRef.current.scrollLeft);
+  };
+  
+  const stopDrag = () => {
+    setIsDragging(false);
+    // Don't reset hasDragged here so click handler can read it
+    setTimeout(() => setHasDragged(false), 50); 
+  };
+  
+  const onDrag = (e) => {
+    if (!isDragging || !sliderRef.current) return;
+    e.preventDefault();
+    setHasDragged(true);
+    const x = e.pageX - sliderRef.current.offsetLeft;
+    const walk = (x - startX) * 2; 
+    sliderRef.current.scrollLeft = scrollLeft - walk;
+  };
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -338,38 +376,87 @@ const ProjectDetail = () => {
           )}
 
           {activeGalleryTab === 'carousel' && (
-            <div className={`container mx-auto px-6 md:px-12 lg:px-24 gap-6 md:gap-8 ${gridCols === 1 ? 'columns-1' : gridCols === 2 ? 'columns-1 md:columns-2' : gridCols === 3 ? 'columns-1 sm:columns-2 md:columns-3' : gridCols === 4 ? 'columns-2 md:columns-4' : gridCols === 5 ? 'columns-2 sm:columns-3 md:columns-5' : 'columns-2 sm:columns-3 md:columns-6'}`}>
-              {carouselGroups.length === 0 && (
-                <div className="w-full text-center text-text/50 font-body py-12 col-span-full">
-                  No carousel groups available for this project.
-                </div>
-              )}
-              {carouselGroups.map((group, groupIdx) => {
-                const coverImage = group.items[0];
-                if (!coverImage) return null;
-                return (
-                  <div key={groupIdx} className="mb-6 md:mb-8 break-inside-avoid">
-                    <div className="relative group cursor-pointer" onClick={() => openLightbox(0, group.items)}>
-                      <TiltImage 
-                        img={coverImage} 
-                        idx={coverImage.originalIndex} 
-                        title={group.name} 
-                        onClick={() => openLightbox(0, group.items)} 
-                      />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-custom flex items-center justify-center pointer-events-none">
-                        <div className="text-white font-heading text-xl border border-white/30 px-6 py-2 rounded-full backdrop-blur-sm">
-                          {group.name} ({group.items.length})
+            <>
+              {!activeCarouselGroup ? (
+                <div className={`container mx-auto px-6 md:px-12 lg:px-24 gap-6 md:gap-8 ${gridCols === 1 ? 'columns-1' : gridCols === 2 ? 'columns-1 md:columns-2' : gridCols === 3 ? 'columns-1 sm:columns-2 md:columns-3' : gridCols === 4 ? 'columns-2 md:columns-4' : gridCols === 5 ? 'columns-2 sm:columns-3 md:columns-5' : 'columns-2 sm:columns-3 md:columns-6'}`}>
+                  {carouselGroups.length === 0 && (
+                    <div className="w-full text-center text-text/50 font-body py-12 col-span-full">
+                      No carousel groups available for this project.
+                    </div>
+                  )}
+                  {carouselGroups.map((group, groupIdx) => {
+                    const coverImage = group.items[0];
+                    if (!coverImage) return null;
+                    return (
+                      <div key={groupIdx} className="mb-6 md:mb-8 break-inside-avoid">
+                        <div className="relative group cursor-pointer" onClick={() => setActiveCarouselGroup(group)}>
+                          <TiltImage 
+                            img={coverImage} 
+                            idx={coverImage.originalIndex} 
+                            title={group.name} 
+                            onClick={() => setActiveCarouselGroup(group)} 
+                          />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-custom flex items-center justify-center pointer-events-none">
+                            <div className="text-white font-heading text-xl border border-white/30 px-6 py-2 rounded-full backdrop-blur-sm">
+                              {group.name} ({group.items.length})
+                            </div>
+                          </div>
+                          <div className="absolute top-4 right-4 bg-black/70 backdrop-blur px-3 py-1 rounded-full border border-white/10 flex items-center gap-2 z-10 pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                            <span className="text-[10px] font-accent tracking-widest text-white uppercase">{group.items.length} Photos</span>
+                          </div>
                         </div>
                       </div>
-                      <div className="absolute top-4 right-4 bg-black/70 backdrop-blur px-3 py-1 rounded-full border border-white/10 flex items-center gap-2 z-10 pointer-events-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
-                        <span className="text-[10px] font-accent tracking-widest text-white uppercase">{group.items.length} Photos</span>
-                      </div>
-                    </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="w-full relative py-8 bg-[#050505] min-h-[60vh] flex flex-col items-center justify-center">
+                  <div className="container mx-auto px-6 mb-8 text-center flex flex-col items-center relative">
+                    <button 
+                      onClick={() => setActiveCarouselGroup(null)}
+                      className="absolute left-6 top-1/2 -translate-y-1/2 text-text/50 hover:text-primary transition-colors text-sm font-accent flex items-center gap-2 tracking-widest uppercase border border-text/10 px-4 py-1.5 rounded-full"
+                    >
+                      <span>←</span> Back
+                    </button>
+                    <h4 className="text-xl font-heading text-text bg-surface/50 border border-text/20 px-6 py-2 rounded-full inline-block mt-12 md:mt-0">{activeCarouselGroup.name}</h4>
+                    <p className="text-text/50 font-accent tracking-widest text-xs uppercase mt-4 animate-pulse">
+                      ← Drag to scroll horizontally →
+                    </p>
                   </div>
-                );
-              })}
-            </div>
+                  <div 
+                    ref={sliderRef}
+                    className="flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory scrollbar-hide h-[50vh] md:h-[75vh] items-center justify-start cursor-grab active:cursor-grabbing px-6 md:px-24 w-full touch-pan-x"
+                    onMouseDown={startDrag}
+                    onMouseLeave={stopDrag}
+                    onMouseUp={stopDrag}
+                    onMouseMove={onDrag}
+                  >
+                    {activeCarouselGroup.items.map((img, i) => (
+                      <div 
+                        key={i} 
+                        className="snap-center shrink-0 w-auto h-full flex-none cursor-zoom-in mx-2 md:mx-4"
+                        onClick={(e) => {
+                          if (hasDragged) {
+                            e.stopPropagation();
+                            return;
+                          }
+                          openLightbox(i, activeCarouselGroup.items);
+                        }}
+                      >
+                        <img
+                          src={img.url}
+                          alt={img.alt || `Carousel image ${i + 1}`}
+                          className="h-full w-auto object-contain pointer-events-none select-none shadow-2xl"
+                          draggable="false"
+                          loading="lazy"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
