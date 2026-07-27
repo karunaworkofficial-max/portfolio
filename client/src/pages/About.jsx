@@ -50,11 +50,9 @@ const About = () => {
   const designSkills = profile.skills?.filter(s => s.category === 'design') || [];
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1, transition: { duration: 0.8 } }}
-      exit={{ opacity: 0 }}
-      className="min-h-screen pt-32 pb-20 relative bg-bg"
+    <section
+      id="about"
+      className="py-24 relative bg-bg"
     >
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
         <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
@@ -269,7 +267,7 @@ const About = () => {
           </div>
         </div>
       </div>
-    </motion.div>
+    </section>
   );
 };
 

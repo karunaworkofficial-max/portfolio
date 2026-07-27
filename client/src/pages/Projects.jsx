@@ -64,11 +64,9 @@ const Projects = () => {
   };
 
   return (
-    <motion.div 
-      className="min-h-screen pt-32 pb-20 relative bg-bg"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1, transition: { duration: 0.8 } }}
-      exit={{ opacity: 0 }}
+    <section 
+      id="projects"
+      className="py-24 relative bg-bg"
     >
       {/* Background Glow */}
       <div className="fixed top-[20%] left-[50%] -translate-x-1/2 w-[800px] h-[800px] bg-primary/10 blur-[150px] pointer-events-none mix-blend-screen rounded-full" />
@@ -185,7 +183,7 @@ const Projects = () => {
           </div>
         )}
       </div>
-    </motion.div>
+    </section>
   );
 };
 

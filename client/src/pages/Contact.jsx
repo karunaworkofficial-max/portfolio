@@ -141,11 +141,9 @@ const Contact = () => {
   };
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1, transition: { duration: 0.8 } }}
-      exit={{ opacity: 0 }}
-      className="min-h-screen pt-32 pb-20 relative bg-bg"
+    <section
+      id="contact"
+      className="py-24 relative bg-bg"
     >
       <div className="absolute top-[30%] left-[50%] -translate-x-1/2 w-[900px] h-[900px] bg-primary/5 blur-[150px] pointer-events-none rounded-full" />
       
@@ -380,7 +378,7 @@ const Contact = () => {
           </motion.div>
         </div>
       </div>
-    </motion.div>
+    </section>
   );
 };
 
