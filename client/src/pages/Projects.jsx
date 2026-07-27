@@ -2,10 +2,13 @@ import React, { useState, useEffect, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../utils/api';
 import { ThemeContext } from '../context/ThemeContext';
+import { SiteSettingsContext } from '../context/SiteSettingsContext';
 import ProjectCard from '../components/ui/ProjectCard';
+import EditableText from '../components/admin/EditableText';
 
-const Projects = () => {
+const Projects = ({ isAdmin = false }) => {
   const { theme } = useContext(ThemeContext);
+  const { settings, updateSettingByPath } = useContext(SiteSettingsContext);
   const [projects, setProjects] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -81,16 +84,26 @@ const Projects = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="text-6xl md:text-8xl lg:text-9xl font-heading mb-6 tracking-tight text-white"
         >
-          Work Archive
+          <EditableText 
+            as="span"
+            isAdmin={isAdmin}
+            value={settings?.projects?.heading || 'Work Archive'}
+            onSave={(val) => updateSettingByPath('projects.heading', val)}
+          />
         </motion.h1>
-        <motion.p 
+        <motion.div 
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
           className="text-lg md:text-xl text-white/60 font-body max-w-2xl mx-auto"
         >
-          A curated exhibition of {totalCount} projects exploring visual identities, digital experiences, and creative solutions.
-        </motion.p>
+          <EditableText 
+            as="p"
+            isAdmin={isAdmin}
+            value={settings?.projects?.subheading || 'A curated selection of my latest work.'}
+            onSave={(val) => updateSettingByPath('projects.subheading', val)}
+          />
+        </motion.div>
       </div>
 
       {/* Sticky Filter Bar */}

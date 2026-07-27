@@ -2,8 +2,10 @@ import React, { useContext, useEffect, useState, useRef } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import { ProfileContext } from '../context/ProfileContext';
 import { ThemeContext } from '../context/ThemeContext';
+import { SiteSettingsContext } from '../context/SiteSettingsContext';
 import api from '../utils/api';
 import { fadeInUp, staggerContainer, fadeInLeft, fadeInRight } from '../utils/animations';
+import EditableText from '../components/admin/EditableText';
 
 const SkillBar = ({ skill, index }) => (
   <motion.div variants={fadeInUp} className="mb-6 group">
@@ -23,9 +25,10 @@ const SkillBar = ({ skill, index }) => (
   </motion.div>
 );
 
-const About = () => {
+const About = ({ isAdmin = false }) => {
   const { profile, loading } = useContext(ProfileContext);
   const { theme } = useContext(ThemeContext);
+  const { settings, updateSettingByPath } = useContext(SiteSettingsContext);
   const experienceContainerRef = useRef(null);
   
   const { scrollYProgress } = useScroll({
@@ -78,7 +81,13 @@ const About = () => {
               </div>
 
               <h1 className="text-4xl font-heading text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70 drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] mb-2">{profile.name}</h1>
-              <p className="text-primary font-accent uppercase tracking-widest text-xs mb-6 block drop-shadow-[0_0_5px_var(--color-primary)]">Interactive Designer</p>
+              <EditableText 
+                as="p"
+                isAdmin={isAdmin}
+                value={settings?.about?.role || 'Interactive Designer'}
+                onSave={(val) => updateSettingByPath('about.role', val)}
+                className="text-primary font-accent uppercase tracking-widest text-xs mb-6 block drop-shadow-[0_0_5px_var(--color-primary)]"
+              />
               
               <p className="text-white/60 font-body text-sm leading-relaxed mb-8">
                 {profile.tagline || 'Crafting digital experiences that merge logic with creativity.'}
@@ -92,7 +101,12 @@ const About = () => {
                   rel="noopener noreferrer" 
                   className="relative z-10 w-full py-4 rounded-full bg-white/5 border border-white/10 text-white font-accent uppercase tracking-widest text-xs hover:bg-primary hover:border-primary transition-colors flex justify-center items-center gap-2"
                 >
-                  Download Resume
+                  <EditableText 
+                    as="span"
+                    isAdmin={isAdmin}
+                    value={settings?.about?.resumeBtn || 'Download Resume'}
+                    onSave={(val) => updateSettingByPath('about.resumeBtn', val)}
+                  />
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 </a>
               )}
@@ -110,7 +124,13 @@ const About = () => {
               variants={fadeInUp}
               className="mb-32"
             >
-              <h2 className="text-sm font-accent text-primary uppercase tracking-[0.2em] mb-6">The Journey</h2>
+              <EditableText 
+                as="h2"
+                isAdmin={isAdmin}
+                value={settings?.about?.journeyHeading || 'The Journey'}
+                onSave={(val) => updateSettingByPath('about.journeyHeading', val)}
+                className="text-sm font-accent text-primary uppercase tracking-[0.2em] mb-6"
+              />
               {profile.designPhilosophy && (
                 <div className="mb-12">
                   <h3 className="text-2xl md:text-3xl font-heading text-white leading-relaxed drop-shadow-[0_0_8px_rgba(255,255,255,0.15)] max-w-4xl">
@@ -133,7 +153,13 @@ const About = () => {
               variants={fadeInUp}
               className="mb-32"
             >
-              <h2 className="text-sm font-accent text-primary uppercase tracking-[0.2em] mb-12">Experience</h2>
+              <EditableText 
+                as="h2"
+                isAdmin={isAdmin}
+                value={settings?.about?.experienceHeading || 'Experience'}
+                onSave={(val) => updateSettingByPath('about.experienceHeading', val)}
+                className="text-sm font-accent text-primary uppercase tracking-[0.2em] mb-12"
+              />
               
               <div className="relative border-l border-white/10 ml-4 space-y-16 pb-8" ref={experienceContainerRef}>
                 <motion.div 
@@ -202,7 +228,13 @@ const About = () => {
               viewport={{ once: true }}
               variants={fadeInUp}
             >
-              <h2 className="text-sm font-accent text-primary uppercase tracking-[0.2em] mb-12">Expertise & Tools</h2>
+              <EditableText 
+                as="h2"
+                isAdmin={isAdmin}
+                value={settings?.about?.skillsHeading || 'Creative Arsenal'}
+                onSave={(val) => updateSettingByPath('about.skillsHeading', val)}
+                className="text-sm font-accent text-primary uppercase tracking-[0.2em] mb-12"
+              />
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
                 <div>

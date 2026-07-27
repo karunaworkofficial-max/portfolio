@@ -19,12 +19,23 @@ const siteSettingsSchema = new mongoose.Schema({
     }
   },
   about: {
-    // We can expand this later
-    heading: { type: String, default: 'About Me' }
+    role: { type: String, default: 'Interactive Designer' },
+    resumeBtn: { type: String, default: 'Download Resume' },
+    journeyHeading: { type: String, default: 'The Journey' },
+    experienceHeading: { type: String, default: 'Experience' },
+    skillsHeading: { type: String, default: 'Creative Arsenal' }
+  },
+  projects: {
+    heading: { type: String, default: 'Featured Projects' },
+    subheading: { type: String, default: 'A curated selection of my latest work.' }
   },
   contact: {
-    // We can expand this later
-    heading: { type: String, default: 'Get In Touch' }
+    heading: { type: String, default: 'Get In Touch' },
+    subheading: { type: String, default: "Let's build something amazing together" },
+    formName: { type: String, default: 'Your Name' },
+    formEmail: { type: String, default: 'Email Address' },
+    formMessage: { type: String, default: 'Project Details' },
+    formSubmit: { type: String, default: 'Send Message' }
   }
 }, { timestamps: true });
 

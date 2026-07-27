@@ -2,10 +2,12 @@ import React, { useState, useContext, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ProfileContext } from '../context/ProfileContext';
 import { ThemeContext } from '../context/ThemeContext';
+import { SiteSettingsContext } from '../context/SiteSettingsContext';
 import api from '../utils/api';
 import { fadeInUp, staggerContainer, fadeInLeft, fadeInRight } from '../utils/animations';
 import confetti from 'canvas-confetti';
 import MagneticButton from '../components/ui/MagneticButton';
+import EditableText from '../components/admin/EditableText';
 
 const InputField = ({ label, name, type = 'text', value, onChange, error, placeholder, textarea = false }) => {
   return (
@@ -63,9 +65,10 @@ const SelectField = ({ label, name, value, onChange, options }) => {
   );
 };
 
-const Contact = () => {
+const Contact = ({ isAdmin = false }) => {
   const { profile } = useContext(ProfileContext);
   const { theme } = useContext(ThemeContext);
+  const { settings, updateSettingByPath } = useContext(SiteSettingsContext);
   
   const [formData, setFormData] = useState({
     name: '', email: '', projectType: '', budget: '', timeline: '', message: ''
@@ -165,11 +168,20 @@ const Contact = () => {
         <div className="w-full lg:w-1/2 order-2 lg:order-1 flex flex-col justify-center">
           <motion.div initial="hidden" animate="visible" variants={fadeInLeft} className="mb-12">
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-heading mb-8 leading-[1.05] tracking-tight text-white">
-              Let's create something <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">amazing</span> together.
+              <EditableText 
+                as="span"
+                isAdmin={isAdmin}
+                value={settings?.contact?.heading || "Get In Touch"}
+                onSave={(val) => updateSettingByPath('contact.heading', val)}
+              />
             </h1>
-            <p className="text-xl md:text-2xl font-body text-white/60 leading-relaxed max-w-lg">
-              Have a project in mind? I'd love to hear about it. Drop a message or connect through social media.
-            </p>
+            <EditableText 
+              as="p"
+              isAdmin={isAdmin}
+              value={settings?.contact?.subheading || "Let's build something amazing together"}
+              onSave={(val) => updateSettingByPath('contact.subheading', val)}
+              className="text-xl md:text-2xl font-body text-white/60 leading-relaxed max-w-lg"
+            />
           </motion.div>
 
           <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="space-y-12">
@@ -303,10 +315,25 @@ const Contact = () => {
                 >
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
                     <motion.div variants={fadeInUp}>
-                      <InputField label="Name *" name="name" value={formData.name} onChange={handleChange} error={errors.name} placeholder="Your name" />
+                      <InputField 
+                        label={settings?.contact?.formName || 'Your Name'} 
+                        name="name" 
+                        value={formData.name} 
+                        onChange={handleChange} 
+                        error={errors.name} 
+                        placeholder="Your name" 
+                      />
                     </motion.div>
                     <motion.div variants={fadeInUp}>
-                      <InputField label="Email *" name="email" type="email" value={formData.email} onChange={handleChange} error={errors.email} placeholder="your@email.com" />
+                      <InputField 
+                        label={settings?.contact?.formEmail || 'Email Address'} 
+                        name="email" 
+                        type="email" 
+                        value={formData.email} 
+                        onChange={handleChange} 
+                        error={errors.email} 
+                        placeholder="your@email.com" 
+                      />
                     </motion.div>
                   </div>
                   
@@ -343,7 +370,7 @@ const Contact = () => {
 
                   <motion.div variants={fadeInUp}>
                     <InputField 
-                      label="Message *" 
+                      label={settings?.contact?.formMessage || 'Project Details'} 
                       name="message" 
                       value={formData.message} 
                       onChange={handleChange} 
@@ -375,7 +402,7 @@ const Contact = () => {
                         </>
                       ) : (
                         <>
-                          Send Request
+                          {settings?.contact?.formSubmit || 'Send Message'}
                           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <line x1="22" y1="2" x2="11" y2="13"></line>
                             <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>

@@ -20,8 +20,25 @@ export const SiteSettingsProvider = ({ children }) => {
           links: { aboutTitle: 'More About Me', aboutSubtitle: 'Discover my journey', contactTitle: "Let's Talk", contactSubtitle: 'Start a conversation' },
           marquee: { items: ['CREATIVE DESIGNER', '✦', 'UI / UX', '✦', 'PROBLEM SOLVER', '✦'] }
         },
-        about: { heading: 'About Me' },
-        contact: { heading: 'Get In Touch' }
+        about: {
+          role: 'Interactive Designer',
+          resumeBtn: 'Download Resume',
+          journeyHeading: 'The Journey',
+          experienceHeading: 'Experience',
+          skillsHeading: 'Creative Arsenal'
+        },
+        projects: {
+          heading: 'Featured Projects',
+          subheading: 'A curated selection of my latest work.'
+        },
+        contact: {
+          heading: 'Get In Touch',
+          subheading: "Let's build something amazing together",
+          formName: 'Your Name',
+          formEmail: 'Email Address',
+          formMessage: 'Project Details',
+          formSubmit: 'Send Message'
+        }
       });
     } finally {
       setLoading(false);
