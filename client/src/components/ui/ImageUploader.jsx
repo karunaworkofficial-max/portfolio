@@ -1,11 +1,138 @@
-import React, { useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
+const SortableImageItem = ({ id, img, index, coverIndex, setCoverIndex, updateImage, handleReplaceClick, removeImage }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <motion.div 
+      ref={setNodeRef}
+      style={style}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={`flex flex-col sm:flex-row gap-4 p-4 rounded-custom border transition-colors ${coverIndex === index ? 'border-primary bg-primary/5' : 'border-text/20 bg-surface/50'}`}
+    >
+      <div 
+        {...attributes} 
+        {...listeners} 
+        className="flex items-center justify-center px-2 cursor-grab active:cursor-grabbing text-text/50 hover:text-primary transition-colors"
+        title="Drag to reorder"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>
+      </div>
+      <div className="w-full sm:w-48 h-32 bg-black rounded overflow-hidden relative shrink-0">
+        <img src={img.url} alt="preview" className="w-full h-full object-cover" />
+        {coverIndex === index && (
+          <div className="absolute top-2 left-2 bg-primary text-text text-[10px] font-bold uppercase font-accent tracking-widest px-2 py-1 rounded">
+            Cover
+          </div>
+        )}
+      </div>
+      
+      <div className="flex-1 flex flex-col justify-between">
+        <div>
+          <div className="flex justify-between items-start mb-2">
+            <input 
+              type="text" 
+              placeholder="Alt Text (SEO)" 
+              value={img.alt || ''}
+              onChange={(e) => updateImage(index, 'alt', e.target.value)}
+              className="w-full sm:w-2/3 bg-bg border border-text/20 rounded px-3 py-1.5 text-text font-body text-sm focus:outline-none focus:border-primary"
+            />
+            <div className="flex items-center gap-2">
+              <button 
+                type="button" 
+                onClick={() => handleReplaceClick(index)}
+                className="text-text/70 hover:text-primary p-1 text-xs font-accent tracking-widest uppercase"
+                title="Replace Image"
+              >
+                Replace
+              </button>
+              <button 
+                type="button" 
+                onClick={() => removeImage(index)}
+                className="text-text/70 hover:text-red-500 p-1 font-bold"
+                title="Remove Image"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-6 mt-3">
+            <label className="flex items-center gap-2 cursor-pointer w-fit">
+              <input 
+                type="checkbox" 
+                checked={img.isMockup || false}
+                onChange={(e) => updateImage(index, 'isMockup', e.target.checked)}
+                className="w-4 h-4 rounded border-text/20 bg-bg text-primary focus:ring-primary cursor-pointer"
+              />
+              <span className="text-xs font-accent text-text/70 tracking-widest uppercase">Is Device Mockup</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer w-fit">
+              <input 
+                type="checkbox" 
+                checked={img.isCarousel || false}
+                onChange={(e) => updateImage(index, 'isCarousel', e.target.checked)}
+                className="w-4 h-4 rounded border-text/20 bg-bg text-primary focus:ring-primary cursor-pointer"
+              />
+              <span className="text-xs font-accent text-text/70 tracking-widest uppercase">Is Carousel</span>
+            </label>
+          </div>
+        </div>
+        
+        <div className="mt-4 flex gap-4">
+          <button 
+            type="button"
+            onClick={() => setCoverIndex(index)}
+            className={`text-xs font-accent tracking-widest uppercase flex items-center gap-1 ${coverIndex === index ? 'text-primary' : 'text-text/70 hover:text-text'}`}
+          >
+            {coverIndex === index ? '★ Cover Image' : '☆ Set as Cover'}
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
 
 const ImageUploader = ({ images, setImages, coverIndex, setCoverIndex }) => {
   const fileInputRef = useRef(null);
   const replaceInputRef = useRef(null);
   const [dragActive, setDragActive] = useState(false);
   const [replacingIndex, setReplacingIndex] = useState(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+    
+    if (active.id !== over.id) {
+      const oldIndex = images.findIndex((img) => img.url === active.id);
+      const newIndex = images.findIndex((img) => img.url === over.id);
+      
+      setImages((items) => {
+        return arrayMove(items, oldIndex, newIndex);
+      });
+      
+      // Update cover index if necessary
+      if (coverIndex === oldIndex) {
+        setCoverIndex(newIndex);
+      } else if (coverIndex === newIndex) {
+        setCoverIndex(oldIndex);
+      }
+    }
+  };
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -134,88 +261,33 @@ const ImageUploader = ({ images, setImages, coverIndex, setCoverIndex }) => {
       {images.length > 0 && (
         <div className="mt-8">
           <h4 className="text-sm font-accent uppercase tracking-widest text-text/70 mb-4">Uploaded Images ({images.length})</h4>
-          <div className="space-y-4">
-            {images.map((img, i) => (
-              <motion.div 
-                key={img.url || i}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={`flex flex-col sm:flex-row gap-4 p-4 rounded-custom border transition-colors ${coverIndex === i ? 'border-primary bg-primary/5' : 'border-text/20 bg-surface/50'}`}
-              >
-                <div className="w-full sm:w-48 h-32 bg-black rounded overflow-hidden relative shrink-0">
-                  <img src={img.url} alt="preview" className="w-full h-full object-cover" />
-                  {coverIndex === i && (
-                    <div className="absolute top-2 left-2 bg-primary text-text text-[10px] font-bold uppercase font-accent tracking-widest px-2 py-1 rounded">
-                      Cover
-                    </div>
-                  )}
-                </div>
-                
-                <div className="flex-1 flex flex-col justify-between">
-                  <div>
-                    <div className="flex justify-between items-start mb-2">
-                      <input 
-                        type="text" 
-                        placeholder="Alt Text (SEO)" 
-                        value={img.alt || ''}
-                        onChange={(e) => updateImage(i, 'alt', e.target.value)}
-                        className="w-full sm:w-2/3 bg-bg border border-text/20 rounded px-3 py-1.5 text-text font-body text-sm focus:outline-none focus:border-primary"
-                      />
-                      <div className="flex items-center gap-2">
-                        <button 
-                          type="button" 
-                          onClick={() => handleReplaceClick(i)}
-                          className="text-text/70 hover:text-primary p-1 text-xs font-accent tracking-widest uppercase"
-                          title="Replace Image"
-                        >
-                          Replace
-                        </button>
-                        <button 
-                          type="button" 
-                          onClick={() => removeImage(i)}
-                          className="text-text/70 hover:text-red-500 p-1 font-bold"
-                          title="Remove Image"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-6 mt-3">
-                      <label className="flex items-center gap-2 cursor-pointer w-fit">
-                        <input 
-                          type="checkbox" 
-                          checked={img.isMockup || false}
-                          onChange={(e) => updateImage(i, 'isMockup', e.target.checked)}
-                          className="w-4 h-4 rounded border-text/20 bg-bg text-primary focus:ring-primary cursor-pointer"
-                        />
-                        <span className="text-xs font-accent text-text/70 tracking-widest uppercase">Is Device Mockup</span>
-                      </label>
-                      <label className="flex items-center gap-2 cursor-pointer w-fit">
-                        <input 
-                          type="checkbox" 
-                          checked={img.isCarousel || false}
-                          onChange={(e) => updateImage(i, 'isCarousel', e.target.checked)}
-                          className="w-4 h-4 rounded border-text/20 bg-bg text-primary focus:ring-primary cursor-pointer"
-                        />
-                        <span className="text-xs font-accent text-text/70 tracking-widest uppercase">Is Carousel</span>
-                      </label>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-4 flex gap-4">
-                    <button 
-                      type="button"
-                      onClick={() => setCoverIndex(i)}
-                      className={`text-xs font-accent tracking-widest uppercase flex items-center gap-1 ${coverIndex === i ? 'text-primary' : 'text-text/70 hover:text-text'}`}
-                    >
-                      {coverIndex === i ? '★ Cover Image' : '☆ Set as Cover'}
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          
+          <DndContext 
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext 
+              items={images.map(img => img.url)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-4">
+                {images.map((img, i) => (
+                  <SortableImageItem 
+                    key={img.url}
+                    id={img.url}
+                    img={img}
+                    index={i}
+                    coverIndex={coverIndex}
+                    setCoverIndex={setCoverIndex}
+                    updateImage={updateImage}
+                    handleReplaceClick={handleReplaceClick}
+                    removeImage={removeImage}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
         </div>
       )}
     </div>
