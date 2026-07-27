@@ -66,6 +66,7 @@ const ProjectDetail = () => {
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [gridCols, setGridCols] = useState(3);
   const [activeGalleryTab, setActiveGalleryTab] = useState('static');
+  const [lightboxImages, setLightboxImages] = useState([]);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -110,14 +111,6 @@ const ProjectDetail = () => {
     }
     groupMap[groupName].push(img);
   });
-  
-  const [lightboxImages, setLightboxImages] = useState([]);
-
-  useEffect(() => {
-    if (project?.images) {
-      setLightboxImages(project.images);
-    }
-  }, [project]);
 
   const openLightbox = (index, images = allImages) => {
     setLightboxImages(images);
