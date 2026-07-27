@@ -34,11 +34,11 @@ const Home = () => {
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
-        const [featuredRes, statsRes] = await Promise.all([
-          api.get('/projects/featured'),
+        const [projectsRes, statsRes] = await Promise.all([
+          api.get('/projects?limit=100'),
           api.get('/projects/stats')
         ]);
-        setProjects(featuredRes.data.data.slice(0, 2)); 
+        setProjects(projectsRes.data.data); 
         if (statsRes.data.success) {
           setProjectStats(statsRes.data.data);
         }
