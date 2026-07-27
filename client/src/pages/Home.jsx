@@ -2,8 +2,10 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
+import { AuthContext } from '../context/AuthContext';
 import { ThemeContext } from '../context/ThemeContext';
 import { ProfileContext } from '../context/ProfileContext';
+import { ContentContext } from '../context/ContentContext';
 import api from '../utils/api';
 import MagneticButton from '../components/ui/MagneticButton';
 
@@ -26,8 +28,10 @@ const containerVariants = {
 };
 
 const Home = () => {
+  const { user } = useContext(AuthContext);
   const { theme } = useContext(ThemeContext);
   const { profile } = useContext(ProfileContext);
+  const { siteContent } = useContext(ContentContext);
   const [projects, setProjects] = useState([]);
   const [projectStats, setProjectStats] = useState({ totalProjects: 0, totalClients: 0 });
   const navigate = useNavigate();
@@ -112,7 +116,9 @@ const Home = () => {
             className="md:col-span-3 md:row-span-2 rounded-[2.5rem] bg-white/5 backdrop-blur-2xl border border-white/10 p-8 md:p-12 flex flex-col justify-center relative overflow-hidden group shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:border-primary/50 hover:bg-white/10 transition-all duration-500 hover:shadow-[0_0_25px_rgba(170,59,255,0.15),inset_0_0_15px_rgba(170,59,255,0.15)]"
           >
             <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-            <span className="text-primary font-accent uppercase tracking-[0.2em] text-sm mb-4 block">Welcome to my universe</span>
+            <span className="text-primary font-accent uppercase tracking-[0.2em] text-sm mb-4 block">
+              {siteContent?.home?.heroTitle || 'Welcome to my universe'}
+            </span>
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-heading leading-[1.1] mb-6 text-white">
               Hello, I'm <br/>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-400 to-secondary bg-300% animate-gradient-shift">
@@ -250,18 +256,15 @@ const Home = () => {
           <div className="flex w-[200%] animate-marquee">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="flex-none mx-8 flex items-center gap-8">
-                <span className="text-4xl md:text-6xl font-heading text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent font-bold uppercase tracking-widest whitespace-nowrap opacity-80">
-                  CREATIVE DESIGNER
-                </span>
-                <span className="text-4xl text-white/20">✦</span>
-                <span className="text-4xl md:text-6xl font-heading text-transparent bg-clip-text bg-gradient-to-r from-secondary to-pink-500 font-bold uppercase tracking-widest whitespace-nowrap opacity-80">
-                  UI / UX
-                </span>
-                <span className="text-4xl text-white/20">✦</span>
-                <span className="text-4xl md:text-6xl font-heading text-white/80 font-bold uppercase tracking-widest whitespace-nowrap text-stroke-primary">
-                  PROBLEM SOLVER
-                </span>
-                <span className="text-4xl text-white/20">✦</span>
+                {(siteContent?.home?.marqueeText || 'CREATIVE DESIGNER ✦ UI / UX ✦ PROBLEM SOLVER').split('✦').map((text, idx, arr) => (
+                  <React.Fragment key={idx}>
+                    <span className={`text-4xl md:text-6xl font-heading font-bold uppercase tracking-widest whitespace-nowrap opacity-80 ${idx % 3 === 0 ? 'text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent' : idx % 3 === 1 ? 'text-transparent bg-clip-text bg-gradient-to-r from-secondary to-pink-500' : 'text-white/80 text-stroke-primary'}`}>
+                      {text.trim()}
+                    </span>
+                    {idx < arr.length - 1 && <span className="text-4xl text-white/20">✦</span>}
+                    {idx === arr.length - 1 && <span className="text-4xl text-white/20">✦</span>}
+                  </React.Fragment>
+                ))}
               </div>
             ))}
           </div>
