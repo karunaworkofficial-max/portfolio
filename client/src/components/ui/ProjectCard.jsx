@@ -20,13 +20,29 @@ const ProjectCard = ({ project, layoutMode = 'grid', index }) => {
       className={`group relative overflow-hidden rounded-[2rem] cursor-pointer border border-white/10 bg-surface/30 break-inside-avoid inline-block w-full mb-6 shadow-xl`}
       onClick={() => navigate(`/projects/${project.slug}`)}
     >
-      {/* Image */}
+      {/* Image / Video */}
       <div className="w-full relative">
-        <img 
-          src={textureUrl} 
-          alt={project.title}
-          className="w-full h-auto block transition-transform duration-700 ease-[cubic-bezier(0.33,1,0.68,1)] group-hover:scale-105"
-        />
+        {project.videoUrl ? (
+          <video 
+            src={project.videoUrl} 
+            loop 
+            muted 
+            playsInline
+            onMouseEnter={(e) => e.target.play()}
+            onMouseLeave={(e) => {
+              e.target.pause();
+              e.target.currentTime = 0;
+            }}
+            poster={textureUrl}
+            className="w-full h-auto block transition-transform duration-700 ease-[cubic-bezier(0.33,1,0.68,1)] group-hover:scale-105 object-cover"
+          />
+        ) : (
+          <img 
+            src={textureUrl} 
+            alt={project.title}
+            className="w-full h-auto block transition-transform duration-700 ease-[cubic-bezier(0.33,1,0.68,1)] group-hover:scale-105"
+          />
+        )}
       </div>
 
       {/* Overlay Gradient */}

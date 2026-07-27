@@ -448,6 +448,7 @@ const ProjectDetail = () => {
                         <img
                           src={img.url}
                           alt={img.alt || `Carousel image ${i + 1}`}
+                          loading="lazy"
                           className="h-full w-auto object-contain pointer-events-none select-none shadow-2xl"
                           draggable="false"
                           loading="lazy"

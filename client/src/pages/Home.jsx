@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { ThemeContext } from '../context/ThemeContext';
 import { ProfileContext } from '../context/ProfileContext';
 import api from '../utils/api';
+import MagneticButton from '../components/ui/MagneticButton';
 
 const itemVariants = {
   hidden: { opacity: 0, y: 40, scale: 0.95 },
@@ -167,7 +168,7 @@ const Home = () => {
           </motion.div>
 
           {/* 6. About Link (col: 1, row: 1) */}
-          <motion.div 
+          <MagneticButton 
             variants={itemVariants}
             onClick={() => navigate('/about')}
             className="md:col-span-1 rounded-[2.5rem] bg-white/5 backdrop-blur-2xl border border-white/10 p-6 md:p-8 cursor-pointer flex flex-col justify-between group shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:border-primary/50 hover:bg-white/10 transition-all duration-500 overflow-hidden relative hover:shadow-[0_0_25px_rgba(170,59,255,0.15),inset_0_0_15px_rgba(170,59,255,0.15)]"
@@ -175,14 +176,14 @@ const Home = () => {
             <div className="w-10 h-10 rounded-full bg-primary/20 text-primary flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors self-end absolute top-6 right-6">
               <svg className="w-5 h-5 -rotate-45 group-hover:rotate-0 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
             </div>
-            <div className="mt-auto">
+            <div className="mt-auto text-left">
               <h3 className="text-2xl font-heading text-white mb-1">More About Me</h3>
               <p className="text-white/50 font-body text-sm">Discover my journey</p>
             </div>
-          </motion.div>
+          </MagneticButton>
 
           {/* 7. Contact Link (col: 1, row: 1) */}
-          <motion.div 
+          <MagneticButton 
             variants={itemVariants}
             onClick={() => navigate('/contact')}
             className="md:col-span-1 rounded-[2.5rem] bg-gradient-to-br from-primary to-secondary p-6 md:p-8 cursor-pointer flex flex-col justify-between group shadow-[0_8px_30px_rgba(170,59,255,0.3)] hover:shadow-[0_15px_40px_rgba(170,59,255,0.5)] transition-all overflow-hidden relative"
@@ -191,11 +192,11 @@ const Home = () => {
             <div className="w-10 h-10 rounded-full bg-white/20 text-white flex items-center justify-center mb-4 self-end absolute top-6 right-6 backdrop-blur-sm">
               <svg className="w-5 h-5 -rotate-45 group-hover:rotate-0 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
             </div>
-            <div className="mt-auto relative z-10">
+            <div className="mt-auto relative z-10 text-left">
               <h3 className="text-2xl font-heading text-white mb-1">Let's Talk</h3>
               <p className="text-white/70 font-body text-sm">Start a conversation</p>
             </div>
-          </motion.div>
+          </MagneticButton>
 
         </motion.div>
 
@@ -237,6 +238,34 @@ const Home = () => {
             </div>
           </motion.div>
         )}
+
+        {/* Scrolling Text Marquee */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="mt-24 w-full overflow-hidden relative border-y border-white/5 bg-primary/5 py-4 z-10 -mx-[50vw] right-[50%] left-[50%] w-[100vw] rotate-[-2deg]"
+          style={{ width: '100vw', marginLeft: '-50vw', marginRight: '-50vw' }}
+        >
+          <div className="flex w-[200%] animate-marquee">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="flex-none mx-8 flex items-center gap-8">
+                <span className="text-4xl md:text-6xl font-heading text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent font-bold uppercase tracking-widest whitespace-nowrap opacity-80">
+                  CREATIVE DESIGNER
+                </span>
+                <span className="text-4xl text-white/20">✦</span>
+                <span className="text-4xl md:text-6xl font-heading text-transparent bg-clip-text bg-gradient-to-r from-secondary to-pink-500 font-bold uppercase tracking-widest whitespace-nowrap opacity-80">
+                  UI / UX
+                </span>
+                <span className="text-4xl text-white/20">✦</span>
+                <span className="text-4xl md:text-6xl font-heading text-white/80 font-bold uppercase tracking-widest whitespace-nowrap text-stroke-primary">
+                  PROBLEM SOLVER
+                </span>
+                <span className="text-4xl text-white/20">✦</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
 
         {/* Scrolling Projects Marquee */}
         {projects && projects.length > 0 && (

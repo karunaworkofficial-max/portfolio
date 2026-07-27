@@ -4,6 +4,8 @@ import { ProfileContext } from '../context/ProfileContext';
 import { ThemeContext } from '../context/ThemeContext';
 import api from '../utils/api';
 import { fadeInUp, staggerContainer, fadeInLeft, fadeInRight } from '../utils/animations';
+import confetti from 'canvas-confetti';
+import MagneticButton from '../components/ui/MagneticButton';
 
 const InputField = ({ label, name, type = 'text', value, onChange, error, placeholder, textarea = false }) => {
   return (
@@ -132,6 +134,14 @@ const Contact = () => {
     try {
       await api.post('/messages', payload);
       setStatus('success');
+      
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#6C63FF', '#FF6584', '#00D4AA']
+      });
+
       setFormData({ name: '', email: '', projectType: '', budget: '', timeline: '', message: '' });
       setTimeout(() => setStatus('idle'), 5000);
     } catch (err) {
