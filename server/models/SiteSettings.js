@@ -4,14 +4,14 @@ const siteSettingsSchema = new mongoose.Schema({
   home: {
     hero: {
       subtitle: { type: String, default: 'Welcome to my universe' },
-      headingLine1: { type: String, default: 'Hello, I\\'m' },
+      headingLine1: { type: String, default: "Hello, I'm" },
       description: { type: String, default: 'Crafting digital experiences that merge logic with creativity.' },
       availability: { type: String, default: 'Available for work' }
     },
     links: {
       aboutTitle: { type: String, default: 'More About Me' },
       aboutSubtitle: { type: String, default: 'Discover my journey' },
-      contactTitle: { type: String, default: 'Let\\'s Talk' },
+      contactTitle: { type: String, default: "Let's Talk" },
       contactSubtitle: { type: String, default: 'Start a conversation' }
     },
     marquee: {
