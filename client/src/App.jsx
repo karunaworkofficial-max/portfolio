@@ -6,7 +6,7 @@ import Lenis from 'lenis';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider, ThemeContext } from './context/ThemeContext';
 import { ProfileProvider } from './context/ProfileContext';
-import { ContentProvider } from './context/ContentContext';
+import { SiteSettingsProvider } from './context/SiteSettingsContext';
 
 import PublicLayout from './components/layout/PublicLayout';
 import AdminLayout from './components/admin/AdminLayout';
@@ -34,7 +34,7 @@ import AddProject from './pages/admin/AddProject';
 import EditProject from './pages/admin/EditProject';
 import ProfileSettings from './pages/admin/ProfileSettings';
 import Messages from './pages/admin/Messages';
-import ManageContent from './pages/admin/ManageContent';
+import AdminSiteSettings from './pages/admin/AdminSiteSettings';
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -89,8 +89,8 @@ const AnimatedRoutes = () => {
           <Route path="projects/add" element={<AddProject />} />
           <Route path="projects/edit/:id" element={<EditProject />} />
           <Route path="profile" element={<ProfileSettings />} />
-          <Route path="content" element={<ManageContent />} />
           <Route path="messages" element={<Messages />} />
+          <Route path="site-settings" element={<AdminSiteSettings />} />
         </Route>
       </Routes>
     </AnimatePresence>
@@ -103,12 +103,12 @@ function App() {
       <AuthProvider>
         <ThemeProvider>
           <ProfileProvider>
-            <ContentProvider>
+            <SiteSettingsProvider>
               {/* ToastProvider will go here */}
               <PremiumBackground />
               <GlobalCursorWrapper />
               <AnimatedRoutes />
-            </ContentProvider>
+            </SiteSettingsProvider>
           </ProfileProvider>
         </ThemeProvider>
       </AuthProvider>

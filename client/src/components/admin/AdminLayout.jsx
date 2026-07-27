@@ -11,8 +11,7 @@ import {
   LogOut, 
   Menu,
   X,
-  Globe,
-  FileText
+  Globe
 } from 'lucide-react';
 
 const AdminLayout = () => {
@@ -30,13 +29,12 @@ const AdminLayout = () => {
   if (!isAuthenticated) {
     return <Navigate to="/admin/login" replace />;
   }
-
   const navItems = [
     { name: 'Dashboard', path: '/admin', icon: LayoutDashboard, exact: true },
     { name: 'Projects', path: '/admin/projects', icon: FolderKanban },
     { name: 'Profile Settings', path: '/admin/profile', icon: UserCircle },
-    { name: 'Site Content', path: '/admin/content', icon: FileText },
     { name: 'Messages', path: '/admin/messages', icon: MessageSquare },
+    { name: 'Site Settings', path: '/admin/site-settings', icon: Palette },
   ];
 
   return (

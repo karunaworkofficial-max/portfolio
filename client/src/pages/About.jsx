@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState, useRef } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import { ProfileContext } from '../context/ProfileContext';
 import { ThemeContext } from '../context/ThemeContext';
-import { ContentContext } from '../context/ContentContext';
 import api from '../utils/api';
 import { fadeInUp, staggerContainer, fadeInLeft, fadeInRight } from '../utils/animations';
 
@@ -27,7 +26,6 @@ const SkillBar = ({ skill, index }) => (
 const About = () => {
   const { profile, loading } = useContext(ProfileContext);
   const { theme } = useContext(ThemeContext);
-  const { siteContent } = useContext(ContentContext);
   const experienceContainerRef = useRef(null);
   
   const { scrollYProgress } = useScroll({
@@ -80,9 +78,7 @@ const About = () => {
               </div>
 
               <h1 className="text-4xl font-heading text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70 drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] mb-2">{profile.name}</h1>
-              <p className="text-primary font-accent uppercase tracking-widest text-xs mb-6 block drop-shadow-[0_0_5px_var(--color-primary)]">
-                {siteContent?.about?.titleRole || 'Interactive Designer'}
-              </p>
+              <p className="text-primary font-accent uppercase tracking-widest text-xs mb-6 block drop-shadow-[0_0_5px_var(--color-primary)]">Interactive Designer</p>
               
               <p className="text-white/60 font-body text-sm leading-relaxed mb-8">
                 {profile.tagline || 'Crafting digital experiences that merge logic with creativity.'}
@@ -114,9 +110,7 @@ const About = () => {
               variants={fadeInUp}
               className="mb-32"
             >
-              <h2 className="text-sm font-accent text-primary uppercase tracking-[0.2em] mb-6">
-                {siteContent?.about?.journeyHeading || 'The Journey'}
-              </h2>
+              <h2 className="text-sm font-accent text-primary uppercase tracking-[0.2em] mb-6">The Journey</h2>
               {profile.designPhilosophy && (
                 <div className="mb-12">
                   <h3 className="text-2xl md:text-3xl font-heading text-white leading-relaxed drop-shadow-[0_0_8px_rgba(255,255,255,0.15)] max-w-4xl">
@@ -126,7 +120,6 @@ const About = () => {
               )}
               
               <div className="prose prose-invert prose-lg max-w-none font-body text-white/60 leading-[2] tracking-wide">
-                <p className="mb-6">{siteContent?.about?.journeyText || 'Hi, I am Karuna. I craft digital experiences that merge logic with creativity.'}</p>
                 {profile.bio?.split('\n').map((paragraph, idx) => (
                   <p key={idx} className="mb-6 last:mb-0">{paragraph}</p>
                 ))}

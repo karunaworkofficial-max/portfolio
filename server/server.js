@@ -13,7 +13,7 @@ const profileRoutes = require('./routes/profileRoutes');
 const themeRoutes = require('./routes/themeRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
-const contentRoutes = require('./routes/contentRoutes');
+const settingsRoutes = require('./routes/settingsRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -40,7 +40,7 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/theme', themeRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/upload', uploadRoutes);
-app.use('/api/content', contentRoutes);
+app.use('/api/settings', settingsRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

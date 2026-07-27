@@ -2,12 +2,12 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
-import { AuthContext } from '../context/AuthContext';
 import { ThemeContext } from '../context/ThemeContext';
 import { ProfileContext } from '../context/ProfileContext';
-import { ContentContext } from '../context/ContentContext';
+import { SiteSettingsContext } from '../context/SiteSettingsContext';
 import api from '../utils/api';
 import MagneticButton from '../components/ui/MagneticButton';
+import EditableText from '../components/admin/EditableText';
 
 const itemVariants = {
   hidden: { opacity: 0, y: 40, scale: 0.95 },
@@ -27,11 +27,10 @@ const containerVariants = {
   }
 };
 
-const Home = () => {
-  const { user } = useContext(AuthContext);
+const Home = ({ isAdmin = false }) => {
   const { theme } = useContext(ThemeContext);
   const { profile } = useContext(ProfileContext);
-  const { siteContent } = useContext(ContentContext);
+  const { settings, updateSettingByPath } = useContext(SiteSettingsContext);
   const [projects, setProjects] = useState([]);
   const [projectStats, setProjectStats] = useState({ totalProjects: 0, totalClients: 0 });
   const navigate = useNavigate();
@@ -116,18 +115,32 @@ const Home = () => {
             className="md:col-span-3 md:row-span-2 rounded-[2.5rem] bg-white/5 backdrop-blur-2xl border border-white/10 p-8 md:p-12 flex flex-col justify-center relative overflow-hidden group shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:border-primary/50 hover:bg-white/10 transition-all duration-500 hover:shadow-[0_0_25px_rgba(170,59,255,0.15),inset_0_0_15px_rgba(170,59,255,0.15)]"
           >
             <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-            <span className="text-primary font-accent uppercase tracking-[0.2em] text-sm mb-4 block">
-              {siteContent?.home?.heroTitle || 'Welcome to my universe'}
-            </span>
+            <EditableText 
+              as="span"
+              isAdmin={isAdmin}
+              value={settings?.home?.hero?.subtitle || 'Welcome to my universe'}
+              onSave={(val) => updateSettingByPath('home.hero.subtitle', val)}
+              className="text-primary font-accent uppercase tracking-[0.2em] text-sm mb-4 block"
+            />
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-heading leading-[1.1] mb-6 text-white">
-              Hello, I'm <br/>
+              <EditableText 
+                as="span"
+                isAdmin={isAdmin}
+                value={settings?.home?.hero?.headingLine1 || "Hello, I'm"}
+                onSave={(val) => updateSettingByPath('home.hero.headingLine1', val)}
+              /> <br/>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-400 to-secondary bg-300% animate-gradient-shift">
                 {profile?.name?.split(' ')[0] || 'Karuna'}
               </span>
             </h1>
-            <p className="text-white/60 font-body text-lg md:text-xl leading-relaxed max-w-md">
-              {profile?.tagline || 'Crafting digital experiences that merge logic with creativity.'}
-            </p>
+            <EditableText 
+              as="p"
+              multiline
+              isAdmin={isAdmin}
+              value={settings?.home?.hero?.description || profile?.tagline || 'Crafting digital experiences that merge logic with creativity.'}
+              onSave={(val) => updateSettingByPath('home.hero.description', val)}
+              className="text-white/60 font-body text-lg md:text-xl leading-relaxed max-w-md"
+            />
           </motion.div>
 
           {/* 2. Profile Photo (col: 1, row: 2) */}
@@ -144,7 +157,12 @@ const Home = () => {
             <div className="absolute bottom-6 left-6 right-6">
               <div className="flex items-center gap-2 text-white/90 font-accent text-xs uppercase tracking-widest bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full w-max border border-white/10">
                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                Available for work
+                <EditableText 
+                  as="span"
+                  isAdmin={isAdmin}
+                  value={settings?.home?.hero?.availability || 'Available for work'}
+                  onSave={(val) => updateSettingByPath('home.hero.availability', val)}
+                />
               </div>
             </div>
           </motion.div>
@@ -183,8 +201,20 @@ const Home = () => {
               <svg className="w-5 h-5 -rotate-45 group-hover:rotate-0 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
             </div>
             <div className="mt-auto text-left">
-              <h3 className="text-2xl font-heading text-white mb-1">More About Me</h3>
-              <p className="text-white/50 font-body text-sm">Discover my journey</p>
+              <EditableText
+                as="h3"
+                isAdmin={isAdmin}
+                value={settings?.home?.links?.aboutTitle || 'More About Me'}
+                onSave={(val) => updateSettingByPath('home.links.aboutTitle', val)}
+                className="text-2xl font-heading text-white mb-1"
+              />
+              <EditableText
+                as="p"
+                isAdmin={isAdmin}
+                value={settings?.home?.links?.aboutSubtitle || 'Discover my journey'}
+                onSave={(val) => updateSettingByPath('home.links.aboutSubtitle', val)}
+                className="text-white/50 font-body text-sm"
+              />
             </div>
           </MagneticButton>
 
@@ -199,8 +229,20 @@ const Home = () => {
               <svg className="w-5 h-5 -rotate-45 group-hover:rotate-0 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
             </div>
             <div className="mt-auto relative z-10 text-left">
-              <h3 className="text-2xl font-heading text-white mb-1">Let's Talk</h3>
-              <p className="text-white/70 font-body text-sm">Start a conversation</p>
+              <EditableText
+                as="h3"
+                isAdmin={isAdmin}
+                value={settings?.home?.links?.contactTitle || "Let's Talk"}
+                onSave={(val) => updateSettingByPath('home.links.contactTitle', val)}
+                className="text-2xl font-heading text-white mb-1"
+              />
+              <EditableText
+                as="p"
+                isAdmin={isAdmin}
+                value={settings?.home?.links?.contactSubtitle || 'Start a conversation'}
+                onSave={(val) => updateSettingByPath('home.links.contactSubtitle', val)}
+                className="text-white/70 font-body text-sm"
+              />
             </div>
           </MagneticButton>
 
@@ -256,15 +298,22 @@ const Home = () => {
           <div className="flex w-[200%] animate-marquee">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="flex-none mx-8 flex items-center gap-8">
-                {(siteContent?.home?.marqueeText || 'CREATIVE DESIGNER ✦ UI / UX ✦ PROBLEM SOLVER').split('✦').map((text, idx, arr) => (
-                  <React.Fragment key={idx}>
-                    <span className={`text-4xl md:text-6xl font-heading font-bold uppercase tracking-widest whitespace-nowrap opacity-80 ${idx % 3 === 0 ? 'text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent' : idx % 3 === 1 ? 'text-transparent bg-clip-text bg-gradient-to-r from-secondary to-pink-500' : 'text-white/80 text-stroke-primary'}`}>
-                      {text.trim()}
-                    </span>
-                    {idx < arr.length - 1 && <span className="text-4xl text-white/20">✦</span>}
-                    {idx === arr.length - 1 && <span className="text-4xl text-white/20">✦</span>}
-                  </React.Fragment>
-                ))}
+                {(settings?.home?.marquee?.items || ['CREATIVE DESIGNER', '✦', 'UI / UX', '✦', 'PROBLEM SOLVER', '✦']).map((item, idx) => {
+                  if (item === '✦') {
+                    return <span key={idx} className="text-4xl text-white/20">✦</span>;
+                  }
+                  // We'll alternate colors slightly based on index
+                  const isPrimary = idx % 4 === 0;
+                  const isSecondary = idx % 4 === 2;
+                  
+                  if (isPrimary) {
+                    return <span key={idx} className="text-4xl md:text-6xl font-heading text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent font-bold uppercase tracking-widest whitespace-nowrap opacity-80">{item}</span>;
+                  } else if (isSecondary) {
+                    return <span key={idx} className="text-4xl md:text-6xl font-heading text-transparent bg-clip-text bg-gradient-to-r from-secondary to-pink-500 font-bold uppercase tracking-widest whitespace-nowrap opacity-80">{item}</span>;
+                  } else {
+                    return <span key={idx} className="text-4xl md:text-6xl font-heading text-white/80 font-bold uppercase tracking-widest whitespace-nowrap text-stroke-primary">{item}</span>;
+                  }
+                })}
               </div>
             ))}
           </div>
