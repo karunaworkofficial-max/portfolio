@@ -111,7 +111,8 @@ const ProjectDetail = () => {
     const fetchProject = async () => {
       try {
         setLoading(true);
-        const { data } = await api.get(`/projects/${slug}`);
+        const isAdmin = !!localStorage.getItem('token');
+        const { data } = await api.get(`/projects/${slug}${isAdmin ? '?admin=true' : ''}`);
         setProject(data.data);
       } catch (err) {
         console.error('Error fetching project detail', err);
@@ -463,10 +464,102 @@ const ProjectDetail = () => {
         </div>
       </div>
 
+      {/* Engagement Section */}
+      <div className="max-w-4xl mx-auto px-6 py-24 border-t border-white/10 mt-12">
+        <div className="flex flex-wrap gap-4 items-center justify-center mb-16">
+          <button 
+            onClick={async () => {
+              if (localStorage.getItem(`liked_project_${project._id}`)) return;
+              try {
+                const { data } = await api.post(`/projects/${project._id}/like`);
+                setProject(p => ({ ...p, likes: data.data }));
+                localStorage.setItem(`liked_project_${project._id}`, 'true');
+              } catch(e) {}
+            }}
+            className={`flex items-center gap-2 px-6 py-3 rounded-full border transition-all ${localStorage.getItem(`liked_project_${project._id}`) ? 'bg-primary/20 border-primary text-primary' : 'border-white/20 text-white/70 hover:border-white/50 hover:text-white'}`}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill={localStorage.getItem(`liked_project_${project._id}`) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <span className="font-accent tracking-widest text-sm">{project.likes || 0} Likes</span>
+          </button>
+
+          <button 
+            onClick={async () => {
+              try {
+                await api.post(`/projects/${project._id}/share`);
+                setProject(p => ({ ...p, shares: (p.shares || 0) + 1 }));
+                if (navigator.share) {
+                  navigator.share({ title: project.title, url: window.location.href });
+                } else {
+                  navigator.clipboard.writeText(window.location.href);
+                  alert('Link copied to clipboard!');
+                }
+              } catch(e) {}
+            }}
+            className="flex items-center gap-2 px-6 py-3 rounded-full border border-white/20 text-white/70 hover:border-white/50 hover:text-white transition-all"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+            <span className="font-accent tracking-widest text-sm">{project.shares || 0} Shares</span>
+          </button>
+          
+          <div className="flex items-center gap-2 px-6 py-3 rounded-full border border-white/10 bg-white/5 text-white/50">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <span className="font-accent tracking-widest text-sm">{project.views || 0} Views</span>
+          </div>
+        </div>
+
+        {/* Comments Section */}
+        <div>
+          <h3 className="text-2xl font-heading mb-8 text-white">Discussion ({project.comments?.length || 0})</h3>
+          
+          <form 
+            onSubmit={async (e) => {
+              e.preventDefault();
+              const name = e.target.name.value;
+              const text = e.target.text.value;
+              if(!name || !text) return;
+              try {
+                const { data } = await api.post(`/projects/${project._id}/comment`, { name, text });
+                setProject(p => ({ ...p, comments: data.data }));
+                e.target.reset();
+              } catch(err) {
+                console.error(err);
+              }
+            }}
+            className="mb-12 bg-surface/30 p-6 rounded-2xl border border-white/5"
+          >
+            <div className="mb-4">
+              <input type="text" name="name" placeholder="Your Name" required className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-primary focus:outline-none transition-colors" />
+            </div>
+            <div className="mb-4">
+              <textarea name="text" placeholder="Add a comment..." required rows="3" className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-primary focus:outline-none transition-colors resize-none"></textarea>
+            </div>
+            <button type="submit" className="px-8 py-3 bg-white text-black font-accent tracking-widest text-xs uppercase rounded-full hover:bg-primary hover:text-white transition-colors">Post Comment</button>
+          </form>
+
+          <div className="space-y-6">
+            {project.comments?.map((c, i) => (
+              <div key={i} className="pb-6 border-b border-white/5 last:border-0">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-accent text-xs">
+                    {c.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <h4 className="text-white font-accent text-sm">{c.name}</h4>
+                    <span className="text-white/40 text-xs">{new Date(c.createdAt).toLocaleDateString()}</span>
+                  </div>
+                </div>
+                <p className="text-white/80 font-body text-sm pl-11">{c.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <Lightbox 
         images={lightboxImages} 
         currentIndex={lightboxIndex} 
         isOpen={lightboxOpen}
+        projectId={project._id}
         onClose={() => setLightboxOpen(false)}
         onNext={nextLightboxImage}
         onPrev={prevLightboxImage}

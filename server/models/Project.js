@@ -41,7 +41,17 @@ const projectSchema = new mongoose.Schema({
     height: Number,
     isMockup: Boolean,
     isCarousel: Boolean,
-    carouselGroupName: String
+    carouselGroupName: String,
+    views: { type: Number, default: 0 },
+    likes: { type: Number, default: 0 },
+    shares: { type: Number, default: 0 },
+    comments: [{
+      name: String,
+      text: String,
+      createdAt: { type: Date, default: Date.now }
+    }],
+    viewedBy: [String],
+    likedBy: [String]
   }],
   thumbnail: {
     url: String,
@@ -69,6 +79,15 @@ const projectSchema = new mongoose.Schema({
   is3DShowcase: { type: Boolean, default: false },
   displayAsCarousel: { type: Boolean, default: false },
   views: { type: Number, default: 0 },
+  likes: { type: Number, default: 0 },
+  shares: { type: Number, default: 0 },
+  comments: [{
+    name: String,
+    text: String,
+    createdAt: { type: Date, default: Date.now }
+  }],
+  viewedBy: [String],
+  likedBy: [String],
   accentColor: String
 }, { timestamps: true });
 

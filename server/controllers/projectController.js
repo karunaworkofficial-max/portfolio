@@ -60,12 +60,20 @@ exports.get3DShowcase = asyncHandler(async (req, res) => {
 });
 
 exports.getProjectBySlug = asyncHandler(async (req, res) => {
-  const project = await Project.findOneAndUpdate(
-    { slug: req.params.slug, isVisible: true },
-    { $inc: { views: 1 } },
-    { new: true }
-  );
+  const { admin } = req.query;
+  const ip = req.ip || req.connection.remoteAddress;
+
+  let project = await Project.findOne({ slug: req.params.slug, isVisible: true });
+  
   if (!project) { res.status(404); throw new Error('Project not found'); }
+
+  // Increment views if not admin and IP hasn't viewed yet
+  if (admin !== 'true' && !project.viewedBy.includes(ip)) {
+    project.views += 1;
+    project.viewedBy.push(ip);
+    await project.save();
+  }
+
   res.json({ success: true, data: project, message: 'Project fetched' });
 });
 
@@ -152,4 +160,103 @@ exports.reorderProjects = asyncHandler(async (req, res) => {
     await Project.findByIdAndUpdate(item.id, { order: item.order });
   }
   res.json({ success: true, data: {}, message: 'Projects reordered' });
+});
+
+// --- Engagement Features (Projects) ---
+
+exports.likeProject = asyncHandler(async (req, res) => {
+  const project = await Project.findById(req.params.id);
+  if (!project) { res.status(404); throw new Error('Project not found'); }
+  
+  const ip = req.ip || req.connection.remoteAddress;
+  if (!project.likedBy.includes(ip)) {
+    project.likes += 1;
+    project.likedBy.push(ip);
+    await project.save();
+  }
+  res.json({ success: true, data: project.likes, message: 'Project liked' });
+});
+
+exports.shareProject = asyncHandler(async (req, res) => {
+  const project = await Project.findById(req.params.id);
+  if (!project) { res.status(404); throw new Error('Project not found'); }
+  
+  project.shares += 1;
+  await project.save();
+  res.json({ success: true, data: project.shares, message: 'Project shared' });
+});
+
+exports.commentOnProject = asyncHandler(async (req, res) => {
+  const { name, text } = req.body;
+  if (!name || !text) { res.status(400); throw new Error('Name and text are required'); }
+  
+  const project = await Project.findById(req.params.id);
+  if (!project) { res.status(404); throw new Error('Project not found'); }
+  
+  project.comments.push({ name, text });
+  await project.save();
+  res.json({ success: true, data: project.comments, message: 'Comment added' });
+});
+
+// --- Engagement Features (Images) ---
+
+exports.viewImage = asyncHandler(async (req, res) => {
+  const { admin } = req.query;
+  const ip = req.ip || req.connection.remoteAddress;
+  
+  const project = await Project.findById(req.params.id);
+  if (!project) { res.status(404); throw new Error('Project not found'); }
+  
+  const image = project.images.id(req.params.imageId);
+  if (!image) { res.status(404); throw new Error('Image not found'); }
+  
+  if (admin !== 'true' && !image.viewedBy.includes(ip)) {
+    image.views += 1;
+    image.viewedBy.push(ip);
+    await project.save();
+  }
+  res.json({ success: true, data: image.views, message: 'Image viewed' });
+});
+
+exports.likeImage = asyncHandler(async (req, res) => {
+  const ip = req.ip || req.connection.remoteAddress;
+  const project = await Project.findById(req.params.id);
+  if (!project) { res.status(404); throw new Error('Project not found'); }
+  
+  const image = project.images.id(req.params.imageId);
+  if (!image) { res.status(404); throw new Error('Image not found'); }
+  
+  if (!image.likedBy.includes(ip)) {
+    image.likes += 1;
+    image.likedBy.push(ip);
+    await project.save();
+  }
+  res.json({ success: true, data: image.likes, message: 'Image liked' });
+});
+
+exports.shareImage = asyncHandler(async (req, res) => {
+  const project = await Project.findById(req.params.id);
+  if (!project) { res.status(404); throw new Error('Project not found'); }
+  
+  const image = project.images.id(req.params.imageId);
+  if (!image) { res.status(404); throw new Error('Image not found'); }
+  
+  image.shares += 1;
+  await project.save();
+  res.json({ success: true, data: image.shares, message: 'Image shared' });
+});
+
+exports.commentOnImage = asyncHandler(async (req, res) => {
+  const { name, text } = req.body;
+  if (!name || !text) { res.status(400); throw new Error('Name and text are required'); }
+
+  const project = await Project.findById(req.params.id);
+  if (!project) { res.status(404); throw new Error('Project not found'); }
+  
+  const image = project.images.id(req.params.imageId);
+  if (!image) { res.status(404); throw new Error('Image not found'); }
+  
+  image.comments.push({ name, text });
+  await project.save();
+  res.json({ success: true, data: image.comments, message: 'Comment added to image' });
 });
