@@ -7,7 +7,7 @@ const swipePower = (offset, velocity) => {
   return Math.abs(offset) * velocity;
 };
 
-const Lightbox = ({ images, currentIndex, isOpen, onClose, onNext, onPrev, projectId }) => {
+const Lightbox = ({ images, currentIndex, isOpen, onClose, onNext, onPrev, projectId, onImageUpdate }) => {
   const [isZoomMode, setIsZoomMode] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [imageSize, setImageSize] = useState({ w: 0, h: 0 });
@@ -39,6 +39,7 @@ const Lightbox = ({ images, currentIndex, isOpen, onClose, onNext, onPrev, proje
           setLocalImages(prev => {
             const next = [...prev];
             next[currentIndex] = { ...next[currentIndex], views: data.data };
+            if (onImageUpdate) onImageUpdate(currentImageId, 'views', data.data);
             return next;
           });
         } catch(e) {}
@@ -203,6 +204,7 @@ const Lightbox = ({ images, currentIndex, isOpen, onClose, onNext, onPrev, proje
                 setLocalImages(prev => {
                   const next = [...prev];
                   next[currentIndex] = { ...next[currentIndex], likes: data.data };
+                  if (onImageUpdate) onImageUpdate(currentImageId, 'likes', data.data);
                   return next;
                 });
                 localStorage.setItem(`liked_image_${currentImageId}`, 'true');
@@ -257,6 +259,7 @@ const Lightbox = ({ images, currentIndex, isOpen, onClose, onNext, onPrev, proje
                         setLocalImages(prev => {
                           const next = [...prev];
                           next[currentIndex] = { ...next[currentIndex], comments: data.data };
+                          if (onImageUpdate) onImageUpdate(currentImageId, 'comments', data.data);
                           return next;
                         });
                         e.target.reset();
@@ -289,7 +292,9 @@ const Lightbox = ({ images, currentIndex, isOpen, onClose, onNext, onPrev, proje
                 await api.post(`/projects/${projectId}/images/${currentImageId}/share`);
                 setLocalImages(prev => {
                   const next = [...prev];
-                  next[currentIndex] = { ...next[currentIndex], shares: (next[currentIndex].shares || 0) + 1 };
+                  const newShares = (next[currentIndex].shares || 0) + 1;
+                  next[currentIndex] = { ...next[currentIndex], shares: newShares };
+                  if (onImageUpdate) onImageUpdate(currentImageId, 'shares', newShares);
                   return next;
                 });
                 if (navigator.share) {

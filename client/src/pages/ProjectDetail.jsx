@@ -240,10 +240,6 @@ const ProjectDetail = () => {
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
                 <span className="font-accent tracking-widest text-sm text-white">{(project.comments || []).length} Comments</span>
               </div>
-              <div className="flex items-center gap-2 text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)] bg-black/40 px-4 py-2 rounded-full border border-white/10">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
-                <span className="font-accent tracking-widest text-sm text-white">{project.shares || 0} Shares</span>
-              </div>
             </motion.div>
           </motion.div>
         </div>
@@ -495,52 +491,15 @@ const ProjectDetail = () => {
           )}
         </div>
       </div>
-
-      {/* Engagement Section */}
       <div className="max-w-4xl mx-auto px-6 py-24 border-t border-white/10 mt-12">
-        <div className="flex flex-wrap gap-4 items-center justify-center mb-16">
-          <button 
-            onClick={async () => {
-              if (localStorage.getItem(`liked_project_${project._id}`)) return;
-              try {
-                const { data } = await api.post(`/projects/${project._id}/like`);
-                setProject(p => ({ ...p, likes: data.data }));
-                localStorage.setItem(`liked_project_${project._id}`, 'true');
-              } catch(e) {}
-            }}
-            className={`flex items-center gap-2 px-6 py-3 rounded-full border transition-all ${localStorage.getItem(`liked_project_${project._id}`) ? 'bg-primary/20 border-primary text-primary' : 'border-white/20 text-white/70 hover:border-white/50 hover:text-white'}`}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill={localStorage.getItem(`liked_project_${project._id}`) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-            <span className="font-accent tracking-widest text-sm">{project.likes || 0} Likes</span>
-          </button>
-
-          <button 
-            onClick={async () => {
-              try {
-                await api.post(`/projects/${project._id}/share`);
-                setProject(p => ({ ...p, shares: (p.shares || 0) + 1 }));
-                if (navigator.share) {
-                  navigator.share({ title: project.title, url: window.location.href });
-                } else {
-                  navigator.clipboard.writeText(window.location.href);
-                  alert('Link copied to clipboard!');
-                }
-              } catch(e) {}
-            }}
-            className="flex items-center gap-2 px-6 py-3 rounded-full border border-white/20 text-white/70 hover:border-white/50 hover:text-white transition-all"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-            <span className="font-accent tracking-widest text-sm">{project.shares || 0} Shares</span>
-          </button>
-          
-          <div className="flex items-center gap-2 px-6 py-3 rounded-full border border-white/10 bg-white/5 text-white/50">
+          <div className="flex items-center gap-2 px-6 py-3 mb-12 rounded-full border border-white/10 bg-white/5 text-white/50 w-fit mx-auto">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
             <span className="font-accent tracking-widest text-sm">{project.views || 0} Views</span>
           </div>
         </div>
 
         {/* Comments Section */}
-        <div>
+        <div id="project-comments-section">
           <h3 className="text-2xl font-heading mb-8 text-white">Discussion ({project.comments?.length || 0})</h3>
           
           <form 
@@ -585,6 +544,59 @@ const ProjectDetail = () => {
             ))}
           </div>
         </div>
+
+
+      {/* Floating Project Engagement Bar */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+        {/* Share Project */}
+        <button 
+          onClick={async () => {
+            try {
+              await api.post(`/projects/${project._id}/share`);
+              setProject(p => ({ ...p, shares: (p.shares || 0) + 1 }));
+              if (navigator.share) {
+                navigator.share({ title: project.title, url: window.location.href });
+              } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert('Link copied to clipboard!');
+              }
+            } catch(e) {}
+          }}
+          className="w-14 h-14 bg-[#111] border border-white/20 rounded-full flex items-center justify-center text-yellow-400 hover:scale-110 hover:bg-yellow-400/20 hover:border-yellow-400 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.5)] group relative"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
+          <span className="absolute -top-1 -right-1 bg-yellow-400 text-black text-[10px] font-bold px-1.5 py-0.5 rounded-full">{project.shares || 0}</span>
+          <span className="absolute right-16 bg-black/80 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Share Project</span>
+        </button>
+
+        {/* Comment Project */}
+        <button 
+          onClick={() => {
+            document.getElementById('project-comments-section')?.scrollIntoView({ behavior: 'smooth' });
+          }}
+          className="w-14 h-14 bg-[#111] border border-white/20 rounded-full flex items-center justify-center text-green-400 hover:scale-110 hover:bg-green-400/20 hover:border-green-400 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.5)] group relative"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+          <span className="absolute -top-1 -right-1 bg-green-400 text-black text-[10px] font-bold px-1.5 py-0.5 rounded-full">{(project.comments || []).length}</span>
+          <span className="absolute right-16 bg-black/80 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Comments</span>
+        </button>
+
+        {/* Like Project */}
+        <button 
+          onClick={async () => {
+            if (localStorage.getItem(`liked_project_${project._id}`)) return;
+            try {
+              const { data } = await api.post(`/projects/${project._id}/like`);
+              setProject(p => ({ ...p, likes: data.data }));
+              localStorage.setItem(`liked_project_${project._id}`, 'true');
+            } catch(e) {}
+          }}
+          className={`w-14 h-14 bg-[#111] border rounded-full flex items-center justify-center transition-all shadow-[0_4px_20px_rgba(0,0,0,0.5)] group relative ${localStorage.getItem(`liked_project_${project._id}`) ? 'text-red-500 border-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.8)]' : 'text-pink-500 border-white/20 hover:scale-110 hover:bg-pink-500/20 hover:border-pink-500'}`}
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill={localStorage.getItem(`liked_project_${project._id}`) ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{project.likes || 0}</span>
+          <span className="absolute right-16 bg-black/80 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Like Project</span>
+        </button>
       </div>
 
       <Lightbox 
@@ -595,6 +607,19 @@ const ProjectDetail = () => {
         onClose={() => setLightboxOpen(false)}
         onNext={nextLightboxImage}
         onPrev={prevLightboxImage}
+        onImageUpdate={(imageId, field, value) => {
+          setProject(p => {
+            if (!p || !p.images) return p;
+            const updatedImages = p.images.map(img => 
+              img._id === imageId ? { ...img, [field]: value } : img
+            );
+            return { ...p, images: updatedImages };
+          });
+          // Also update the lightbox images if they are different array
+          setLightboxImages(prev => 
+            prev.map(img => img._id === imageId ? { ...img, [field]: value } : img)
+          );
+        }}
       />
     </motion.div>
   );
