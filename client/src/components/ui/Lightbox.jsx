@@ -47,9 +47,6 @@ const Lightbox = ({ images, currentIndex, isOpen, onClose, onNext, onPrev, proje
     }
   }, [isOpen, currentIndex, currentImageId, projectId]);
 
-  const ZOOM_LEVEL = 2.5;
-  const LENS_WIDTH = 400;
-  const LENS_HEIGHT = 250;
 
   const handleKeyDown = useCallback((e) => {
     if (e.key === 'Escape') {
