@@ -186,13 +186,15 @@ const Lightbox = ({ images, currentIndex, isOpen, onClose, onNext, onPrev, proje
         {/* Instagram-style Engagement UI */}
         <div className="absolute bottom-6 right-6 z-[120] flex items-center gap-6">
           {/* Views */}
-          <div className="text-white/70 font-accent text-xs flex items-center gap-2 group">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-            <span className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap bg-black/80 px-2 py-1 rounded text-[10px]">{currentImgObj.views || 0} views</span>
+          <div className="text-blue-400/80 font-accent text-xs flex items-center gap-2 group hover:text-blue-400 hover:drop-shadow-[0_0_8px_rgba(96,165,250,0.6)] transition-all">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap bg-black/80 px-2 py-1 rounded text-[10px] text-blue-100">{currentImgObj.views || 0} views</span>
           </div>
 
           {/* Like */}
-          <button 
+          <motion.button 
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9, y: -5 }}
             onClick={async (e) => {
               e.stopPropagation();
               if (localStorage.getItem(`liked_image_${currentImageId}`)) return;
@@ -206,21 +208,23 @@ const Lightbox = ({ images, currentIndex, isOpen, onClose, onNext, onPrev, proje
                 localStorage.setItem(`liked_image_${currentImageId}`, 'true');
               } catch(err) {}
             }}
-            className={`group relative flex items-center gap-2 transition-transform active:scale-90 ${localStorage.getItem(`liked_image_${currentImageId}`) ? 'text-red-500' : 'text-white/70 hover:text-white'}`}
+            className={`group relative flex items-center gap-2 transition-all ${localStorage.getItem(`liked_image_${currentImageId}`) ? 'text-red-500 drop-shadow-[0_0_12px_rgba(239,68,68,0.8)]' : 'text-pink-400/80 hover:text-pink-400 hover:drop-shadow-[0_0_8px_rgba(244,114,182,0.6)]'}`}
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill={localStorage.getItem(`liked_image_${currentImageId}`) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
             <span className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap bg-black/80 text-white px-2 py-1 rounded text-[10px] font-accent tracking-widest">{currentImgObj.likes || 0} likes</span>
-          </button>
+          </motion.button>
 
           {/* Comment */}
           <div className="relative">
-            <button 
+            <motion.button 
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               onClick={(e) => { e.stopPropagation(); setShowEngagement(!showEngagement); }}
-              className="text-white/70 hover:text-white transition-colors flex items-center gap-2 group"
+              className="text-green-400/80 hover:text-green-400 hover:drop-shadow-[0_0_8px_rgba(74,222,128,0.6)] transition-all flex items-center gap-2 group"
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
               <span className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap bg-black/80 text-white px-2 py-1 rounded text-[10px] font-accent tracking-widest">{(currentImgObj.comments || []).length} comments</span>
-            </button>
+            </motion.button>
 
             <AnimatePresence>
               {showEngagement && (
@@ -275,7 +279,10 @@ const Lightbox = ({ images, currentIndex, isOpen, onClose, onNext, onPrev, proje
           </div>
 
           {/* Share */}
-          <button 
+          {/* Share */}
+          <motion.button 
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9, x: 5, y: -5 }}
             onClick={async (e) => {
               e.stopPropagation();
               try {
@@ -293,11 +300,11 @@ const Lightbox = ({ images, currentIndex, isOpen, onClose, onNext, onPrev, proje
                 }
               } catch(err) {}
             }}
-            className="text-white/70 hover:text-white transition-colors flex items-center gap-2 group relative"
+            className="text-yellow-400/80 hover:text-yellow-400 hover:drop-shadow-[0_0_8px_rgba(250,204,21,0.6)] transition-all flex items-center gap-2 group relative"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
             <span className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap bg-black/80 text-white px-2 py-1 rounded text-[10px] font-accent tracking-widest">Share</span>
-          </button>
+          </motion.button>
         </div>
       </motion.div>
     </AnimatePresence>

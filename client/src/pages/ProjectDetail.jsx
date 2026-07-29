@@ -49,6 +49,24 @@ const TiltImage = ({ img, title, idx, onClick }) => {
           alt={`${title} gallery ${idx + 1}`} 
           className="w-full h-auto object-contain block pointer-events-none"
         />
+        <div className="absolute bottom-2 right-2 flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="flex items-center gap-1 text-blue-400">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <span className="text-[10px] font-accent">{img.views || 0}</span>
+          </div>
+          <div className="flex items-center gap-1 text-pink-500">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill={img.likes > 0 ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <span className="text-[10px] font-accent">{img.likes || 0}</span>
+          </div>
+          <div className="flex items-center gap-1 text-green-400">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            <span className="text-[10px] font-accent">{(img.comments || []).length}</span>
+          </div>
+          <div className="flex items-center gap-1 text-yellow-400">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
+            <span className="text-[10px] font-accent">{img.shares || 0}</span>
+          </div>
+        </div>
       </motion.div>
     </motion.div>
   );
@@ -209,10 +227,24 @@ const ProjectDetail = () => {
               {project.title}
             </motion.h1>
             {project.subtitle && (
-              <motion.p variants={fadeInUp} className="text-xl md:text-3xl font-body text-white/70 max-w-3xl">
+              <motion.p variants={fadeInUp} className="text-xl md:text-3xl font-body text-white/70 max-w-3xl mb-8">
                 {project.subtitle}
               </motion.p>
             )}
+            <motion.div variants={fadeInUp} className="flex flex-wrap items-center gap-6 mt-4">
+              <div className="flex items-center gap-2 text-pink-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)] bg-black/40 px-4 py-2 rounded-full border border-white/10">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill={project.likes > 0 ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                <span className="font-accent tracking-widest text-sm text-white">{project.likes || 0} Likes</span>
+              </div>
+              <div className="flex items-center gap-2 text-green-400 drop-shadow-[0_0_8px_rgba(74,222,128,0.5)] bg-black/40 px-4 py-2 rounded-full border border-white/10">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                <span className="font-accent tracking-widest text-sm text-white">{(project.comments || []).length} Comments</span>
+              </div>
+              <div className="flex items-center gap-2 text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)] bg-black/40 px-4 py-2 rounded-full border border-white/10">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
+                <span className="font-accent tracking-widest text-sm text-white">{project.shares || 0} Shares</span>
+              </div>
+            </motion.div>
           </motion.div>
         </div>
       </div>
