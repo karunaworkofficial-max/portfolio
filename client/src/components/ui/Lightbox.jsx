@@ -183,119 +183,122 @@ const Lightbox = ({ images, currentIndex, isOpen, onClose, onNext, onPrev, proje
           ›
         </button>
         
-        {/* Help text & Engagement Toggle */}
-        <div className="absolute bottom-6 left-6 z-[110] flex gap-4">
-          <button 
-            onClick={(e) => { e.stopPropagation(); setShowEngagement(!showEngagement); }}
-            className="px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full text-white font-accent text-xs uppercase tracking-widest transition-colors flex items-center gap-2"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-            Discuss & Like
-          </button>
-          
-          <div className="text-white/50 font-accent text-xs tracking-widest flex items-center gap-2 border border-white/10 px-4 py-2 rounded-full">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-            {currentImgObj.views || 0}
+        {/* Instagram-style Engagement UI */}
+        <div className="absolute bottom-6 right-6 z-[120] flex items-center gap-6">
+          {/* Views */}
+          <div className="text-white/70 font-accent text-xs flex items-center gap-2 group">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap bg-black/80 px-2 py-1 rounded text-[10px]">{currentImgObj.views || 0} views</span>
           </div>
-        </div>
-        
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-text/70 font-accent text-xs tracking-widest pointer-events-none hidden md:block">
-          {isZoomMode ? 'Double click to zoom out' : 'Double click to zoom in'}
-        </div>
 
-        {/* Engagement Sidebar */}
-        <AnimatePresence>
-          {showEngagement && currentImageId && (
-            <motion.div
-              initial={{ opacity: 0, x: '100%' }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="absolute top-0 right-0 w-full md:w-96 h-full bg-[#0a0a0a] border-l border-white/10 z-[120] flex flex-col"
-              onClick={(e) => e.stopPropagation()}
+          {/* Like */}
+          <button 
+            onClick={async (e) => {
+              e.stopPropagation();
+              if (localStorage.getItem(`liked_image_${currentImageId}`)) return;
+              try {
+                const { data } = await api.post(`/projects/${projectId}/images/${currentImageId}/like`);
+                setLocalImages(prev => {
+                  const next = [...prev];
+                  next[currentIndex] = { ...next[currentIndex], likes: data.data };
+                  return next;
+                });
+                localStorage.setItem(`liked_image_${currentImageId}`, 'true');
+              } catch(err) {}
+            }}
+            className={`group relative flex items-center gap-2 transition-transform active:scale-90 ${localStorage.getItem(`liked_image_${currentImageId}`) ? 'text-red-500' : 'text-white/70 hover:text-white'}`}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill={localStorage.getItem(`liked_image_${currentImageId}`) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap bg-black/80 text-white px-2 py-1 rounded text-[10px] font-accent tracking-widest">{currentImgObj.likes || 0} likes</span>
+          </button>
+
+          {/* Comment */}
+          <div className="relative">
+            <button 
+              onClick={(e) => { e.stopPropagation(); setShowEngagement(!showEngagement); }}
+              className="text-white/70 hover:text-white transition-colors flex items-center gap-2 group"
             >
-              <div className="p-6 border-b border-white/10 flex justify-between items-center bg-black/50 backdrop-blur-md">
-                <h3 className="text-white font-heading text-xl">Image Details</h3>
-                <button onClick={() => setShowEngagement(false)} className="text-white/50 hover:text-white">✕</button>
-              </div>
-              
-              <div className="flex p-4 gap-2 border-b border-white/10">
-                <button 
-                  onClick={async () => {
-                    if (localStorage.getItem(`liked_image_${currentImageId}`)) return;
-                    try {
-                      const { data } = await api.post(`/projects/${projectId}/images/${currentImageId}/like`);
-                      setLocalImages(prev => {
-                        const next = [...prev];
-                        next[currentIndex] = { ...next[currentIndex], likes: data.data };
-                        return next;
-                      });
-                      localStorage.setItem(`liked_image_${currentImageId}`, 'true');
-                    } catch(e) {}
-                  }}
-                  className={`flex-1 py-2 rounded-md font-accent text-xs uppercase tracking-widest border transition-colors ${localStorage.getItem(`liked_image_${currentImageId}`) ? 'bg-primary/20 text-primary border-primary/50' : 'border-white/20 text-white/70 hover:bg-white/5'}`}
-                >
-                  {currentImgObj.likes || 0} Likes
-                </button>
-                <button 
-                  onClick={async () => {
-                    try {
-                      await api.post(`/projects/${projectId}/images/${currentImageId}/share`);
-                      setLocalImages(prev => {
-                        const next = [...prev];
-                        next[currentIndex] = { ...next[currentIndex], shares: (next[currentIndex].shares || 0) + 1 };
-                        return next;
-                      });
-                      if (navigator.share) {
-                        navigator.share({ title: 'Check out this image', url: window.location.href });
-                      } else {
-                        navigator.clipboard.writeText(window.location.href);
-                        alert('Link copied to clipboard!');
-                      }
-                    } catch(e) {}
-                  }}
-                  className="flex-1 py-2 rounded-md font-accent text-xs uppercase tracking-widest border border-white/20 text-white/70 hover:bg-white/5 transition-colors"
-                >
-                  {currentImgObj.shares || 0} Shares
-                </button>
-              </div>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+              <span className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap bg-black/80 text-white px-2 py-1 rounded text-[10px] font-accent tracking-widest">{(currentImgObj.comments || []).length} comments</span>
+            </button>
 
-              <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                {(currentImgObj.comments || []).map((c, i) => (
-                  <div key={i} className="bg-white/5 p-4 rounded-lg">
-                    <div className="flex justify-between items-start mb-2">
-                      <span className="text-white font-accent text-sm">{c.name}</span>
-                      <span className="text-white/40 text-[10px]">{new Date(c.createdAt).toLocaleDateString()}</span>
-                    </div>
-                    <p className="text-white/80 text-sm font-body">{c.text}</p>
+            <AnimatePresence>
+              {showEngagement && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute bottom-12 right-0 w-80 bg-[#111] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="max-h-60 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+                    {(currentImgObj.comments || []).length === 0 && (
+                      <p className="text-white/40 text-center text-sm font-body py-4">No comments yet. Be the first!</p>
+                    )}
+                    {(currentImgObj.comments || []).map((c, i) => (
+                      <div key={i} className="text-sm font-body">
+                        <span className="font-accent font-bold text-white mr-2 text-xs">{c.name}</span>
+                        <span className="text-white/80">{c.text}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                  <form 
+                    onSubmit={async (e) => {
+                      e.preventDefault();
+                      const text = e.target.text.value;
+                      if(!text) return;
+                      try {
+                        const { data } = await api.post(`/projects/${projectId}/images/${currentImageId}/comment`, { text });
+                        setLocalImages(prev => {
+                          const next = [...prev];
+                          next[currentIndex] = { ...next[currentIndex], comments: data.data };
+                          return next;
+                        });
+                        e.target.reset();
+                      } catch(err) {}
+                    }}
+                    className="p-3 border-t border-white/10 flex items-center gap-2 bg-black/40"
+                  >
+                    <input 
+                      type="text" 
+                      name="text" 
+                      placeholder="Add a comment..." 
+                      className="flex-1 bg-transparent text-white text-sm focus:outline-none font-body placeholder:text-white/40" 
+                      required
+                    />
+                    <button type="submit" className="text-primary font-accent text-xs tracking-widest uppercase hover:text-white transition-colors">Post</button>
+                  </form>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
-              <div className="p-6 border-t border-white/10 bg-black/50 backdrop-blur-md">
-                <form onSubmit={async (e) => {
-                  e.preventDefault();
-                  const name = e.target.name.value;
-                  const text = e.target.text.value;
-                  if(!name || !text) return;
-                  try {
-                    const { data } = await api.post(`/projects/${projectId}/images/${currentImageId}/comment`, { name, text });
-                    setLocalImages(prev => {
-                      const next = [...prev];
-                      next[currentIndex] = { ...next[currentIndex], comments: data.data };
-                      return next;
-                    });
-                    e.target.reset();
-                  } catch(e) {}
-                }}>
-                  <input type="text" name="name" required placeholder="Name" className="w-full bg-white/5 border border-white/10 rounded-md px-3 py-2 text-white mb-2 text-sm focus:border-primary focus:outline-none" />
-                  <textarea name="text" required placeholder="Comment..." rows="2" className="w-full bg-white/5 border border-white/10 rounded-md px-3 py-2 text-white mb-2 text-sm resize-none focus:border-primary focus:outline-none"></textarea>
-                  <button type="submit" className="w-full py-2 bg-primary text-white rounded-md font-accent text-xs uppercase tracking-widest hover:bg-secondary transition-colors">Post</button>
-                </form>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+          {/* Share */}
+          <button 
+            onClick={async (e) => {
+              e.stopPropagation();
+              try {
+                await api.post(`/projects/${projectId}/images/${currentImageId}/share`);
+                setLocalImages(prev => {
+                  const next = [...prev];
+                  next[currentIndex] = { ...next[currentIndex], shares: (next[currentIndex].shares || 0) + 1 };
+                  return next;
+                });
+                if (navigator.share) {
+                  navigator.share({ title: 'Check out this image', url: window.location.href });
+                } else {
+                  navigator.clipboard.writeText(window.location.href);
+                  alert('Link copied to clipboard!');
+                }
+              } catch(err) {}
+            }}
+            className="text-white/70 hover:text-white transition-colors flex items-center gap-2 group relative"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap bg-black/80 text-white px-2 py-1 rounded text-[10px] font-accent tracking-widest">Share</span>
+          </button>
+        </div>
       </motion.div>
     </AnimatePresence>
   );

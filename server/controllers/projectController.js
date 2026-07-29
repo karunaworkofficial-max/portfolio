@@ -187,8 +187,9 @@ exports.shareProject = asyncHandler(async (req, res) => {
 });
 
 exports.commentOnProject = asyncHandler(async (req, res) => {
-  const { name, text } = req.body;
-  if (!name || !text) { res.status(400); throw new Error('Name and text are required'); }
+  let { name, text } = req.body;
+  if (!text) { res.status(400); throw new Error('Text is required'); }
+  if (!name) name = 'Anonymous';
   
   const project = await Project.findById(req.params.id);
   if (!project) { res.status(404); throw new Error('Project not found'); }
@@ -247,8 +248,9 @@ exports.shareImage = asyncHandler(async (req, res) => {
 });
 
 exports.commentOnImage = asyncHandler(async (req, res) => {
-  const { name, text } = req.body;
-  if (!name || !text) { res.status(400); throw new Error('Name and text are required'); }
+  let { name, text } = req.body;
+  if (!text) { res.status(400); throw new Error('Text is required'); }
+  if (!name) name = 'Anonymous';
 
   const project = await Project.findById(req.params.id);
   if (!project) { res.status(404); throw new Error('Project not found'); }

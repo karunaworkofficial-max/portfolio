@@ -516,9 +516,9 @@ const ProjectDetail = () => {
               e.preventDefault();
               const name = e.target.name.value;
               const text = e.target.text.value;
-              if(!name || !text) return;
+              if(!text) return;
               try {
-                const { data } = await api.post(`/projects/${project._id}/comment`, { name, text });
+                const { data } = await api.post(`/projects/${project._id}/comment`, { name: name || 'Anonymous', text });
                 setProject(p => ({ ...p, comments: data.data }));
                 e.target.reset();
               } catch(err) {
@@ -528,7 +528,7 @@ const ProjectDetail = () => {
             className="mb-12 bg-surface/30 p-6 rounded-2xl border border-white/5"
           >
             <div className="mb-4">
-              <input type="text" name="name" placeholder="Your Name" required className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-primary focus:outline-none transition-colors" />
+              <input type="text" name="name" placeholder="Your Name (Optional)" className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-primary focus:outline-none transition-colors" />
             </div>
             <div className="mb-4">
               <textarea name="text" placeholder="Add a comment..." required rows="3" className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-primary focus:outline-none transition-colors resize-none"></textarea>
