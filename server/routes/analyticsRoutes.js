@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { trackView, getAnalytics } = require('../controllers/analyticsController');
-const { protect } = require('../middleware/authMiddleware');
+const { protect } = require('../middleware/auth');
 
 // Public route to track views
 router.post('/track', trackView);
