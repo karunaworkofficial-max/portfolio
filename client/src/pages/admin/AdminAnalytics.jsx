@@ -7,17 +7,28 @@ const AdminAnalytics = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchAnalytics = async () => {
+    let intervalId;
+
+    const fetchAnalytics = async (isInitial = false) => {
       try {
         const res = await api.get('/analytics');
         setData(res.data.data);
       } catch (err) {
         console.error('Failed to fetch analytics:', err);
       } finally {
-        setLoading(false);
+        if (isInitial) setLoading(false);
       }
     };
-    fetchAnalytics();
+    
+    // Initial fetch
+    fetchAnalytics(true);
+
+    // Live sync every 5 seconds
+    intervalId = setInterval(() => {
+      fetchAnalytics(false);
+    }, 5000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   if (loading) {

@@ -19,6 +19,9 @@ const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
+// Trust reverse proxy (Vercel, Render, etc.) to get correct client IP
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(helmet());
 app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173' }));
