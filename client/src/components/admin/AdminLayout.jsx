@@ -11,7 +11,8 @@ import {
   LogOut, 
   Menu,
   X,
-  Globe
+  Globe,
+  BarChart2
 } from 'lucide-react';
 
 const AdminLayout = () => {
@@ -35,6 +36,7 @@ const AdminLayout = () => {
     { name: 'Profile Settings', path: '/admin/profile', icon: UserCircle },
     { name: 'Messages', path: '/admin/messages', icon: MessageSquare },
     { name: 'Site Settings', path: '/admin/site-settings', icon: Palette },
+    { name: 'Analytics', path: '/admin/analytics', icon: BarChart2 },
   ];
 
   return (

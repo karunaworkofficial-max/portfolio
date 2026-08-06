@@ -1,5 +1,6 @@
 const Project = require('../models/Project');
 const asyncHandler = require('../middleware/asyncHandler');
+const { recordViewAsync } = require('./analyticsController');
 const cloudinary = require('cloudinary').v2; // Will configure properly in server.js
 
 exports.getProjects = asyncHandler(async (req, res) => {
@@ -72,6 +73,9 @@ exports.getProjectBySlug = asyncHandler(async (req, res) => {
     project.views += 1;
     project.viewedBy.push(ip);
     await project.save();
+    
+    // Log advanced analytics
+    recordViewAsync(ip, 'PROJECT_VIEW', `Project: ${project.title}`);
   }
 
   res.json({ success: true, data: project, message: 'Project fetched' });
@@ -215,6 +219,9 @@ exports.viewImage = asyncHandler(async (req, res) => {
     image.views += 1;
     image.viewedBy.push(ip);
     await project.save();
+
+    // Log advanced analytics
+    recordViewAsync(ip, 'IMAGE_VIEW', `Project: ${project.title} - Image ID: ${image._id}`);
   }
   res.json({ success: true, data: image.views, message: 'Image viewed' });
 });

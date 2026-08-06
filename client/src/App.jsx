@@ -35,9 +35,12 @@ import EditProject from './pages/admin/EditProject';
 import ProfileSettings from './pages/admin/ProfileSettings';
 import Messages from './pages/admin/Messages';
 import AdminSiteSettings from './pages/admin/AdminSiteSettings';
+import AdminAnalytics from './pages/admin/AdminAnalytics';
+import useTracker from './hooks/useTracker';
 
 const AnimatedRoutes = () => {
   const location = useLocation();
+  useTracker(); // Initialize the analytics tracker
 
   useEffect(() => {
     let lenis = new Lenis({
@@ -91,6 +94,7 @@ const AnimatedRoutes = () => {
           <Route path="profile" element={<ProfileSettings />} />
           <Route path="messages" element={<Messages />} />
           <Route path="site-settings" element={<AdminSiteSettings />} />
+          <Route path="analytics" element={<AdminAnalytics />} />
         </Route>
       </Routes>
     </AnimatePresence>
